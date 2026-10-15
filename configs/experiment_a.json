@@ -1,0 +1,48 @@
+{
+  "seed": 2026,
+  "data_file": "../data/wm38k/Wafer_Map_Datasets.npz",
+  "split_manifest": "protocol/split.csv",
+  "query_manifest": "protocol/queries.csv",
+  "candidate_manifest": "protocol/candidates.csv",
+  "output_dir": "artifacts/experiment_a_seed2026",
+  "expected_candidates": 1000,
+  "device": "cuda",
+  "num_workers": 4,
+  "batch_size": 128,
+  "inference_batch_size": 256,
+  "pair_score_batch_size": 4096,
+  "input_size": 96,
+  "embedding_dim": 256,
+  "proposal": {"min_area": 5, "top_k": 6, "padding": 4},
+  "matching": {
+    "shape_threshold": 0.0,
+    "score_threshold": 0.0,
+    "weight": "sqrt_area",
+    "lambda_pos": 0.0,
+    "lambda_scale": 0.0,
+    "sigma_pos": 0.35,
+    "sigma_scale": 0.5
+  },
+  "augmentation": {"rotation": true, "max_shift": 3, "dropout": 0.02, "noise": 0.005},
+  "local": {
+    "epochs": 100,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "projector_dim": 128,
+    "temperature": 0.07,
+    "num_negatives": 1024,
+    "memory_momentum": 0.5
+  },
+  "global": {
+    "budgets": [0.05, 0.1, 0.5],
+    "epochs": 50,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "pairs_per_epoch": 50000,
+    "validation_pairs": 10000,
+    "pair_hidden_dim": 256,
+    "loss": "mse"
+  },
+  "evaluation": {"ks": [1, 5, 10, 20], "bootstrap_samples": 1000, "save_matches_top_k": 10},
+  "geometry": {"lambda_pos": 0.125, "lambda_scale": 0.125, "examples": 6}
+}
