@@ -100,6 +100,7 @@ def prepare(config):
     cache.mkdir(parents=True, exist_ok=True)
     fingerprints = source_fingerprint(config)
     signature = digest({"sources": fingerprints, "proposal": config["proposal"], "input_size": config["input_size"],
+                        "handcrafted": config["handcrafted"],
                         "handcrafted_code": file_hash(Path(__file__).parent / "methods/handcrafted.py"),
                         "regions_code": file_hash(Path(__file__).with_name("regions.py")),
                         "data_code": file_hash(__file__)})
@@ -143,7 +144,7 @@ def prepare(config):
         desc, positions, scales, areas = [], [], [], []
         for i, region in enumerate(regions):
             patches[i, 0] = token_patch(region["mask"], size, config["proposal"]["padding"])
-            desc.append(handcrafted_descriptor(region["mask"]))
+            desc.append(handcrafted_descriptor(region["mask"], config["handcrafted"]["max_order"]))
             positions.append(region["position"])
             scales.append(region["scale"])
             areas.append(region["area"])
@@ -158,7 +159,8 @@ def prepare(config):
         details[split] = {"maps": len(ids), "tokens": count, "maps_without_tokens": int((counts == 0).sum()),
                           "mean_tokens": float(counts.mean()), "max_tokens": int(counts.max())}
         print(f"Prepared {split}: {details[split]}", flush=True)
-    status = {"signature": signature, "source_sha256": fingerprints, "protocol": protocol.summary(), "regions": details}
+    status = {"signature": signature, "source_sha256": fingerprints, "protocol": protocol.summary(), "regions": details,
+              "handcrafted": {**config["handcrafted"], "descriptor_dim": len(desc[0])}}
     write_json(output / "resolved_config.json", config)
     packages = {}
     for package in ("numpy", "scipy", "torch", "matplotlib"):

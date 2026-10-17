@@ -66,8 +66,13 @@ def load_config(path):
     p, m = config["proposal"], config["matching"]
     if p["min_area"] < 1 or p["top_k"] < 1 or p["padding"] < 0:
         raise ValueError("min_area/top_k must be positive and padding must be nonnegative")
-    if config["input_size"] < 16 or config["embedding_dim"] < 1:
-        raise ValueError("input_size >= 16 and embedding_dim >= 1 are required")
+    if config["input_size"] < 32 or config["embedding_dim"] != 512:
+        raise ValueError("WaPIRL-aligned models require input_size >= 32 and embedding_dim = 512")
+    from .methods.handcrafted import moment_orders
+    descriptor = config["handcrafted"]
+    if descriptor["type"] != "zernike" or not np.isfinite(descriptor["distance_scale"]) or descriptor["distance_scale"] <= 0:
+        raise ValueError("Use a Zernike descriptor with a finite positive distance_scale")
+    moment_orders(descriptor["max_order"])
     if config["batch_size"] < 2 or config["num_workers"] < 0:
         raise ValueError("batch_size >= 2 and num_workers >= 0 are required")
     if not (0 <= m["shape_threshold"] <= 1 and 0 <= m["score_threshold"] <= 1):
@@ -85,6 +90,13 @@ def load_config(path):
     if not all(0 <= a[k] < 1 for k in ("dropout", "noise")) or a["max_shift"] < 0:
         raise ValueError("Invalid augmentation strength")
     local, global_ = config["local"], config["global"]
+    for settings in (local, global_):
+        if settings["optimizer"] != "sgd" or settings["scheduler"] != "wapirl_cosine":
+            raise ValueError("Both learned methods use the WaPIRL SGD/cosine recipe")
+        if settings["learning_rate"] <= 0 or settings["weight_decay"] < 0 or not 0 <= settings["momentum"] < 1:
+            raise ValueError("Invalid SGD settings")
+    if local["projector_type"] != "linear" or local["negative_sampling"] != "with_replacement":
+        raise ValueError("WaPIRL alignment requires a linear projector and with-replacement negatives")
     if local["epochs"] < 1 or global_["epochs"] < 1 or local["num_negatives"] < 1:
         raise ValueError("Epochs and negative count must be positive")
     if local["temperature"] <= 0 or not 0 <= local["memory_momentum"] < 1:
@@ -95,6 +107,9 @@ def load_config(path):
         raise ValueError("Pair counts must be positive")
     if global_["loss"] not in ("mse", "smooth_l1"):
         raise ValueError("Global loss must be mse or smooth_l1")
+    from .early_stopping import EarlyStopping
+    for kind, settings in (("local", local), ("global", global_)):
+        EarlyStopping.from_settings(settings, kind)
     if any(int(k) < 1 for k in config["evaluation"]["ks"]):
         raise ValueError("Evaluation K must be positive")
     return config
@@ -118,6 +133,8 @@ def get_device(name):
     device = torch.device(name)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA is unavailable; select --device cpu for forward checks")
+    if device.type == "mps" and not torch.backends.mps.is_available():
+        raise RuntimeError("MPS is unavailable in this process; run on a Metal-enabled Mac outside a restrictive sandbox")
     return device
 
 

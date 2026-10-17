@@ -111,7 +111,7 @@ def compare_paired(config, left="proposed", right="handcrafted", metric="Contain
     if set(left_rows) != set(right_rows):
         raise ValueError("Paired comparison requires identical query IDs")
     differences = [float(left_rows[q][metric]) - float(right_rows[q][metric]) for q in left_rows
-                   if left_rows[q][metric] and right_rows[q][metric]]
+                   if left_rows[q][metric] not in (None, "") and right_rows[q][metric] not in (None, "")]
     interval = bootstrap_interval(differences, config["evaluation"]["bootstrap_samples"], np.random.default_rng(config["seed"]))
     result = {"left": left, "right": right, "metric": metric,
               "mean_difference": float(np.mean(differences)) if differences else None,

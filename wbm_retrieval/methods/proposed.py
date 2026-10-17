@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+import math
+import time
 
 import numpy as np
 import torch
@@ -15,7 +17,8 @@ from ..data import load_regions
 from ..matching import group_tokens
 from ..models import Encoder, Projector
 from ..regions import augment
-from ..training import loader, load_checkpoint, optimizer_to_device, restore, save_checkpoint, training_signature
+from ..training import (encoder_spec, loader, load_checkpoint, optimization, optimizer_to_device, parameter_hash, restore,
+                        save_checkpoint, stopping_state, training_signature, validation_rng)
 
 
 class PatchDataset(Dataset):
@@ -61,12 +64,11 @@ class MemoryBank:
         available = int((probabilities > 0).sum())
         if available == 0:
             raise ValueError("No negatives left outside the current batch")
-        return torch.multinomial(probabilities, min(count, available), replacement=False)
+        return torch.multinomial(probabilities, count, replacement=True)
 
     @torch.no_grad()
     def update(self, indices, values):
-        updated = self.momentum * self.buffer[indices] + (1 - self.momentum) * values
-        self.buffer[indices] = F.normalize(updated, dim=1)
+        self.buffer[indices] = self.momentum * self.buffer[indices] + (1 - self.momentum) * values
 
 
 def nce_loss(anchors, positives, negatives, temperature):
@@ -89,10 +91,17 @@ def train(config, resume=False):
     encoder = Encoder(config["embedding_dim"]).to(device)
     projector = Projector(config["embedding_dim"], settings["projector_dim"]).to(device)
     model = nn.ModuleDict({"encoder": encoder, "projector": projector})
-    optimizer = torch.optim.AdamW(model.parameters(), lr=settings["learning_rate"], weight_decay=settings["weight_decay"])
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, settings["epochs"])
+    optimizer, scheduler = optimization(model, settings)
     start, best, history, checkpoint = restore(output / "last.pt", model, optimizer, scheduler, signature, resume)
     optimizer_to_device(optimizer, device)
+    stopper = stopping_state(settings, "local", checkpoint)
+    if stopper.stopped or start >= settings["epochs"]:
+        print(f"Local training already complete at epoch {start}; skipping optimizer updates", flush=True)
+        return
+    initial_hash = checkpoint["initial_parameter_sha256"] if checkpoint else parameter_hash(model)
+    initial_encoder_hash = checkpoint["initial_encoder_sha256"] if checkpoint else parameter_hash(encoder)
+    optimizer_steps = checkpoint.get("optimizer_steps", 0) if checkpoint else 0
+    best_epoch = checkpoint.get("best_epoch", 0) if checkpoint else 0
     train = PatchDataset(cache / "train_patches.npy", config["augmentation"], config["seed"])
     valid = PatchDataset(cache / "valid_patches.npy", config["augmentation"], config["seed"] + 1)
     if len(train) < 2:
@@ -104,10 +113,11 @@ def train(config, resume=False):
         print(f"Initializing local memory bank with {len(train)} train tokens", flush=True)
         bank.initialize(encoder, projector, loader(train, config, config["seed"], False), device)
     for epoch in range(start, settings["epochs"]):
+        epoch_started = time.perf_counter()
         train.epoch = epoch
         model.train()
         total, examples = 0., 0
-        for indices, image, transformed in loader(train, config, config["seed"] + epoch, True):
+        for batch_index, (indices, image, transformed) in enumerate(loader(train, config, config["seed"] + epoch, True), 1):
             indices = indices.to(device)
             image, transformed = image.to(device), transformed.to(device)
             value = projector(encoder(torch.cat([image, transformed])))
@@ -125,35 +135,60 @@ def train(config, resume=False):
                 negatives = bank.buffer[bank.negative_indices(indices, settings["num_negatives"])]
                 loss = 0.5 * (nce_loss(anchors, z, negatives, settings["temperature"]) +
                               nce_loss(anchors, zt, negatives, settings["temperature"]))
+            loss_value = float(loss.item())
+            if not math.isfinite(loss_value):
+                raise FloatingPointError(f"Non-finite local loss at epoch {epoch+1}, batch {batch_index}")
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             optimizer.step()
+            optimizer_steps += 1
             bank.update(indices, z.detach())
-            total += loss.item() * len(indices)
+            total += loss_value * len(indices)
             examples += len(indices)
+            if batch_index % config.get("log_every", 100) == 0:
+                print(f"Local epoch {epoch+1}, batch {batch_index}: loss={loss_value:.5f}, device={device}", flush=True)
         model.eval()
         val_sum, val_count = 0., 0
         # Fixed views and fixed negative indices make epochs comparable.
-        with torch.no_grad(), torch.random.fork_rng(devices=[device.index or 0] if device.type == "cuda" else []):
-            torch.manual_seed(config["seed"] + 999)
+        with torch.no_grad(), validation_rng(device, config["seed"] + 999):
             for _, image, transformed in loader(valid, config, config["seed"], False):
                 z, zt = projector(encoder(torch.cat([image.to(device), transformed.to(device)]))).chunk(2)
-                chosen = torch.randperm(len(bank.buffer), device=device)[:settings["num_negatives"]]
+                # Validation IDs are unrelated to train-bank IDs: exclude none.
+                chosen = torch.randint(len(bank.buffer), (settings["num_negatives"],), device=device)
                 loss = nce_loss(z, zt, bank.buffer[chosen], settings["temperature"])
                 val_sum += loss.item() * len(image)
                 val_count += len(image)
         val_loss = val_sum / max(val_count, 1)
         improved = val_loss < best
         best = min(best, val_loss)
+        if improved:
+            best_epoch = epoch + 1
+        should_stop = stopper.step(val_loss, epoch + 1)
+        reason = "early_stopping" if should_stop else "max_epochs" if epoch + 1 == settings["epochs"] else None
         history.append({"epoch": epoch + 1, "train_loss": total / max(examples, 1), "valid_loss": val_loss,
-                        "learning_rate": optimizer.param_groups[0]["lr"]})
+                        "learning_rate": optimizer.param_groups[0]["lr"], "optimizer_steps": optimizer_steps,
+                        "early_stopping_bad_epochs": stopper.bad_epochs, "epoch_seconds": time.perf_counter() - epoch_started})
         scheduler.step()
-        extra = {"memory": bank.buffer.detach().cpu(), "embedding_dim": config["embedding_dim"]}
+        extra = {"memory": bank.buffer.detach().cpu(), "embedding_dim": config["embedding_dim"],
+                 "encoder_spec": encoder_spec(config), "initial_encoder_sha256": initial_encoder_hash,
+                 "early_stopping": stopper.state_dict(), "best_epoch": best_epoch, "stop_reason": reason,
+                 "optimizer_steps": optimizer_steps, "training_device": str(device),
+                 "initial_parameter_sha256": initial_hash}
         if improved:
             save_checkpoint(output / "best.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
         save_checkpoint(output / "last.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
         write_json(output / "history.json", history)
         print(f"Local epoch {epoch+1}/{settings['epochs']}: train={history[-1]['train_loss']:.5f} valid={val_loss:.5f}", flush=True)
+        if should_stop:
+            print(f"Local early stopping at epoch {epoch+1}; best epoch={best_epoch}", flush=True)
+            break
+    write_json(output / "training_summary.json", {"training_device": str(device), "epochs_completed": len(history),
+               "max_epochs": settings["epochs"], "best_epoch": best_epoch, "best_valid_loss": best,
+               "stop_reason": reason, "early_stopping": stopper.state_dict(), "optimizer_steps": optimizer_steps,
+               "initial_parameter_sha256": initial_hash, "final_parameter_sha256": parameter_hash(model),
+               "initial_encoder_sha256": initial_encoder_hash, "encoder_spec": encoder_spec(config),
+               "optimizer": "SGD", "negative_sampling": "with replacement, excluding training batch",
+               "memory_update": "raw projected features, unnormalized EMA"})
 
 
 def load_encoder(config, device):
@@ -181,4 +216,3 @@ def retrieve(config, protocol):
         cache / "test_local_embeddings.npy", config, device,
     )
     rank_local("proposed", group_tokens(metadata, embeddings), config, protocol)
-

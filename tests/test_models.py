@@ -22,32 +22,68 @@ class ModelTests(unittest.TestCase):
     def test_encoder_gradients_and_directional_scorer(self):
         import torch
         from wbm_retrieval.models import Encoder, DirectionalScorer, Projector
-        encoder, projector = Encoder(16), Projector(16, 8)
+        encoder, projector = Encoder(), Projector(512, 8)
         z = encoder(torch.rand(2, 1, 32, 32))
-        self.assertEqual(z.shape, (2, 16))
-        torch.testing.assert_close(z.norm(dim=1), torch.ones(2))
+        self.assertEqual(z.shape, (2, 512))
+        self.assertFalse(torch.allclose(z.norm(dim=1), torch.ones(2)))
         projected = projector(z)
-        scorer = DirectionalScorer(16, 16)
+        scorer = DirectionalScorer(512, 16)
         a = scorer(z[:1], z[1:])
         b = scorer(z[1:], z[:1])
         self.assertFalse(torch.allclose(a, b))
         (a.sum() + projected.square().sum()).backward()
         self.assertIsNotNone(encoder.stem[0].weight.grad)
 
-    def test_memory_excludes_anchors_and_normalizes_update(self):
+    def test_memory_samples_with_replacement_excludes_batch_and_keeps_raw_ema(self):
         import torch
         from wbm_retrieval.methods.proposed import MemoryBank, nce_loss
         memory = MemoryBank(10, 8, "cpu")
         memory.buffer.copy_(torch.nn.functional.normalize(torch.rand(10, 8), dim=1))
         chosen = memory.negative_indices(torch.tensor([1, 3]), 1024)
-        self.assertEqual(len(chosen), 8)
+        self.assertEqual(len(chosen), 1024)
+        self.assertLessEqual(len(set(chosen.tolist())), 8)
         self.assertFalse(any(i in {1, 3} for i in chosen.tolist()))
-        memory.update(torch.tensor([0]), torch.rand(1, 8))
-        torch.testing.assert_close(memory.buffer[0].norm(), torch.tensor(1.))
+        before = memory.buffer[0].clone()
+        value = torch.full((1, 8), 4.)
+        memory.update(torch.tensor([0]), value)
+        torch.testing.assert_close(memory.buffer[0], .5 * before + .5 * value[0])
         value = torch.rand(2, 8, requires_grad=True)
         loss = nce_loss(memory.buffer[:2], value, memory.buffer[2:], .07)
         loss.backward()
         self.assertTrue(torch.isfinite(value.grad).all())
+
+    def test_same_backbone_initialization_and_original_stem(self):
+        import torch
+        from wbm_retrieval.models import Encoder, GlobalRanker, Projector
+        from wbm_retrieval.training import parameter_hash
+        torch.manual_seed(2026)
+        local = Encoder()
+        torch.manual_seed(2026)
+        supervised = GlobalRanker()
+        self.assertEqual(parameter_hash(local), parameter_hash(supervised.encoder))
+        self.assertEqual(local.stem[0].kernel_size, (7, 7))
+        self.assertEqual(local.stem[0].stride, (2, 2))
+        self.assertIsInstance(local.stem[3], torch.nn.MaxPool2d)
+        self.assertFalse(any(isinstance(layer, torch.nn.Linear) for layer in local.modules()))
+        projector = Projector(512, 128)
+        self.assertIsInstance(projector.net, torch.nn.Linear)
+        local.eval()
+        with torch.no_grad():
+            self.assertEqual(local.stages(local.stem(torch.zeros(1, 1, 96, 96))).shape, (1, 512, 3, 3))
+
+    def test_vectorized_nce_matches_wapirl_cosine_and_gradients(self):
+        import torch
+        from wbm_retrieval.methods.proposed import nce_loss
+        from torch.nn import functional as F
+        anchors, negatives = torch.randn(3, 8), torch.randn(17, 8)
+        value = torch.randn(3, 8, requires_grad=True)
+        actual = nce_loss(anchors, value, negatives, .07)
+        expected_logits = torch.cat([F.cosine_similarity(anchors, value).unsqueeze(1),
+                                     F.cosine_similarity(value[:, None], negatives[None], dim=2)], dim=1) / .07
+        expected = F.cross_entropy(expected_logits, torch.zeros(3, dtype=torch.long))
+        torch.testing.assert_close(actual, expected)
+        torch.testing.assert_close(torch.autograd.grad(actual, value, retain_graph=True)[0],
+                                   torch.autograd.grad(expected, value)[0])
 
     def test_views_change_by_epoch(self):
         from wbm_retrieval.methods.proposed import PatchDataset
@@ -99,10 +135,10 @@ class ModelTests(unittest.TestCase):
             protocol = Protocol(config, labels)
             root = Path(config["output_dir"])
             (root / "models/local").mkdir(parents=True)
-            local = torch.nn.ModuleDict({"encoder": Encoder(16), "projector": Projector(16, config["local"]["projector_dim"])})
+            local = torch.nn.ModuleDict({"encoder": Encoder(), "projector": Projector(512, config["local"]["projector_dim"])})
             torch.save({"model": local.state_dict(), "signature": training_signature(config, "local")}, root / "models/local/best.pt")
             del local
-            global_model = GlobalRanker(16, config["global"]["pair_hidden_dim"])
+            global_model = GlobalRanker(512, config["global"]["pair_hidden_dim"])
             for budget in config["global"]["budgets"]:
                 name = budget_name(budget)
                 (root / "models" / name).mkdir()

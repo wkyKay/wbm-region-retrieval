@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import random
+import hashlib
+import math
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +13,17 @@ import torch
 from torch.utils.data import DataLoader
 
 from .common import digest, file_hash, read_json
+from .early_stopping import EarlyStopping
+
+
+def optimization(model, settings):
+    """Use the same WaPIRL SGD/cosine recipe for both learned methods."""
+    optimizer = torch.optim.SGD(model.parameters(), lr=settings["learning_rate"],
+                                momentum=settings["momentum"], weight_decay=settings["weight_decay"])
+    # WaPIRL's zero-warmup schedule uses this multiplier, including its floor.
+    scheduler = torch.optim.lr_scheduler.LambdaLR(
+        optimizer, lambda epoch: 1e-4 + max(0., 0.5 * (1 + math.cos(math.pi * epoch / settings["epochs"]))))
+    return optimizer, scheduler
 
 
 def loader(dataset, config, seed, shuffle):
@@ -27,9 +41,10 @@ def training_signature(config, kind):
         method_file = "supervised_global.py"
     else:
         raise ValueError(f"Unknown learned method: {kind}")
-    keys = ("seed", "batch_size", "input_size", "embedding_dim", "augmentation", "local", "global")
+    keys = ("seed", "batch_size", "input_size", "embedding_dim", "augmentation", "local", "global", "handcrafted")
     return digest({"config": {key: config[key] for key in keys}, "kind": kind, "cache": cache["signature"],
                    "models": file_hash(Path(__file__).with_name("models.py")), "training": file_hash(__file__),
+                   "early_stopping": file_hash(Path(__file__).with_name("early_stopping.py")),
                    "method": file_hash(Path(__file__).parent / "methods" / method_file)})
 
 
@@ -44,6 +59,8 @@ def save_checkpoint(path, model, optimizer, scheduler, epoch, best_loss, history
                "torch_rng": torch.get_rng_state(), "numpy_rng": np.random.get_state(), "python_rng": random.getstate()}
     if torch.cuda.is_available():
         payload["cuda_rng"] = torch.cuda.get_rng_state_all()
+    if next(model.parameters()).device.type == "mps":
+        payload["mps_rng"] = torch.mps.get_rng_state()
     payload.update(extra)
     path = Path(path)
     temporary = path.with_suffix(".tmp")
@@ -67,11 +84,53 @@ def restore(path, model, optimizer, scheduler, signature, resume):
     random.setstate(checkpoint["python_rng"])
     if torch.cuda.is_available() and "cuda_rng" in checkpoint:
         torch.cuda.set_rng_state_all(checkpoint["cuda_rng"])
+    if "mps_rng" in checkpoint and next(model.parameters()).device.type == "mps":
+        torch.mps.set_rng_state(checkpoint["mps_rng"])
     return checkpoint["epoch"], checkpoint["best_loss"], checkpoint["history"], checkpoint
 
 
 def optimizer_to_device(optimizer, device):
     for state in optimizer.state.values():
         for key, value in state.items():
-            if torch.is_tensor(value):
+            # Non-capturable AdamW keeps its scalar step counter on CPU.
+            if torch.is_tensor(value) and key != "step":
                 state[key] = value.to(device)
+
+
+def parameter_hash(state):
+    """Hash trainable tensors, excluding BN running statistics and counters."""
+    values = dict(state.named_parameters()) if isinstance(state, torch.nn.Module) else state
+    result = hashlib.sha256()
+    for name, value in sorted(values.items()):
+        if name.endswith(("running_mean", "running_var", "num_batches_tracked")):
+            continue
+        result.update(name.encode())
+        result.update(value.detach().cpu().contiguous().numpy().tobytes())
+    return result.hexdigest()
+
+
+def encoder_spec(config):
+    """Recorded in both checkpoints to make backbone comparability auditable."""
+    return {"architecture": "WaPIRL-ResNet18", "input_channels": 1, "input_size": config["input_size"],
+            "stem": "7x7 stride=2 + 3x3 maxpool stride=2", "blocks": [2, 2, 2, 2],
+            "embedding_dim": 512, "readout": "GAP without learned bottleneck", "initialization": "WaPIRL"}
+
+
+def stopping_state(settings, kind, checkpoint):
+    stopper = EarlyStopping.from_settings(settings, kind)
+    if checkpoint and "early_stopping" in checkpoint:
+        stopper.load_state_dict(checkpoint["early_stopping"])
+    return stopper
+
+
+@contextmanager
+def validation_rng(device, seed):
+    """Keep validation sampling deterministic without altering future MPS draws."""
+    mps_state = torch.mps.get_rng_state() if device.type == "mps" else None
+    try:
+        with torch.random.fork_rng(devices=[device.index or 0] if device.type == "cuda" else []):
+            torch.manual_seed(seed)
+            yield
+    finally:
+        if mps_state is not None:
+            torch.mps.set_rng_state(mps_state)

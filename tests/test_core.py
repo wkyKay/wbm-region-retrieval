@@ -21,7 +21,7 @@ def fixture_config(root):
     config.update(data_file=str(root / "data.npz"), split_manifest=str(root / "split.csv"),
                   query_manifest=str(root / "query.csv"), candidate_manifest=str(root / "candidate.csv"),
                   output_dir=str(root / "output"), device="cpu", num_workers=0, batch_size=2,
-                  inference_batch_size=4, input_size=32, embedding_dim=16, expected_candidates=3)
+                  inference_batch_size=4, input_size=32, embedding_dim=512, expected_candidates=3)
     config["proposal"].update(min_area=2, top_k=3, padding=2)
     config["evaluation"].update(bootstrap_samples=10, save_matches_top_k=2)
     config["geometry"]["examples"] = 1
@@ -118,6 +118,18 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(values["FullCoverageRecall@2"], 1)
         self.assertEqual(values["mAP_full"], 1)
         self.assertIsNone(query_metrics([.5, 0], [.5, 0], [1])["mAP_full"])
+
+    def test_paired_bootstrap_keeps_zero_ndcg(self):
+        from wbm_retrieval.common import write_csv
+        from wbm_retrieval.evaluation import compare_paired
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for method, value in (("proposed", 0.), ("handcrafted", .5)):
+                write_csv(root / "retrieval" / method / "per_query_metrics.csv",
+                          [{"query_id": 1, "ContainmentNDCG@10": value}], ["query_id", "ContainmentNDCG@10"])
+            compare_paired({"output_dir": str(root), "seed": 2026, "evaluation": {"bootstrap_samples": 10}})
+            result = read_json(root / "paired_proposed_vs_handcrafted.json")
+            self.assertEqual(result["mean_difference"], -.5)
 
     def test_protocol_ignores_candidate_jaccard_and_rejects_leakage(self):
         with tempfile.TemporaryDirectory() as directory:

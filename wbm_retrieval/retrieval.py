@@ -55,7 +55,10 @@ def feature_cache(encoder, source, checkpoint, target, config, device):
     return representations
 
 
-def rank_local(name, groups, config, protocol):
+def rank_local(name, groups, config, protocol, representation="learned"):
+    matching = {**config["matching"], "representation": representation}
+    if representation == "zernike":
+        matching["zernike_distance_scale"] = config["handcrafted"]["distance_scale"]
     output = Path(config["output_dir"]) / "retrieval" / name
     output.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
@@ -67,18 +70,19 @@ def rank_local(name, groups, config, protocol):
         match_writer = csv.DictWriter(match_file, fieldnames=match_fields)
         match_writer.writeheader()
         for query_index, query_id in enumerate(protocol.queries, 1):
-            scored = [(candidate_id, map_similarity(groups[query_id], groups[candidate_id], config["matching"]))
+            scored = [(candidate_id, map_similarity(groups[query_id], groups[candidate_id], matching))
                       for candidate_id in protocol.candidates[query_id]]
             scored.sort(key=lambda value: (-value[1], value[0]))
             for rank, (candidate_id, score) in enumerate(scored, 1):
                 ranking_writer.writerow([query_id, rank, candidate_id, score])
                 if rank <= config["evaluation"]["save_matches_top_k"]:
-                    _, matches = map_similarity(groups[query_id], groups[candidate_id], config["matching"], details=True)
+                    _, matches = map_similarity(groups[query_id], groups[candidate_id], matching, details=True)
                     match_writer.writerows({"query_id": query_id, "candidate_id": candidate_id, "candidate_rank": rank, **match}
                                            for match in matches)
             if query_index % 50 == 0:
                 print(f"{name}: {query_index}/{len(protocol.queries)} queries", flush=True)
-    write_json(output / "retrieval_info.json", {"method": name, "matching": config["matching"],
+    write_json(output / "retrieval_info.json", {"method": name, "matching": matching,
+               "representation": representation, "descriptor": config["handcrafted"] if representation == "zernike" else None,
                "ranking_wall_seconds_excluding_encoding": time.perf_counter() - started,
                "num_queries": len(protocol.queries), "shape_only": True,
                "empty_query_maps": sum(not len(groups[q]["area"]) for q in protocol.queries)})

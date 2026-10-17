@@ -65,14 +65,20 @@ def extract_regions(raw, min_area=5, top_k=6, padding=4):
     return result
 
 
-def augment(image, rng, rotation=True, max_shift=3, dropout=0.02, noise=0.005):
+def augment(image, rng, rotation=True, max_shift=0, dropout=0.0, noise=0.0):
     output = np.array(image, dtype=np.float32, copy=True)
     if rotation:
         output = np.rot90(output, int(rng.integers(4)), axes=(-2, -1)).copy()
     if max_shift:
-        row, col = rng.integers(-max_shift, max_shift + 1, size=2)
-        shifted = np.zeros_like(output)
         h, w = output.shape[-2:]
+        rows, cols = np.nonzero((output.reshape(-1, h, w) > 0).any(0))
+        if len(rows):
+            # Optional translations must retain every foreground pixel.
+            row = int(rng.integers(max(-max_shift, -int(rows.min())), min(max_shift, h - 1 - int(rows.max())) + 1))
+            col = int(rng.integers(max(-max_shift, -int(cols.min())), min(max_shift, w - 1 - int(cols.max())) + 1))
+        else:
+            row = col = 0
+        shifted = np.zeros_like(output)
         r0, r1 = max(0, -row), min(h, h - row)
         c0, c1 = max(0, -col), min(w, w - col)
         shifted[..., r0 + row:r1 + row, c0 + col:c1 + col] = output[..., r0:r1, c0:c1]

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import math
 import time
 from pathlib import Path
 
@@ -15,7 +16,8 @@ from ..common import budget_name, get_device, seed_everything, write_csv, write_
 from ..data import load_regions, sample_pairs, stratified_budget
 from ..models import GlobalRanker
 from ..regions import augment
-from ..training import loader, load_checkpoint, optimizer_to_device, restore, save_checkpoint, training_signature
+from ..training import (encoder_spec, loader, load_checkpoint, optimization, optimizer_to_device, parameter_hash, restore,
+                        save_checkpoint, stopping_state, training_signature)
 
 
 class PairDataset(Dataset):
@@ -71,24 +73,38 @@ def train(config, protocol, resume=False):
         np.savez_compressed(output / "validation_pairs.npz", pairs=valid_pairs, targets=valid_targets)
         signature = training_signature(config, name)
         model = GlobalRanker(config["embedding_dim"], settings["pair_hidden_dim"]).to(device)
-        optimizer = torch.optim.AdamW(model.parameters(), lr=settings["learning_rate"], weight_decay=settings["weight_decay"])
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, settings["epochs"])
-        start, best, history, _ = restore(output / "last.pt", model, optimizer, scheduler, signature, resume)
+        optimizer, scheduler = optimization(model, settings)
+        start, best, history, checkpoint = restore(output / "last.pt", model, optimizer, scheduler, signature, resume)
         optimizer_to_device(optimizer, device)
+        stopper = stopping_state(settings, "global", checkpoint)
+        if stopper.stopped or start >= settings["epochs"]:
+            print(f"{name} training already complete at epoch {start}; skipping optimizer updates", flush=True)
+            continue
+        initial_hash = checkpoint["initial_parameter_sha256"] if checkpoint else parameter_hash(model)
+        initial_encoder_hash = checkpoint["initial_encoder_sha256"] if checkpoint else parameter_hash(model.encoder)
+        optimizer_steps = checkpoint.get("optimizer_steps", 0) if checkpoint else 0
+        best_epoch = checkpoint.get("best_epoch", 0) if checkpoint else 0
         for epoch in range(start, settings["epochs"]):
+            epoch_started = time.perf_counter()
             pairs, targets = sample_pairs(selected, labels, settings["pairs_per_epoch"], config["seed"] + epoch)
             train_set = PairDataset(cache / "train_whole.npy", train_meta["map_ids"], pairs, targets,
                                     config["augmentation"], config["seed"] + epoch)
             model.train()
             total, count = 0., 0
-            for query, candidate, target in loader(train_set, config, config["seed"] + epoch, True):
+            for batch_index, (query, candidate, target) in enumerate(loader(train_set, config, config["seed"] + epoch, True), 1):
                 predictions = model(query.to(device), candidate.to(device))
                 loss = loss_function(predictions, target.to(device))
+                loss_value = float(loss.item())
+                if not math.isfinite(loss_value):
+                    raise FloatingPointError(f"Non-finite {name} loss at epoch {epoch+1}, batch {batch_index}")
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 optimizer.step()
-                total += loss.item() * len(target)
+                optimizer_steps += 1
+                total += loss_value * len(target)
                 count += len(target)
+                if batch_index % config.get("log_every", 100) == 0:
+                    print(f"{name} epoch {epoch+1}, batch {batch_index}: loss={loss_value:.5f}, device={device}", flush=True)
             model.eval()
             val_sum, val_count = 0., 0
             with torch.no_grad():
@@ -99,16 +115,34 @@ def train(config, protocol, resume=False):
             val_loss = val_sum / max(val_count, 1)
             improved = val_loss < best
             best = min(best, val_loss)
+            if improved:
+                best_epoch = epoch + 1
+            should_stop = stopper.step(val_loss, epoch + 1)
+            reason = "early_stopping" if should_stop else "max_epochs" if epoch + 1 == settings["epochs"] else None
             history.append({"epoch": epoch + 1, "train_loss": total / count, "valid_loss": val_loss,
-                            "learning_rate": optimizer.param_groups[0]["lr"]})
+                            "learning_rate": optimizer.param_groups[0]["lr"], "optimizer_steps": optimizer_steps,
+                            "early_stopping_bad_epochs": stopper.bad_epochs, "epoch_seconds": time.perf_counter() - epoch_started})
             scheduler.step()
             extra = {"embedding_dim": config["embedding_dim"], "hidden_dim": settings["pair_hidden_dim"],
-                     "labeled_train_ids": selected, "budget": budget}
+                     "encoder_spec": encoder_spec(config), "initial_encoder_sha256": initial_encoder_hash,
+                     "labeled_train_ids": selected, "budget": budget,
+                     "early_stopping": stopper.state_dict(), "best_epoch": best_epoch, "stop_reason": reason,
+                     "optimizer_steps": optimizer_steps, "training_device": str(device),
+                     "initial_parameter_sha256": initial_hash}
             if improved:
                 save_checkpoint(output / "best.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
             save_checkpoint(output / "last.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
             write_json(output / "history.json", history)
             print(f"{name} epoch {epoch+1}/{settings['epochs']}: train={total/count:.5f} valid={val_loss:.5f}", flush=True)
+            if should_stop:
+                print(f"{name} early stopping at epoch {epoch+1}; best epoch={best_epoch}", flush=True)
+                break
+        write_json(output / "training_summary.json", {"training_device": str(device), "epochs_completed": len(history),
+                   "max_epochs": settings["epochs"], "best_epoch": best_epoch, "best_valid_loss": best,
+                   "stop_reason": reason, "early_stopping": stopper.state_dict(), "optimizer_steps": optimizer_steps,
+                   "initial_parameter_sha256": initial_hash, "final_parameter_sha256": parameter_hash(model),
+                   "initial_encoder_sha256": initial_encoder_hash, "encoder_spec": encoder_spec(config),
+                   "optimizer": "SGD"})
 
 
 @torch.no_grad()
@@ -162,4 +196,3 @@ def retrieve(config, protocol, methods=None):
             cache / f"test_{name}_embeddings.npy", config, device,
         )
         rank_global(name, model, embeddings, metadata, config, protocol, device)
-

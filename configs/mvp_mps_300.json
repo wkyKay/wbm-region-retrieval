@@ -1,0 +1,108 @@
+{
+  "seed": 2026,
+  "data_file": "artifacts/mvp_mps_300_wapirl_zernike_20261017/data/subset.npz",
+  "split_manifest": "artifacts/mvp_mps_300_wapirl_zernike_20261017/protocol/split.csv",
+  "query_manifest": "artifacts/mvp_mps_300_wapirl_zernike_20261017/protocol/queries.csv",
+  "candidate_manifest": "artifacts/mvp_mps_300_wapirl_zernike_20261017/protocol/candidates.csv",
+  "output_dir": "artifacts/mvp_mps_300_wapirl_zernike_20261017",
+  "expected_candidates": 59,
+  "device": "mps",
+  "num_workers": 0,
+  "batch_size": 16,
+  "inference_batch_size": 16,
+  "pair_score_batch_size": 256,
+  "log_every": 25,
+  "input_size": 96,
+  "embedding_dim": 512,
+  "proposal": {
+    "min_area": 5,
+    "top_k": 6,
+    "padding": 4
+  },
+  "matching": {
+    "shape_threshold": 0.0,
+    "score_threshold": 0.0,
+    "weight": "sqrt_area",
+    "lambda_pos": 0.0,
+    "lambda_scale": 0.0,
+    "sigma_pos": 0.35,
+    "sigma_scale": 0.5
+  },
+  "augmentation": {
+    "rotation": true,
+    "max_shift": 0,
+    "dropout": 0.0,
+    "noise": 0.0
+  },
+  "local": {
+    "epochs": 3,
+    "learning_rate": 0.01,
+    "weight_decay": 0.001,
+    "projector_dim": 128,
+    "temperature": 0.07,
+    "num_negatives": 5000,
+    "memory_momentum": 0.5,
+    "early_stopping": {
+      "enabled": false
+    },
+    "optimizer": "sgd",
+    "momentum": 0.9,
+    "scheduler": "wapirl_cosine",
+    "projector_type": "linear",
+    "negative_sampling": "with_replacement"
+  },
+  "global": {
+    "budgets": [
+      0.05,
+      0.1,
+      0.5
+    ],
+    "epochs": 3,
+    "learning_rate": 0.01,
+    "weight_decay": 0.001,
+    "pairs_per_epoch": 256,
+    "validation_pairs": 128,
+    "pair_hidden_dim": 256,
+    "loss": "mse",
+    "early_stopping": {
+      "enabled": false
+    },
+    "optimizer": "sgd",
+    "momentum": 0.9,
+    "scheduler": "wapirl_cosine"
+  },
+  "evaluation": {
+    "ks": [
+      1,
+      5,
+      10,
+      20
+    ],
+    "bootstrap_samples": 100,
+    "save_matches_top_k": 10
+  },
+  "geometry": {
+    "lambda_pos": 0.125,
+    "lambda_scale": 0.125,
+    "examples": 2
+  },
+  "mvp": {
+    "source_config": "configs/experiment_a.json",
+    "maps": 300,
+    "source_mixed_signatures": [
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        2
+      ]
+    ]
+  },
+  "handcrafted": {
+    "type": "zernike",
+    "max_order": 12,
+    "distance_scale": 1.0
+  }
+}

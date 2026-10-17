@@ -6,7 +6,16 @@ import numpy as np
 
 
 def pair_components(query, candidate, config):
-    shape = np.clip(query["embedding"] @ candidate["embedding"].T, 0.0, 1.0)
+    q = np.asarray(query["embedding"], dtype=np.float64)
+    c = np.asarray(candidate["embedding"], dtype=np.float64)
+    if config.get("representation", "learned") == "zernike":
+        distance = np.linalg.norm(q[:, None] - c[None], axis=-1)
+        shape = np.exp(-distance / config["zernike_distance_scale"])
+    else:
+        # The encoders return raw GAP features; normalize explicitly for cosine.
+        q = q / np.maximum(np.linalg.norm(q, axis=1, keepdims=True), 1e-12)
+        c = c / np.maximum(np.linalg.norm(c, axis=1, keepdims=True), 1e-12)
+        shape = np.clip(q @ c.T, 0.0, 1.0)
     distance2 = ((query["position"][:, None] - candidate["position"][None]) ** 2).sum(-1)
     position = np.exp(-distance2 / config["sigma_pos"] ** 2)
     qscale = np.maximum(query["scale"], 1e-8)

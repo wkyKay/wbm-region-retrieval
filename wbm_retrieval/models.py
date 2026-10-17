@@ -1,4 +1,4 @@
-"""ResNet-18 with a small-image stem, a pretraining projector and a directional scorer."""
+"""Single-channel WaPIRL ResNet-18, linear projector and directional scorer."""
 
 import torch
 from torch import nn
@@ -24,35 +24,45 @@ class BasicBlock(nn.Module):
 
 
 class Encoder(nn.Module):
-    """[2,2,2,2] residual stages; 3x3 stride-1 stem and no initial max-pooling."""
+    """WaPIRL's [2,2,2,2] backbone followed by GAP, without a learned bottleneck.
 
-    def __init__(self, embedding_dim=256):
+    Return raw 512-D features. Cosine normalization belongs to the loss or
+    downstream scoring, so it does not change the original memory-bank EMA.
+    """
+
+    def __init__(self, embedding_dim=512):
         super().__init__()
-        self.stem = nn.Sequential(nn.Conv2d(1, 64, 3, 1, 1, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
+        if embedding_dim != 512:
+            raise ValueError("The WaPIRL-aligned encoder has a fixed 512-D GAP output")
+        self.stem = nn.Sequential(nn.Conv2d(1, 64, 7, 2, 3, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
+                                  nn.MaxPool2d(3, 2, 1))
         stages, previous = [], 64
         for channels, stride in ((64, 1), (128, 2), (256, 2), (512, 2)):
             stages.append(nn.Sequential(BasicBlock(previous, channels, stride), BasicBlock(channels, channels)))
             previous = channels
         self.stages = nn.Sequential(*stages)
-        self.embedding = nn.Linear(512, embedding_dim)
         for module in self.modules():
             if isinstance(module, nn.Conv2d):
                 nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(module, nn.BatchNorm2d):
+                # Match WaPIRL/utils/initialization.py, including its BN bias.
+                nn.init.ones_(module.weight)
+                nn.init.ones_(module.bias)
 
     def forward(self, image):
         value = self.stages(self.stem(image))
-        value = F.adaptive_avg_pool2d(value, 1).flatten(1)
-        return F.normalize(self.embedding(value), dim=1)
+        return F.adaptive_avg_pool2d(value, 1).flatten(1)
 
 
 class Projector(nn.Module):
     def __init__(self, embedding_dim, projection_dim):
         super().__init__()
-        self.net = nn.Sequential(nn.Linear(embedding_dim, embedding_dim), nn.ReLU(inplace=True),
-                                 nn.Linear(embedding_dim, projection_dim))
+        self.net = nn.Linear(embedding_dim, projection_dim)
+        nn.init.normal_(self.net.weight, 0, 0.02)
+        nn.init.zeros_(self.net.bias)
 
     def forward(self, embedding):
-        return F.normalize(self.net(embedding), dim=1)
+        return self.net(embedding)
 
 
 class DirectionalScorer(nn.Module):
@@ -65,12 +75,13 @@ class DirectionalScorer(nn.Module):
                                  nn.Linear(hidden_dim // 2, 1))
 
     def forward(self, query, candidate):
+        query, candidate = F.normalize(query, dim=1), F.normalize(candidate, dim=1)
         features = torch.cat([query, candidate, query * candidate, query - candidate], dim=1)
         return self.net(features).flatten().sigmoid()
 
 
 class GlobalRanker(nn.Module):
-    def __init__(self, embedding_dim=256, hidden_dim=256):
+    def __init__(self, embedding_dim=512, hidden_dim=256):
         super().__init__()
         self.encoder = Encoder(embedding_dim)
         self.scorer = DirectionalScorer(embedding_dim, hidden_dim)
