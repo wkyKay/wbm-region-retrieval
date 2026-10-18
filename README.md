@@ -181,6 +181,64 @@ MVP 与主实验共用新版编码器、512/128 维、Zernike、旋转增强、S
 
 MVP 被中断可执行 `python scripts/run_mvp.py --resume`；`--prepare-only` 只生成隔离子集，不运行训练。若进程无法访问 Metal，会明确报错，不降级为 CPU 训练。
 
+## 不重训的 valid 诊断
+
+已有 `models/local/best.pt`、`last.pt` 及 `cache/valid_regions.npz`、`valid_patches.npy` 时，运行独立脚本：
+
+```bash
+python -u scripts/diagnose_local.py \
+  --config configs/experiment_a.json \
+  --device cuda \
+  --output-dir artifacts/diagnostics_valid_seed2026 \
+  --queries 500 --candidates 1000 --seed 2026
+```
+
+这不是训练入口，不调用 `prepare`、优化器或 `backward`。六组分别为 `best_h512`、`best_z128`、`last_h512`、`last_z128`、`random_h512`、`random_z128`。`h512` 是 GAP 后的 backbone 表示，`z128` 是同一模型线性 projector 的输出；六组都做 L2 归一化，使用同一套 cosine 截断、面积权重和一对一区域匹配。随机模型按训练配置的 seed 初始化，未经训练和 BN 数据校准；脚本记录其初始参数哈希是否与 checkpoint 的训练初始哈希一致。它不是均匀随机排名，随机网络也可能保留图像结构偏好。
+
+默认从 valid 均匀选 500 个查询，每查询独立均匀抽 1,000 个 valid 候选，均不使用标签采样，排除自身，冻结在新目录的 `protocol/`，所有变体完全复用。样本不足自动取可用数量；`--queries 0 --candidates 0` 表示全部 valid 查询与全部其余 valid 候选，开销明显增大。这里不用正式 test 的 2,000×1,000 检索池，诊断值不能直接和主实验 test 表比较。
+
+`--pair-samples 20000` 指随机跨晶圆区域对数量（有放回、排除同晶圆）。另外选择至多 20,000 个不同区域，分别与其固定 90/180/270 度旋转比较，诊断旋转一致性。`--neighbor-anchors 24 --neighbors 8` 为人工核查选取最多 24 个 anchor，尽量均分单缺陷/混合缺陷晶圆，每个找 8 个其他 valid 晶圆的区域近邻。近邻按原始 cosine 排序，CSV 同时报告截断分数。晶圆标签仅作为上下文，不当作区域真值；随机区域对也不等于真实语义负样本。
+
+输出目录必须与原实验目录互不包含，默认使用原实验目录名加 `_valid_diagnostics`。脚本只读原实验，写入新目录，并在前后核对原实验全部文件路径/大小/修改时间、配置与主要输入的 SHA256。如果主实验有其他进程同时写文件，校验会失败，应等其结束后诊断。请勿通过本诊断修改训练配置。
+
+```text
+artifacts/diagnostics_valid_seed2026/
+├── run.log / run_manifest.json / source_audit.json / model_info.json
+├── protocol/{manifest.json,queries.csv,candidates.csv,valid_maps.csv,...}
+├── features/{best,last,random}/        # 仅本次诊断的原始与旋转 h512/z128
+├── variants/<六个变体>/
+│   ├── rankings.csv / per_query_metrics.csv / metrics.json
+│   ├── map_score_by_query.csv / map_score_distribution.json
+│   ├── score_pairs.csv / score_distribution.json
+│   └── region_neighbors.csv
+├── comparison.csv / comparison.json / paired_comparisons.json
+├── figures/{retrieval_by_group.png,region_cosine_distributions.png,neighbors_token_*.png}
+└── report.md
+```
+
+- `comparison.csv`：六个表示 × `all/single/mixed` 共 18 行，包含正式评价的 22 个指标。single 为查询晶圆只有一种基础缺陷，mixed 为两种及以上；**候选始终是原来的同一混合池**。`metrics.json` 另存分组有效查询数和查询 bootstrap 95% 区间。
+- `paired_comparisons.json`：相同查询上的 `z128−h512`、`best−last`、训练模型减相同维度随机模型，分别报告 NDCG@10、mAP 的均值差和配对区间。
+- `map_score_*`：晶圆级匹配分数，按 query 标签全覆盖、部分重叠和不相交划分。`score_distribution.json`：区域原始 cosine/截断分数分位数、旋转正对与随机对的差距及视图区分 AUC，以及特征范数、均值方向集中程度。高 cosine 或均值方向集中本身不能证明表示塌缩。
+- `region_neighbors.csv` 与近邻图：同一批 anchor 在六个空间的结果，用于查看近邻是否形状相似、是否偏好通用碎片，以及混合晶圆中的区域是否被错误对应。
+- `report.md`：本次实际结果表、配对差异及解读边界。mAP/Recall/Hit 在没有全覆盖候选的查询上记为缺失，不能把缺失误判为 0；各指标有效样本数见 `metrics.json`。
+- `run_manifest.json`：设备、输入/代码哈希、诊断参数和完成状态；`source_audit.json` 的 `source_unchanged=true` 表示隔离校验通过；`model_info.json` 记录实际 epoch 和随机初始参数对应关系。
+
+中断后可在**完全相同命令**末尾加 `--resume`，复用校验过的诊断特征和 protocol，重新生成排名/分析。修改参数、输入、设备或代码应换新输出目录。`--batch-size` 仅控制诊断推理 batch，`--num-workers` 默认 0，不改变训练参数。CUDA/MPS 只负责网络推理；区域匹配、统计和绘图在 CPU。运行日志自动保存在独立诊断目录的 `run.log`。
+
+远程部署只需同步新增的 `scripts/diagnose_local.py` 和 `wbm_retrieval/diagnostics.py`（以及本 README 和诊断测试）。**不要替换已经训练所用的 `models.py`、`training.py` 或 `methods/proposed.py`**；checkpoint 会验证训练代码指纹。
+
+本地可用已有 300-map MVP checkpoint 验证，不重训：
+
+```bash
+python scripts/diagnose_local.py \
+  --config configs/mvp_mps_300.json --device mps \
+  --output-dir artifacts/diagnostics_mvp_valid_20261018 \
+  --queries 12 --candidates 20 --pair-samples 128 \
+  --neighbor-anchors 4 --neighbors 3 --bootstrap 100
+```
+
+本次已使用已有 300-map 模型完成真实 MPS 验证，无重新训练：12 个 valid 查询、每个 20 个候选、175 个区域，六组共 1,440 条排名，18 行分组对比及 6 张图。最终验证目录为 `artifacts/diagnostics_mvp_valid_20261018_verified`，首次运行耗时 26.66 秒，缓存复用耗时 5.67 秒；特征、protocol、排名的 SHA256 在复用前后相同，原实验 85 个文件的隔离检查通过。该目录的 `validation.json` 记录验证结果；38 项自动化测试通过，包括与正式匹配器及正式评价函数的一致性检查。这些 MVP 数值仅用于验证诊断流程，正式模型仍需执行上面的远程命令。
+
 ## 代码位置与参考
 
 `run_experiment.py` 是统一入口。`wbm_retrieval/methods/proposed.py`、`handcrafted.py`、`supervised_global.py` 分别实现三类方法；`models.py` 定义共享网络，`training.py` 保存共同优化/恢复组件，`regions.py` 提取区域和增强，`matching.py` 匹配，`evaluation.py` 统一评价，`scripts/run_mvp.py` 运行隔离测试。
