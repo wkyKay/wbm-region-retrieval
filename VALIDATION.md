@@ -1,6 +1,37 @@
-# 当前版本验证记录：WaPIRL 对齐与 Zernike（2026-10-17）
+# 当前版本验证记录：top4、轻度开运算与单标签迁移（2026-10-18）
 
-本节对应当前代码和配置。下方保留旧版验证历史，旧版数值不能作为当前版本的验证结论。
+本节对应当前代码。新增测试与所有既有测试合计 **46 项通过**，耗时 10.118 秒；语法检查、正式配置 dry-run、`git diff --check` 均通过。新增检查覆盖毛边去除及前景保护、纯细线/过度删除回退、原始分支不变、关闭增强时保持原 RNG 行为、增强仅作用于局部方法、历史 checkpoint 严格结构加载、top1 与原 patch/描述子一致、单标签/同 split/排除自身、空 proposal、macro/micro 和缺失正例，以及与正式匹配/评价的一致性。推理集成测试禁止调用 SGD 和 backward。
+
+真实 MPS 验证命令：
+
+```bash
+PYTORCH_ENABLE_MPS_FALLBACK=0 python -u scripts/run_mvp.py \
+  --single-label-source artifacts/mvp_mps_300_wapirl_zernike_20261017
+```
+
+MPS GPU 在允许访问 Metal 的本地进程中运行，关闭自动 CPU fallback。环境为 macOS 27.0.1 arm64，Python 3.12.14、PyTorch 2.14.1、NumPy 2.5.4、SciPy 1.18.1、Matplotlib 3.11.2。总耗时 **107.42 秒**，完整训练、检索、评价、几何示例、完成态续跑，以及历史 best.pt 的单标签推理和缓存复用均通过。
+
+- 新 MVP 目录：`artifacts/mvp_mps_300_top4_opening_20261018`。共 300 张原始图，按原 split 取 train/valid/test=210/30/60；提取 776/117/229 个区域，最大区域数均不超过 4。
+- 局部模型和三个监督预算分别真实训练 3 轮；local 更新 147 次，三个监督模型各更新 48 次。四个模型结构、初始编码器哈希相同，参数确有变化且有限，best 对应各自最低 valid loss。
+- 五个方法各输出 60×59=3,540 条完整排名。完成态 `--resume` 后训练文件 SHA256 不变，没有额外优化更新。
+- 开运算训练触发率分别为 51.03%、48.20%、49.74%；实际改变视图占比分别为 45.10%、42.40%、44.20%；尝试后的回退率分别为 11.62%、12.03%、11.14%。每轮整体前景像素保留比例为 97.04%、97.58%、97.29%。valid 三轮固定为 117 个视图、62 次尝试、55 次实际改变、7 次回退。
+- 已人工查看 `models/local/augmentation_examples.png`，原始/开运算/组合视图顺序正确，细薄区域存在回退，图与逐行审计信息对应。增强不保证类别语义，因此正式训练后仍需检查该图和回退率。
+
+单标签验证读取**修改前已经存在**的 `artifacts/mvp_mps_300_wapirl_zernike_20261017/models/local/best.pt`，原训练 topk=6、epoch=1；仅本次推理 topk=1。未对这个旧模型进行重训，也没有将其转成全图输入。
+
+- 单独目录：`artifacts/mvp_mps_300_top4_opening_20261018_single_label_top1`。
+- valid 单标签为 16 张，每查询 15 个候选；test 为 32 张，每查询 31 个候选。300 是整个 MVP 的输入数量，辅助测试只使用其中的单标签 valid/test 图。
+- 两个方法分别产生 valid 240 行、test 992 行，候选池完全一致、无自身或跨 split，40 行汇总指标及四张检查图完整。
+- 固定池及特征缓存复用后，h512、query/candidate 清单和两个方法的全部排名 SHA256 均保持不变；源旧实验的 `source_unchanged=true`。已查看 map/区域/patch/近邻图，显示顺序与标签、分数对应。
+- 自动保护检查再次核对改动前的 **341 个旧 artifact 文件**路径、大小、mtime，以及原始 NPZ、冻结 CSV、旧 best/last checkpoint 共 20 项 SHA256，全部未变。没有启动正式全数据训练，也没有创建 `artifacts/experiment_a_top4_opening_seed2026`。
+
+机器报告见新 MVP 的 `mvp_report.json`、`validation.json` 和 `run.log`；单标签报告见其独立目录的 `report.md`、`run_manifest.json`、`source_audit.json`。这些测试证明本地 MPS 全链路和历史模型迁移可运行，不用于推断正式训练效果。完整数据上的 CUDA 训练与单标签评测仍需按 README 在远程运行。
+
+---
+
+## 历史验证记录：WaPIRL 对齐与 Zernike（2026-10-17）
+
+本节对应 2026-10-17 的代码和配置，保留为历史记录；数值不能作为当前版本的验证结论。
 
 - 环境：macOS 27.0.1 arm64，Python 3.12.14，PyTorch 2.14.1，NumPy 2.5.4，SciPy 1.18.1，Matplotlib 3.11.2。
 - `python -m unittest discover -s tests -v`：33 项全部通过，耗时 28.244 秒。覆盖 Zernike 解析点集的已知矩值、旋转/平移不变性、环/弧/实心圆差异、欧氏距离打分、完整形状增强、原版 stem、线性投影、共同初始编码器，以及向量化 NCE 与原版 cosine 公式的数值和梯度一致性。

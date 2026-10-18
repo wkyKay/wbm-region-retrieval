@@ -90,6 +90,8 @@ def load_config(path):
     if not all(0 <= a[k] < 1 for k in ("dropout", "noise")) or a["max_shift"] < 0:
         raise ValueError("Invalid augmentation strength")
     local, global_ = config["local"], config["global"]
+    from .augmentation import validate_opening
+    validate_opening(local.get("opening"))
     for settings in (local, global_):
         if settings["optimizer"] != "sgd" or settings["scheduler"] != "wapirl_cosine":
             raise ValueError("Both learned methods use the WaPIRL SGD/cosine recipe")

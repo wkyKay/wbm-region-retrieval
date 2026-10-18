@@ -4,7 +4,7 @@
   "split_manifest": "protocol/split.csv",
   "query_manifest": "protocol/queries.csv",
   "candidate_manifest": "protocol/candidates.csv",
-  "output_dir": "artifacts/experiment_a_wapirl_zernike_seed2026",
+  "output_dir": "artifacts/experiment_a_top4_opening_seed2026",
   "expected_candidates": 1000,
   "device": "cuda",
   "num_workers": 4,
@@ -15,7 +15,7 @@
   "embedding_dim": 512,
   "proposal": {
     "min_area": 5,
-    "top_k": 6,
+    "top_k": 4,
     "padding": 4
   },
   "matching": {
@@ -48,7 +48,14 @@
       "enabled": false
     },
     "projector_type": "linear",
-    "negative_sampling": "with_replacement"
+    "negative_sampling": "with_replacement",
+    "opening": {
+      "enabled": true,
+      "probability": 0.5,
+      "kernel": "cross3",
+      "iterations": 1,
+      "min_retained_fraction": 0.8
+    }
   },
   "global": {
     "budgets": [

@@ -105,8 +105,8 @@ def build_subset(config):
     return read_json(marker)
 
 
-def run_stage(config_path, stage, output, durations, resume=False):
-    command = [sys.executable, "-u", str(ROOT / "run_experiment.py"), "--config", str(config_path), "--stage", stage]
+def run_stage(config_path, stage, output, durations, resume=False, command=None):
+    command = command or [sys.executable, "-u", str(ROOT / "run_experiment.py"), "--config", str(config_path), "--stage", stage]
     if resume:
         command.append("--resume")
     key = f"resume_{stage}" if resume else stage
@@ -178,6 +178,20 @@ def validate_outputs(config):
         raise AssertionError("Local and supervised models must share architecture and initial encoder weights")
     if specs[0]["embedding_dim"] != 512 or any(summary["optimizer"] != "SGD" for summary in models.values()):
         raise AssertionError("The MVP must exercise the revised 512-D WaPIRL/SGD models")
+    if config["proposal"]["top_k"] != 4:
+        raise AssertionError("The current MVP must exercise top4 proposals")
+    for split in ("train", "valid", "test"):
+        with np.load(output / "cache" / f"{split}_regions.npz") as regions:
+            if np.diff(regions["offsets"]).max() > 4:
+                raise AssertionError("A map retained more than four regions")
+    opening = read_json(output / "models/local/augmentation_audit.json")
+    if opening["settings"] != config["local"]["opening"]:
+        raise AssertionError("Missing local opening settings")
+    epochs = opening["epochs"]
+    if not epochs or not all(item["train"]["attempted"] > 0 and item["train"]["changed"] > 0 for item in epochs):
+        raise AssertionError("The MVP did not exercise actual opening changes")
+    if any(item["valid"] != epochs[0]["valid"] for item in epochs):
+        raise AssertionError("Validation opening views were not fixed across epochs")
     with np.load(output / "cache/test_regions.npz", allow_pickle=False) as metadata:
         from wbm_retrieval.methods.handcrafted import moment_orders
         expected_dim = len(moment_orders(config["handcrafted"]["max_order"]))
@@ -218,6 +232,7 @@ def main():
     parser.add_argument("--config", default=str(ROOT / "configs/mvp_mps_300.json"))
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--resume", action="store_true", help="Continue this isolated MVP after interruption")
+    parser.add_argument("--single-label-source", help="Optionally test a historical best.pt; default: this MVP's new best.pt")
     args = parser.parse_args()
     config_path = Path(args.config).resolve()
     config = load_config(config_path)
@@ -250,6 +265,37 @@ def main():
             if file_hash(path) != expected:
                 raise AssertionError(f"Completed training changed during --resume: {path}")
         after_resume = validate_outputs(config)
+        single_source = Path(args.single_label_source).resolve() if args.single_label_source else output
+        single_output = output.with_name(output.name + "_single_label_top1")
+        single_command = [sys.executable, "-u", str(ROOT / "scripts/evaluate_single_label.py"),
+                          "--source-experiment", str(single_source), "--output-dir", str(single_output),
+                          "--device", "mps", "--batch-size", "16", "--bootstrap", "100"]
+        run_stage(config_path, "single-label", output, report["stage_seconds"], resume=args.resume, command=single_command.copy())
+        single_hashes = {str(path): file_hash(path) for split in ("valid", "test")
+                         for name in ("h512.npy", "protocol/queries.csv", "protocol/candidates.csv",
+                                      "methods/handcrafted/rankings.csv", "methods/proposed/rankings.csv")
+                         for path in [single_output / split / name]}
+        run_stage(config_path, "single-label", output, report["stage_seconds"], resume=True, command=single_command.copy())
+        if any(file_hash(path) != expected for path, expected in single_hashes.items()):
+            raise AssertionError("Single-label features, pools or rankings changed on resume")
+        single_manifest = read_json(single_output / "run_manifest.json")
+        if single_manifest["status"] != "complete" or not read_json(single_output / "source_audit.json")["source_unchanged"]:
+            raise AssertionError("Single-label source isolation check failed")
+        single_protocols = {split: read_json(single_output / split / "protocol/manifest.json") for split in ("valid", "test")}
+        for split, single_protocol in single_protocols.items():
+            n, candidate_count = single_protocol["queries"], single_protocol["candidates_per_query"]
+            coverage = {int(row["sample_id"]): row for row in csv_rows(single_output / split / "region_coverage.csv")}
+            for method in ("handcrafted", "proposed"):
+                rows = csv_rows(single_output / split / "methods" / method / "rankings.csv")
+                by_query = {q: set() for q in coverage}
+                for row in rows:
+                    by_query[int(row["query_id"])].add(int(row["candidate_id"]))
+                if len(rows) != n * candidate_count or any(values != set(coverage) - {q} for q, values in by_query.items()):
+                    raise AssertionError("Single-label methods do not use identical complete self-excluded pools")
+        report["single_label"] = {"source": str(single_source), "output": str(single_output), "device": "mps",
+                                  "training_performed": False, "source_unchanged": True,
+                                  "resume_identical": True, "protocol": single_protocols,
+                                  "model": read_json(single_output / "model_info.json")}
         current_protected = protected_files(ROOT / config["mvp"]["source_config"])
         if current_protected != subset["protected_sources"]:
             raise AssertionError("A protected formal experiment file changed")

@@ -45,6 +45,7 @@ def training_signature(config, kind):
     return digest({"config": {key: config[key] for key in keys}, "kind": kind, "cache": cache["signature"],
                    "models": file_hash(Path(__file__).with_name("models.py")), "training": file_hash(__file__),
                    "early_stopping": file_hash(Path(__file__).with_name("early_stopping.py")),
+                   "region_augmentation": file_hash(Path(__file__).with_name("augmentation.py")),
                    "method": file_hash(Path(__file__).parent / "methods" / method_file)})
 
 

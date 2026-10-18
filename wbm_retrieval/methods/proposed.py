@@ -16,17 +16,18 @@ from ..common import get_device, seed_everything, write_json
 from ..data import load_regions
 from ..matching import group_tokens
 from ..models import Encoder, Projector
-from ..regions import augment
+from ..augmentation import opening_summary, region_view, save_view_examples
 from ..training import (encoder_spec, loader, load_checkpoint, optimization, optimizer_to_device, parameter_hash, restore,
                         save_checkpoint, stopping_state, training_signature, validation_rng)
 
 
 class PatchDataset(Dataset):
-    def __init__(self, path, augmentation, seed, epoch=0):
+    def __init__(self, path, augmentation, seed, epoch=0, opening=None):
         self.path = str(path)
         self.array = None
         self.length = len(np.load(self.path, mmap_mode="r"))
         self.augmentation, self.seed, self.epoch = augmentation, seed, epoch
+        self.opening = opening
 
     def __len__(self):
         return self.length
@@ -37,8 +38,8 @@ class PatchDataset(Dataset):
         image = np.array(self.array[index], dtype=np.float32)
         # Epoch-aware views; the same seed and epoch are reproducible across worker counts.
         rng = np.random.default_rng(np.random.SeedSequence([self.seed, self.epoch, int(index)]))
-        transformed = augment(image, rng, **self.augmentation)
-        return int(index), torch.from_numpy(image), torch.from_numpy(transformed)
+        transformed, info = region_view(image, rng, self.augmentation, self.opening)
+        return int(index), torch.from_numpy(image), torch.from_numpy(transformed), info
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -55,7 +56,7 @@ class MemoryBank:
     def initialize(self, encoder, projector, data_loader, device):
         encoder.eval()
         projector.eval()
-        for indices, image, _ in data_loader:
+        for indices, image, _, _info in data_loader:
             self.buffer[indices.to(device)] = projector(encoder(image.to(device)))
 
     def negative_indices(self, excluded, count):
@@ -102,8 +103,10 @@ def train(config, resume=False):
     initial_encoder_hash = checkpoint["initial_encoder_sha256"] if checkpoint else parameter_hash(encoder)
     optimizer_steps = checkpoint.get("optimizer_steps", 0) if checkpoint else 0
     best_epoch = checkpoint.get("best_epoch", 0) if checkpoint else 0
-    train = PatchDataset(cache / "train_patches.npy", config["augmentation"], config["seed"])
-    valid = PatchDataset(cache / "valid_patches.npy", config["augmentation"], config["seed"] + 1)
+    train = PatchDataset(cache / "train_patches.npy", config["augmentation"], config["seed"], opening=settings.get("opening"))
+    valid = PatchDataset(cache / "valid_patches.npy", config["augmentation"], config["seed"] + 1, opening=settings.get("opening"))
+    if settings.get("opening", {}).get("enabled", False):
+        save_view_examples(config, valid)
     if len(train) < 2:
         raise ValueError("At least two train tokens are required")
     bank = MemoryBank(len(train), settings["projector_dim"], device, settings["memory_momentum"])
@@ -117,7 +120,12 @@ def train(config, resume=False):
         train.epoch = epoch
         model.train()
         total, examples = 0., 0
-        for batch_index, (indices, image, transformed) in enumerate(loader(train, config, config["seed"] + epoch, True), 1):
+        audit_keys = ("attempted", "accepted", "changed", "fallback", "before_pixels", "after_pixels")
+        view_audit = {name: dict.fromkeys(("views",) + audit_keys, 0) for name in ("train", "valid")}
+        for batch_index, (indices, image, transformed, info) in enumerate(loader(train, config, config["seed"] + epoch, True), 1):
+            view_audit["train"]["views"] += len(indices)
+            for key in audit_keys:
+                view_audit["train"][key] += int(info[key].sum())
             indices = indices.to(device)
             image, transformed = image.to(device), transformed.to(device)
             value = projector(encoder(torch.cat([image, transformed])))
@@ -151,7 +159,10 @@ def train(config, resume=False):
         val_sum, val_count = 0., 0
         # Fixed views and fixed negative indices make epochs comparable.
         with torch.no_grad(), validation_rng(device, config["seed"] + 999):
-            for _, image, transformed in loader(valid, config, config["seed"], False):
+            for _, image, transformed, info in loader(valid, config, config["seed"], False):
+                view_audit["valid"]["views"] += len(image)
+                for key in audit_keys:
+                    view_audit["valid"][key] += int(info[key].sum())
                 z, zt = projector(encoder(torch.cat([image.to(device), transformed.to(device)]))).chunk(2)
                 # Validation IDs are unrelated to train-bank IDs: exclude none.
                 chosen = torch.randint(len(bank.buffer), (settings["num_negatives"],), device=device)
@@ -167,17 +178,21 @@ def train(config, resume=False):
         reason = "early_stopping" if should_stop else "max_epochs" if epoch + 1 == settings["epochs"] else None
         history.append({"epoch": epoch + 1, "train_loss": total / max(examples, 1), "valid_loss": val_loss,
                         "learning_rate": optimizer.param_groups[0]["lr"], "optimizer_steps": optimizer_steps,
-                        "early_stopping_bad_epochs": stopper.bad_epochs, "epoch_seconds": time.perf_counter() - epoch_started})
+                        "early_stopping_bad_epochs": stopper.bad_epochs, "epoch_seconds": time.perf_counter() - epoch_started,
+                        "opening": {name: opening_summary(values) for name, values in view_audit.items()}})
         scheduler.step()
         extra = {"memory": bank.buffer.detach().cpu(), "embedding_dim": config["embedding_dim"],
                  "encoder_spec": encoder_spec(config), "initial_encoder_sha256": initial_encoder_hash,
                  "early_stopping": stopper.state_dict(), "best_epoch": best_epoch, "stop_reason": reason,
                  "optimizer_steps": optimizer_steps, "training_device": str(device),
-                 "initial_parameter_sha256": initial_hash}
+                 "initial_parameter_sha256": initial_hash, "opening": settings.get("opening")}
         if improved:
             save_checkpoint(output / "best.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
         save_checkpoint(output / "last.pt", model, optimizer, scheduler, epoch + 1, best, history, signature, **extra)
         write_json(output / "history.json", history)
+        write_json(output / "augmentation_audit.json", {"scope": "proposed region view only, before rotation",
+                   "settings": settings.get("opening"), "input_pixels": config["input_size"],
+                   "epochs": [{"epoch": item["epoch"], **item["opening"]} for item in history if "opening" in item]})
         print(f"Local epoch {epoch+1}/{settings['epochs']}: train={history[-1]['train_loss']:.5f} valid={val_loss:.5f}", flush=True)
         if should_stop:
             print(f"Local early stopping at epoch {epoch+1}; best epoch={best_epoch}", flush=True)
@@ -188,7 +203,7 @@ def train(config, resume=False):
                "initial_parameter_sha256": initial_hash, "final_parameter_sha256": parameter_hash(model),
                "initial_encoder_sha256": initial_encoder_hash, "encoder_spec": encoder_spec(config),
                "optimizer": "SGD", "negative_sampling": "with replacement, excluding training batch",
-               "memory_update": "raw projected features, unnormalized EMA"})
+               "memory_update": "raw projected features, unnormalized EMA", "opening": settings.get("opening")})
 
 
 def load_encoder(config, device):
