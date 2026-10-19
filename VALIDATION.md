@@ -1,6 +1,24 @@
-# 当前版本验证记录：top4、轻度开运算与单标签迁移（2026-10-18）
+# 当前验证记录：独立 A～D 消融（2026-10-19）
 
-本节对应当前代码。新增测试与所有既有测试合计 **46 项通过**，耗时 10.118 秒；语法检查、正式配置 dry-run、`git diff --check` 均通过。新增检查覆盖毛边去除及前景保护、纯细线/过度删除回退、原始分支不变、关闭增强时保持原 RNG 行为、增强仅作用于局部方法、历史 checkpoint 严格结构加载、top1 与原 patch/描述子一致、单标签/同 split/排除自身、空 proposal、macro/micro 和缺失正例，以及与正式匹配/评价的一致性。推理集成测试禁止调用 SGD 和 backward。
+新增入口与设计见 [ABLATION_ABCD.md](ABLATION_ABCD.md)。既有主实验实现和配置没有修改。
+
+本地 CPU 上完整 `python -m unittest discover -s tests -v` **52 项通过**（49.012 秒）；随后补充完成态报告恢复逻辑，再次执行 6 项消融测试全部通过（16.809 秒）。入口 `--dry-run`、`--help` 与 `git diff --check` 通过。
+
+- 新测试使用 24 张合成 map，train/valid/test 各 8 张，min_area=5、top4、输入 96、h512/projector128；小测试使用 batch=2、8 个负样本和 1～2 epochs，不代表正式 100 epoch 设置。
+- A～D 均执行真实 SGD 参数更新、valid 检索、两种 checkpoint 评价，以及完成态 resume；初始化参数 SHA256 相同，训练后参数与初始化不同。
+- 原输入与旧 `token_patch` 相同；B 与 `pad(token_patch(mask, 88, 0), 4)` 相同；C 二值、可重现、平移不截前景；D GAP 前特征图 6×6，其余组 3×3。
+- 验证候选池不看标签、不含自身、只含 valid；Zernike 分数与原逐对 matcher 一致，排名指标与原 evaluator 一致。
+- B 的两轮训练分别连续运行和在一轮后中断恢复，最终所有模型张量、memory bank 逐元素一致，调度器与更新次数一致。
+- 模拟 `last.pt` 已提交、JSON 报告尚未写入时中断：resume 可重建报告，不改 checkpoint。
+- 默认流程未产生 test 指标；额外显式测试 B 的 test 入口后，checkpoint 哈希不变，使用原冻结测试池。
+
+完整 Mixed-WM38 的 CUDA 显存、速度、收敛和性能尚未验证，需按文档在远程服务器运行。这里的合成数据指标只证明流程可运行，不作为方法优劣结论。
+
+---
+
+# 历史验证记录：top4、轻度开运算与单标签迁移（2026-10-18）
+
+本节对应 2026-10-18 主实验版本。新增测试与所有既有测试合计 **46 项通过**，耗时 10.118 秒；语法检查、正式配置 dry-run、`git diff --check` 均通过。新增检查覆盖毛边去除及前景保护、纯细线/过度删除回退、原始分支不变、关闭增强时保持原 RNG 行为、增强仅作用于局部方法、历史 checkpoint 严格结构加载、top1 与原 patch/描述子一致、单标签/同 split/排除自身、空 proposal、macro/micro 和缺失正例，以及与正式匹配/评价的一致性。推理集成测试禁止调用 SGD 和 backward。
 
 真实 MPS 验证命令：
 

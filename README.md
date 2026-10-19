@@ -4,6 +4,8 @@
 
 2026-10-18 版本保留 WaPIRL 对齐的网络与训练结构，将主实验区域上限改为 top4，并为 proposed 的区域增强视图加入带前景保护的轻度开运算。新增单标签 top1 区域检索，可直接复用历史 best.pt。运行代码独立于 `wbm-wdm-matching`，不下载外部模型权重。
 
+2026-10-19 新增独立的 [A～D 尺度/增强/stride 消融实验](ABLATION_ABCD.md)：四组均关闭开运算，以旧输入、resize 后 padding、轻度尺度＋平移增强、首层 stride=1 做对照。使用 `scripts/run_ablation.py` 和 `configs/ablation_abcd.json`，按固定 valid 池选择检索 checkpoint；同时保留 NCE 最优 checkpoint。**下文旧主实验设置保持不变**，新消融的远程运行、断点续跑和 test 命令见上述文档。
+
 ## 当前方法与已确认的设计
 
 | 项目 | proposed | 整图监督参考 |
