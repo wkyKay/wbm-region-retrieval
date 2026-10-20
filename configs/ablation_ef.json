@@ -1,0 +1,19 @@
+{
+  "suite_id": "ef_v1",
+  "base_config": "configs/experiment_a.json",
+  "output_root": "artifacts/ablation_ef_20261020",
+  "overrides": {
+    "proposal": {"min_area": 5, "top_k": 4, "padding": 4},
+    "input_size": 96,
+    "augmentation": {"rotation": true, "max_shift": 0, "dropout": 0.0, "noise": 0.0},
+    "local": {"epochs": 100, "opening": {"enabled": false}, "early_stopping": {"enabled": false}}
+  },
+  "valid_pool": {"seed": 2026, "queries": 500, "candidates": 1000},
+  "selection_metric": "ContainmentNDCG@10",
+  "evaluate_every": 5,
+  "variants": {
+    "D": {"preprocess": "resize_pad", "content_size": 88, "stem_stride": 1, "scale_range": null, "max_shift": 0, "input_channels": 1, "window_size": null},
+    "E": {"preprocess": "resize_pad", "content_size": 88, "stem_stride": 1, "scale_range": [80, 88], "max_shift": 2, "input_channels": 1, "window_size": null},
+    "F": {"preprocess": "fixed_window", "content_size": 88, "stem_stride": 1, "scale_range": null, "max_shift": 0, "input_channels": 3, "window_size": 52}
+  }
+}
