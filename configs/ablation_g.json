@@ -1,0 +1,58 @@
+{
+  "base_config": "configs/experiment_a.json",
+  "output_root": "artifacts/ablation_g_20261025",
+  "overrides": {
+    "proposal": {
+      "min_area": 5,
+      "top_k": 4,
+      "padding": 4
+    },
+    "input_size": 96,
+    "augmentation": {
+      "rotation": true,
+      "max_shift": 0,
+      "dropout": 0.0,
+      "noise": 0.0
+    },
+    "local": {
+      "epochs": 100,
+      "opening": {
+        "enabled": false
+      },
+      "early_stopping": {
+        "enabled": false
+      },
+      "num_negatives": 1000
+    },
+    "matching": {
+      "aggregation": "query_region_count",
+      "method_thresholds": {
+        "handcrafted": {
+          "shape_threshold": 0.0,
+          "score_threshold": 0.0
+        },
+        "proposed": {
+          "shape_threshold": 0.0,
+          "score_threshold": 0.0
+        }
+      }
+    }
+  },
+  "valid_pool": {
+    "seed": 2026,
+    "queries": 500,
+    "candidates": 1000
+  },
+  "selection_metric": "ContainmentNDCG@10",
+  "evaluate_every": 5,
+  "variants": {
+    "G": {
+      "preprocess": "resize_pad",
+      "content_size": 88,
+      "stem_stride": 1,
+      "scale_range": null,
+      "max_shift": 0
+    }
+  },
+  "suite_id": "g_count_v1"
+}
