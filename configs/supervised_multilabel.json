@@ -1,0 +1,27 @@
+{
+  "base_config": "configs/experiment_a.json",
+  "output_root": "artifacts/supervised_multilabel_seed2026",
+  "seed": 2026,
+  "encoder_reference": "proposed-main",
+  "budgets": [0.05, 0.1, 0.5],
+  "budget_source": null,
+  "threshold": 0.5,
+  "training": {
+    "epochs": 100,
+    "batch_size": 256,
+    "learning_rate": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.001,
+    "optimizer": "sgd",
+    "scheduler": "wapirl_cosine",
+    "rotation": true
+  },
+  "inference_batch_size": 256,
+  "train_diagnostic_maps": 512,
+  "evaluate_every": 5,
+  "valid_pool": {"queries": 500, "candidates": 1000, "seed": 2026},
+  "evaluation": {"ks": [1, 5, 10, 20], "bootstrap_samples": 1000},
+  "device": "cuda",
+  "num_workers": 4,
+  "cpu_threads": 4
+}

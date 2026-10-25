@@ -1,0 +1,27 @@
+{
+  "base_config": "configs/mvp_mps_300.json",
+  "output_root": "artifacts/supervised_multilabel_mvp_20261025",
+  "seed": 2026,
+  "encoder_reference": "proposed-main",
+  "budgets": [0.05, 0.1, 0.5],
+  "budget_source": "artifacts/mvp_mps_300_top4_opening_20261018",
+  "threshold": 0.5,
+  "training": {
+    "epochs": 2,
+    "batch_size": 16,
+    "learning_rate": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.001,
+    "optimizer": "sgd",
+    "scheduler": "wapirl_cosine",
+    "rotation": true
+  },
+  "inference_batch_size": 16,
+  "train_diagnostic_maps": 32,
+  "evaluate_every": 1,
+  "valid_pool": {"queries": 12, "candidates": 20, "seed": 2026},
+  "evaluation": {"ks": [1, 5, 10, 20], "bootstrap_samples": 50},
+  "device": "cpu",
+  "num_workers": 0,
+  "cpu_threads": 2
+}

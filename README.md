@@ -2,6 +2,8 @@
 
 本工程在 Mixed-WM38 上研究有方向的区域检索：query 中的缺陷区域应尽量在 candidate 中找到相似区域，candidate 可以含有额外缺陷。当前三类方法为 Zernike 矩局部基线、自监督局部主方法 proposed、整图监督参考；监督参考使用 5%、10%、50% 三种训练标签预算，最终对比表共五行。
 
+新增独立的 **supervised 多标签分类检索实验**：复用主入口 proposed 的编码器，训练整图8维标签分类，再按预测硬标签包含率排序；同时输出分类指标、检索指标和figures。入口、输出与旧整图回归及A～G实验隔离，详见 [方案与远程运行](doc/SUPERVISED_MULTILABEL.md) 和 [本地验证记录](doc/SUPERVISED_MULTILABEL_LOCAL_VALIDATION.md)。
+
 2026-10-18 版本保留 WaPIRL 对齐的网络与训练结构，将主实验区域上限改为 top4，并为 proposed 的区域增强视图加入带前景保护的轻度开运算。新增单标签 top1 区域检索，可直接复用历史 best.pt。运行代码独立于 `wbm-wdm-matching`，不下载外部模型权重。
 
 2026-10-19 新增独立的 [A～D 尺度/增强/stride 消融实验](ABLATION_ABCD.md)：四组均关闭开运算，以旧输入、resize 后 padding、轻度尺度＋平移增强、首层 stride=1 做对照。使用 `scripts/run_ablation.py` 和 `configs/ablation_abcd.json`，按固定 valid 池选择检索 checkpoint；同时保留 NCE 最优 checkpoint。**下文旧主实验设置保持不变**，新消融的远程运行、断点续跑和 test 命令见上述文档。
