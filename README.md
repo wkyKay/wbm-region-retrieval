@@ -173,6 +173,18 @@ artifacts/experiment_a_top4_opening_seed2026/
 
 `retrieval_info.json` 的 ranking 耗时不含提前完成的神经特征提取，不应直接当成端到端在线延迟。主实验的具体指标数值需远程实际训练后得到，代码不会预填性能。
 
+### 监督模型的训练／验证损失曲线
+
+读取三组预算已有的 `history.json` 绘图，无需 GPU 或重新训练：
+
+```bash
+python scripts/plot_global_learning_curves.py --source-experiment artifacts/experiment_a_top4_opening_seed2026
+```
+
+默认在该实验的 `figures/learning_curves/` 下保存三张单独的 `global_*pct_loss.png`，以及三组共用坐标范围的合图 `global_learning_curves.png` 和 `.pdf`。图中显示原始逐轮 train/valid loss，并标记验证损失最低的 epoch；终端同时打印最佳及末轮损失。当前默认配置的损失是 MSE。训练 pair 每轮重采样，验证 pair 固定，因此应结合整体趋势判断过拟合，不能仅凭单轮波动下结论。
+
+历史实验可将 `--source-experiment` 替换为对应目录；可用 `--output-dir` 指定图片目录。两个参数中的相对路径均以项目根目录为基准。脚本只读取历史记录、保存图片，不加载 checkpoint，也不改变训练配置。
+
 ## 本地 300-map MPS 验证与隔离
 
 ```bash
