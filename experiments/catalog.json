@@ -1,0 +1,80 @@
+{
+  "proposed/a": {
+    "kind": "suite",
+    "variant": "A",
+    "config": "experiments/proposed/a/config.json",
+    "entrypoint": "experiments/proposed/_shared/abcd_cli.py"
+  },
+  "proposed/b": {
+    "kind": "suite",
+    "variant": "B",
+    "config": "experiments/proposed/b/config.json",
+    "entrypoint": "experiments/proposed/_shared/abcd_cli.py"
+  },
+  "proposed/c": {
+    "kind": "suite",
+    "variant": "C",
+    "config": "experiments/proposed/c/config.json",
+    "entrypoint": "experiments/proposed/_shared/abcd_cli.py"
+  },
+  "proposed/d": {
+    "kind": "suite",
+    "variant": "D",
+    "config": "experiments/proposed/d/config.json",
+    "entrypoint": "experiments/proposed/_shared/abcd_cli.py"
+  },
+  "proposed/e": {
+    "kind": "suite",
+    "variant": "E",
+    "config": "experiments/proposed/e/config.json",
+    "entrypoint": "experiments/proposed/_shared/ef_cli.py"
+  },
+  "proposed/f": {
+    "kind": "suite",
+    "variant": "F",
+    "config": "experiments/proposed/f/config.json",
+    "entrypoint": "experiments/proposed/_shared/ef_cli.py"
+  },
+  "proposed/g": {
+    "kind": "suite",
+    "variant": "G",
+    "config": "experiments/proposed/g/config.json",
+    "entrypoint": "experiments/proposed/g/cli.py"
+  },
+  "proposed/main": {
+    "kind": "main_method",
+    "method": "proposed",
+    "training_stage": "train-local",
+    "description": "原始局部自监督主实验：开运算增强、面积加权检索。",
+    "config": "experiments/proposed/main/config.json"
+  },
+  "handcrafted/a": {
+    "kind": "main_method",
+    "method": "handcrafted",
+    "description": "Zernike 区域描述子与面积加权匹配，无训练。",
+    "config": "experiments/handcrafted/a/config.json"
+  },
+  "handcrafted/b": {
+    "kind": "handcrafted_count",
+    "description": "G 对照：Zernike 与匹配区域计数包含率，无训练。",
+    "config": "experiments/handcrafted/b/config.json"
+  },
+  "supervised/a": {
+    "kind": "main_method",
+    "method": "supervised_global",
+    "training_stage": "train-global",
+    "description": "5%/10%/50% 标签预算的整图有序 pair 包含率回归。",
+    "config": "experiments/supervised/a/config.json"
+  },
+  "supervised/b": {
+    "kind": "suite",
+    "config": "experiments/supervised/b/config.json",
+    "entrypoint": "experiments/supervised/b/cli.py"
+  },
+  "proposed/d_ef": {
+    "kind": "suite",
+    "variant": "D",
+    "config": "experiments/proposed/d/config_ef.json",
+    "entrypoint": "experiments/proposed/_shared/ef_cli.py"
+  }
+}

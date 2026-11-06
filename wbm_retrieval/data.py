@@ -93,7 +93,7 @@ def audit(config):
 
 
 def prepare(config):
-    from .methods.handcrafted import handcrafted_descriptor
+    from experiments.handcrafted.a.descriptor import handcrafted_descriptor
     from .regions import extract_regions, token_patch, whole_map_patch
     output = Path(config["output_dir"])
     cache = output / "cache"
@@ -101,7 +101,7 @@ def prepare(config):
     fingerprints = source_fingerprint(config)
     signature = digest({"sources": fingerprints, "proposal": config["proposal"], "input_size": config["input_size"],
                         "handcrafted": config["handcrafted"],
-                        "handcrafted_code": file_hash(Path(__file__).parent / "methods/handcrafted.py"),
+                        "handcrafted_code": file_hash(Path(__file__).parent.parent / "experiments/handcrafted/a/descriptor.py"),
                         "regions_code": file_hash(Path(__file__).with_name("regions.py")),
                         "data_code": file_hash(__file__)})
     status_file = cache / "prepared.json"

@@ -15,20 +15,20 @@ import numpy as np
 import torch
 
 from test_core import fixture_config
-from wbm_retrieval import ablation, ablation_ef
+from experiments.proposed._shared import abcd_suite as ablation, ef_suite as ablation_ef
 from wbm_retrieval.common import ROOT, csv_rows, file_hash, read_json, seed_everything, write_json
 from wbm_retrieval.evaluation import evaluate_ranking
 from wbm_retrieval.matching import map_similarity as legacy_similarity
 from wbm_retrieval.training import load_checkpoint, parameter_hash
-from experiments.g import training
-from experiments.g.matching import batched_map_scores, count_similarity, map_similarity, method_settings
-from experiments.g.suite import build_model, evaluate, exclusive, load_suite, prepare_suite, summarize
+from experiments.proposed.g import training
+from experiments.proposed.g.matching import batched_map_scores, count_similarity, map_similarity, method_settings
+from experiments.proposed.g.suite import build_model, evaluate, exclusive, load_suite, prepare_suite, summarize
 
 
 class GTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(2)
-        self.suite, self.config = load_suite(ROOT / "configs/ablation_g.json", device="cpu", workers=0)
+        self.suite, self.config = load_suite(ROOT / "experiments/proposed/g/config.json", device="cpu", workers=0)
 
     def fixture(self, directory, epochs=1):
         config, labels = fixture_config(directory)
@@ -91,8 +91,8 @@ class GTests(unittest.TestCase):
 
     def test_configuration_model_and_protected_outputs(self):
         self.assertEqual(self.config["local"]["num_negatives"], 1000)
-        old_suite, old_config = ablation.load_suite(ROOT / "configs/ablation_abcd.json")
-        ef_suite, ef_config = ablation_ef.load_suite(ROOT / "configs/ablation_ef.json")
+        old_suite, old_config = ablation.load_suite(ROOT / "experiments/proposed/a/config.json")
+        ef_suite, ef_config = ablation_ef.load_suite(ROOT / "experiments/proposed/e/config.json")
         self.assertEqual(old_config["local"]["num_negatives"], 5000)
         self.assertEqual(ef_config["local"]["num_negatives"], 5000)
         self.assertEqual(self.suite["variants"]["G"], old_suite["variants"]["D"])
@@ -103,7 +103,7 @@ class GTests(unittest.TestCase):
         self.assertEqual(parameter_hash(model), parameter_hash(ablation.build_model(old_config, old_suite["variants"]["D"])))
         for root in (old_config["output_dir"], ef_config["output_dir"], str(Path(ef_config["output_dir"]) / "G")):
             with self.assertRaises(ValueError):
-                load_suite(ROOT / "configs/ablation_g.json", output_root=root)
+                load_suite(ROOT / "experiments/proposed/g/config.json", output_root=root)
         with tempfile.TemporaryDirectory() as directory:
             bad = copy.deepcopy(self.suite)
             bad["overrides"]["local"]["num_negatives"] = 5000
@@ -115,7 +115,7 @@ class GTests(unittest.TestCase):
             prior.mkdir()
             write_json(prior / "suite_manifest.json", {"signature": "old"})
             with self.assertRaises(ValueError):
-                load_suite(ROOT / "configs/ablation_g.json", output_root=str(prior / "G"))
+                load_suite(ROOT / "experiments/proposed/g/config.json", output_root=str(prior / "G"))
 
     def test_cache_ranking_metrics_and_signature_guards(self):
         before = (ablation.code_hashes(), ablation_ef.code_hashes())
@@ -216,7 +216,7 @@ class GTests(unittest.TestCase):
             suite["overrides"]["local"]["epochs"] = 1
             path = Path(directory) / "g.json"
             write_json(path, suite)
-            command = [sys.executable, str(ROOT / "scripts/run_ablation_g.py"), "--config", str(path),
+            command = [sys.executable, str(ROOT / "experiments/proposed/g/cli.py"), "--config", str(path),
                        "--device", "cpu", "--num-workers", "1"]
             env = {**os.environ, "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2"}
             def run(*args, check=True):

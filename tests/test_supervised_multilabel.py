@@ -10,11 +10,11 @@ import unittest
 import numpy as np
 import torch
 
-from experiments.supervised.suite import (Classifier, WholeMaps, exclusive, load_suite, prepare,
+from experiments.supervised.b.suite import (Classifier, WholeMaps, exclusive, load_suite, prepare,
                                          split_protocol)
-from experiments.supervised.evaluation import (classification_metrics, hard_containment, rank_predictions,
+from experiments.supervised.b.evaluation import (classification_metrics, hard_containment, rank_predictions,
                                                retrieval_report)
-from experiments.supervised.training import better_classifier, evaluate, train
+from experiments.supervised.b.training import better_classifier, evaluate, train
 from wbm_retrieval.common import ROOT, file_hash, read_json, seed_everything, write_csv, write_json
 from wbm_retrieval.data import containment
 from wbm_retrieval.evaluation import evaluate_ranking
@@ -104,7 +104,7 @@ class SupervisedTests(unittest.TestCase):
                 "query_manifest": str(folder / "queries.csv"), "candidate_manifest": str(folder / "candidates.csv"),
                 "expected_candidates": 3, "output_dir": str(folder / "legacy")}
         write_json(folder / "base.json", base)
-        suite = read_json(ROOT / "configs/supervised_multilabel.json")
+        suite = read_json(ROOT / "experiments/supervised/b/config.json")
         suite.update(base_config=str(folder / "base.json"), output_root=str(folder / "new"), budgets=[.5],
                      device="cpu", num_workers=0, cpu_threads=2, train_diagnostic_maps=4,
                      inference_batch_size=4, valid_pool={"queries": 2, "candidates": 3, "seed": 2026})

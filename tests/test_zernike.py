@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from wbm_retrieval.methods.handcrafted import handcrafted_descriptor, moment_orders
+from experiments.handcrafted.a.descriptor import handcrafted_descriptor, moment_orders
 from wbm_retrieval.matching import pair_components
 from wbm_retrieval.common import ROOT, load_config
 from wbm_retrieval.regions import augment
@@ -38,7 +38,7 @@ class ZernikeTests(unittest.TestCase):
             handcrafted_descriptor(np.zeros((4, 4)))
 
     def test_euclidean_scores_use_magnitudes_not_cosine(self):
-        config = load_config(ROOT / "configs/experiment_a.json")
+        config = load_config(ROOT / "experiments/_shared/base.json")
         tokens = {"embedding": np.ones((1, 47)), "position": np.zeros((1, 2)), "scale": np.ones(1)}
         candidate = {**tokens, "embedding": np.full((1, 47), 2.)}
         settings = {**config["matching"], "representation": "zernike", "zernike_distance_scale": 1.}

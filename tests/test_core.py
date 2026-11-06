@@ -11,13 +11,13 @@ from wbm_retrieval.common import ROOT, read_json, write_csv
 from wbm_retrieval.data import Protocol, containment, sample_pairs, stratified_budget
 from wbm_retrieval.evaluation import query_metrics
 from wbm_retrieval.matching import greedy_assignment, map_similarity
-from wbm_retrieval.methods.handcrafted import handcrafted_descriptor
+from experiments.handcrafted.a.descriptor import handcrafted_descriptor
 from wbm_retrieval.regions import augment, extract_regions, token_patch
 
 
 def fixture_config(root):
     root = Path(root)
-    config = copy.deepcopy(read_json(ROOT / "configs/experiment_a.json"))
+    config = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
     config.update(data_file=str(root / "data.npz"), split_manifest=str(root / "split.csv"),
                   query_manifest=str(root / "query.csv"), candidate_manifest=str(root / "candidate.csv"),
                   output_dir=str(root / "output"), device="cpu", num_workers=0, batch_size=2,
@@ -47,7 +47,7 @@ def fixture_config(root):
 
 class CoreTests(unittest.TestCase):
     def setUp(self):
-        self.matching = read_json(ROOT / "configs/experiment_a.json")["matching"]
+        self.matching = read_json(ROOT / "experiments/_shared/base.json")["matching"]
 
     def test_containment_direction_and_extra_regions(self):
         abc, abcd = [1, 1, 1, 0], [1, 1, 1, 1]

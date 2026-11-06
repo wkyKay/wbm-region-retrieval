@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1440" viewBox="0 0 2200 1440" role="img" aria-labelledby="title desc">
+<title id="title">区域划分与标签语义不一致：标签正样本不一定有可一一对应的区域</title>
+<desc id="desc">查询图有A1、B1、C1三种语义缺陷，但B1与C1接触，连通域提取只得到A1与BC1两个区域。正样本有A2、B2、C2三个分离区域。两图的标签集合都为A、B、C，标签包含率为1；然而BC1不能在一对一匹配中同时匹配B2与C2，区域分数可能偏离标签预期，但并非必然降低。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8caec8"/></marker><marker id="amber-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e9bc79"/></marker></defs>
+<rect width="2200" height="1440" fill="#152a3b"/>
+<text x="70" y="85" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="48" font-weight="650" fill="#eaf1f8" text-anchor="start">实验设计问题：区域划分与标签语义不一致</text>
+<text x="70" y="134" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="400" fill="#a6bdce" text-anchor="start">标签认为是完整覆盖的正样本，算法却未必能建立逐区域的语义对应。</text>
+<rect x="70" y="172" width="2060" height="100" rx="18" fill="#203e50"/>
+<text x="104" y="233" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#51c7b4" text-anchor="start">标签评价</text>
+<text x="310" y="233" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="33" font-weight="600" fill="#eaf1f8" text-anchor="start">TQ = TP = {A, B, C}</text>
+<path d="M815 219H925" fill="none" stroke="#8caec8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="965" y="233" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#51c7b4" text-anchor="start">完整覆盖正例</text>
+<text x="1265" y="233" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#eaf1f8" text-anchor="start">R(Q, P) = 3 / 3 = 1</text>
+<text x="2098" y="233" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="end">A / B / C 为类型，₁ / ₂ 区分图中的实例</text>
+<text x="70" y="326" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="27" font-weight="600" fill="#eaf1f8" text-anchor="start">01  缺陷图：按语义看有三类</text>
+<text x="490" y="326" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="27" font-weight="600" fill="#eaf1f8" text-anchor="start">02  连通域提取：按像素相连分块</text>
+<text x="1110" y="326" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="27" font-weight="600" fill="#eaf1f8" text-anchor="start">03  一对一匹配：区域不能一对多</text>
+<text x="220" y="384" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#7da7ff" text-anchor="middle">查询图 Q</text>
+<g transform="translate(220 533) scale(1.24)">
+<path d="M-90 -43.58898943540674V43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-43.58898943540674 -90H43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-75 -66.14378277661477V66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-66.14378277661477 -75H66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-60 -80.0V80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-80.0 -60H80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-45 -89.30285549745876V89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-89.30285549745876 -45H89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-30 -95.39392014169457V95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-95.39392014169457 -30H95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-15 -98.86859966642594V98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-98.86859966642594 -15H98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M0 -100.0V100.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-100.0 0H100.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M15 -98.86859966642594V98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-98.86859966642594 15H98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M30 -95.39392014169457V95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-95.39392014169457 30H95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M45 -89.30285549745876V89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-89.30285549745876 45H89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M60 -80.0V80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-80.0 60H80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M75 -66.14378277661477V66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-66.14378277661477 75H66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M90 -43.58898943540674V43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-43.58898943540674 90H43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<circle r="100" fill="none" stroke="#62849b" stroke-width="1.5"/>
+<circle cx="-30" cy="-32" r="28" fill="none" stroke="#7da7ff" stroke-width="9"/>
+<rect x="21" y="21" width="28" height="28" rx="0" fill="#51c7b4"/>
+<path d="M45 47L65 68" fill="none" stroke="#b598db" stroke-width="8"/>
+<text x="-30" y="-27" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#7da7ff" text-anchor="middle">A₁</text>
+<text x="40" y="12" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#51c7b4" text-anchor="middle">B₁</text>
+<text x="76" y="83" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#b598db" text-anchor="middle">C₁</text>
+<rect x="14" y="14" width="63" height="65" rx="7" fill="none" stroke="#e9bc79" stroke-width="2" stroke-dasharray="4 3"/>
+</g>
+<text x="220" y="701" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#eaf1f8" text-anchor="middle">{A₁, B₁, C₁}</text>
+<text x="220" y="741" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="24" font-weight="400" fill="#e9bc79" text-anchor="middle">B₁ 与 C₁ 接触 / 相连</text>
+<path d="M366 532H463" fill="none" stroke="#8caec8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="490" y="411" width="540" height="326" rx="18" fill="#1b3448"/>
+<text x="520" y="454" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#e9bc79" text-anchor="start">只提取出 2 个区域</text>
+<rect x="561.0" y="487" width="154" height="132" rx="13" fill="#132b3d" stroke="#7da7ff" stroke-width="2"/>
+<circle cx="638" cy="553" r="29" fill="none" stroke="#7da7ff" stroke-width="10"/>
+<text x="638" y="658" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#7da7ff" text-anchor="middle">A₁</text>
+<rect x="808.0" y="487" width="154" height="132" rx="13" fill="#132b3d" stroke="#e9bc79" stroke-width="2"/>
+<rect x="848" y="519" width="48" height="48" rx="0" fill="#e9bc79"/>
+<path d="M890 562L924 598" fill="none" stroke="#e9bc79" stroke-width="11"/>
+<text x="885" y="658" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#e9bc79" text-anchor="middle">BC₁</text>
+<text x="760" y="710" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="middle">{A₁, BC₁}：B 与 C 被合为一个整体</text>
+<text x="220" y="811" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#51c7b4" text-anchor="middle">标签正样本 P</text>
+<g transform="translate(220 953) scale(1.24)">
+<path d="M-90 -43.58898943540674V43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-43.58898943540674 -90H43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-75 -66.14378277661477V66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-66.14378277661477 -75H66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-60 -80.0V80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-80.0 -60H80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-45 -89.30285549745876V89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-89.30285549745876 -45H89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-30 -95.39392014169457V95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-95.39392014169457 -30H95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-15 -98.86859966642594V98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-98.86859966642594 -15H98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M0 -100.0V100.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-100.0 0H100.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M15 -98.86859966642594V98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-98.86859966642594 15H98.86859966642594" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M30 -95.39392014169457V95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-95.39392014169457 30H95.39392014169457" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M45 -89.30285549745876V89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-89.30285549745876 45H89.30285549745876" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M60 -80.0V80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-80.0 60H80.0" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M75 -66.14378277661477V66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-66.14378277661477 75H66.14378277661477" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M90 -43.58898943540674V43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<path d="M-43.58898943540674 90H43.58898943540674" fill="none" stroke="#395265" stroke-width="0.9"/>
+<circle r="100" fill="none" stroke="#62849b" stroke-width="1.5"/>
+<circle cx="-30" cy="-32" r="28" fill="none" stroke="#7da7ff" stroke-width="9"/>
+<rect x="21" y="21" width="28" height="28" rx="0" fill="#51c7b4"/>
+<path d="M-50 40L-30 61" fill="none" stroke="#b598db" stroke-width="8"/>
+<text x="-30" y="-27" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#7da7ff" text-anchor="middle">A₂</text>
+<text x="40" y="12" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#51c7b4" text-anchor="middle">B₂</text>
+<text x="-62" y="72" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" fill="#b598db" text-anchor="middle">C₂</text>
+</g>
+<text x="220" y="1120" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#eaf1f8" text-anchor="middle">{A₂, B₂, C₂}</text>
+<path d="M366 951H463" fill="none" stroke="#8caec8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="490" y="832" width="540" height="302" rx="18" fill="#1b3448"/>
+<text x="520" y="875" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#51c7b4" text-anchor="start">提取出 3 个独立区域</text>
+<rect x="533.0" y="902" width="118" height="132" rx="13" fill="#132b3d" stroke="#7da7ff" stroke-width="2"/>
+<circle cx="592" cy="968" r="29" fill="none" stroke="#7da7ff" stroke-width="10"/>
+<text x="592" y="1073" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#7da7ff" text-anchor="middle">A₂</text>
+<rect x="701.0" y="902" width="118" height="132" rx="13" fill="#132b3d" stroke="#51c7b4" stroke-width="2"/>
+<rect x="736" y="944" width="48" height="48" rx="0" fill="#51c7b4"/>
+<text x="760" y="1073" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#51c7b4" text-anchor="middle">B₂</text>
+<rect x="869.0" y="902" width="118" height="132" rx="13" fill="#132b3d" stroke="#b598db" stroke-width="2"/>
+<path d="M906 943L950 993" fill="none" stroke="#b598db" stroke-width="11"/>
+<text x="928" y="1073" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="600" fill="#b598db" text-anchor="middle">C₂</text>
+<rect x="1080" y="365" width="1050" height="769" rx="18" fill="#1b3448"/>
+<text x="1232" y="422" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="26" font-weight="400" fill="#a6bdce" text-anchor="middle">Q 的区域</text>
+<text x="1945" y="422" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="26" font-weight="400" fill="#a6bdce" text-anchor="middle">P 的区域</text>
+<rect x="1134" y="474" width="200" height="87" rx="13" fill="#213d57"/>
+<text x="1234" y="530" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="35" font-weight="600" fill="#7da7ff" text-anchor="middle">A₁</text>
+<rect x="1845" y="474" width="200" height="87" rx="13" fill="#213d57"/>
+<text x="1945" y="530" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="35" font-weight="600" fill="#7da7ff" text-anchor="middle">A₂</text>
+<path d="M1353 516H1824" fill="none" stroke="#7da7ff" stroke-width="3.3" marker-end="url(#arrow)"/>
+<text x="1585" y="491" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="24" font-weight="400" fill="#a6bdce" text-anchor="middle">可直接对应</text>
+<rect x="1134" y="720" width="200" height="105" rx="13" fill="#463e31" stroke="#e9bc79" stroke-width="2"/>
+<text x="1234" y="785" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="35" font-weight="600" fill="#e9bc79" text-anchor="middle">BC₁</text>
+<rect x="1845" y="689" width="200" height="87" rx="13" fill="#1d4747"/>
+<text x="1945" y="745" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="35" font-weight="600" fill="#51c7b4" text-anchor="middle">B₂</text>
+<rect x="1845" y="926" width="200" height="87" rx="13" fill="#39394e"/>
+<text x="1945" y="982" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="35" font-weight="600" fill="#b598db" text-anchor="middle">C₂</text>
+<path d="M1355 750C1500 652 1630 667 1824 730" fill="none" stroke="#e9bc79" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#amber-arrow)"/>
+<path d="M1355 798C1510 971 1660 992 1824 969" fill="none" stroke="#e9bc79" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#amber-arrow)"/>
+<rect x="1435" y="754" width="350" height="130" rx="15" fill="#20394c"/>
+<text x="1610" y="801" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#e9bc79" text-anchor="middle">同一个 BC₁</text>
+<text x="1610" y="845" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="25" font-weight="500" fill="#eaf1f8" text-anchor="middle">不能同时匹配 B₂ 和 C₂</text>
+<text x="1134" y="910" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="start">合并后的形状</text>
+<text x="1134" y="945" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="start">也可能与两者都不相似</text>
+<text x="1605" y="1085" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="24" font-weight="400" fill="#a6bdce" text-anchor="middle">虚线表示备选关系：至多选一条，也可能均不匹配</text>
+<rect x="70" y="1180" width="2060" height="146" rx="18" fill="#3b3831"/>
+<text x="106" y="1232" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="650" fill="#e9bc79" text-anchor="start">核心错位</text>
+<text x="300" y="1232" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="29" font-weight="550" fill="#eaf1f8" text-anchor="start">评价比较的是“缺陷类型是否包含”，算法比较的是“连通区域能否逐块匹配”。</text>
+<text x="106" y="1285" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="30" font-weight="600" fill="#e9bc79" text-anchor="start">区域粒度不一致 → 正样本相似度可能被低估 → 检索排序与标签预期可能不一致。</text>
+<text x="70" y="1376" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="start">示意说明：颜色用于区分语义，实际连通域提取只看二值缺陷是否相连；当前数据不提供区域级语义真值。</text>
+<text x="70" y="1413" font-family="PingFang SC, Heiti SC, STHeiti, Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#a6bdce" text-anchor="start">这不是“必然低分”：候选多出的区域不直接扣分，最终结果仍取决于合并区域的特征、匹配阈值与聚合规则。</text>
+</svg>

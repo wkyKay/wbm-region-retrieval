@@ -32,12 +32,12 @@ class MVPSubsetTests(unittest.TestCase):
         write_csv(root / "split.csv", rows, list(rows[0]))
         write_csv(root / "query.csv", [{"sample_id": 240}], ["sample_id"])
         write_csv(root / "candidate.csv", [{"query_id": 240, "candidate_id": 241}], ["query_id", "candidate_id"])
-        source = copy.deepcopy(read_json(ROOT / "configs/experiment_a.json"))
+        source = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
         source.update(data_file=str(root / "source.npz"), split_manifest=str(root / "split.csv"),
                       query_manifest=str(root / "query.csv"), candidate_manifest=str(root / "candidate.csv"),
                       output_dir=str(root / "artifacts/formal"))
         write_json(root / "source.json", source)
-        config = copy.deepcopy(read_json(ROOT / "configs/mvp_mps_300.json"))
+        config = copy.deepcopy(read_json(ROOT / "experiments/proposed/main/config_mvp.json"))
         output = root / "artifacts/mvp"
         config.update(data_file=str(output / "data.npz"), split_manifest=str(output / "split.csv"),
                       query_manifest=str(output / "query.csv"), candidate_manifest=str(output / "candidate.csv"),

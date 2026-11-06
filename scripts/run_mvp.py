@@ -106,7 +106,7 @@ def build_subset(config):
 
 
 def run_stage(config_path, stage, output, durations, resume=False, command=None):
-    command = command or [sys.executable, "-u", str(ROOT / "run_experiment.py"), "--config", str(config_path), "--stage", stage]
+    command = command or [sys.executable, "-u", str(ROOT / "experiments/_shared/main_cli.py"), "--config", str(config_path), "--stage", stage]
     if resume:
         command.append("--resume")
     key = f"resume_{stage}" if resume else stage
@@ -193,7 +193,7 @@ def validate_outputs(config):
     if any(item["valid"] != epochs[0]["valid"] for item in epochs):
         raise AssertionError("Validation opening views were not fixed across epochs")
     with np.load(output / "cache/test_regions.npz", allow_pickle=False) as metadata:
-        from wbm_retrieval.methods.handcrafted import moment_orders
+        from experiments.handcrafted.a.descriptor import moment_orders
         expected_dim = len(moment_orders(config["handcrafted"]["max_order"]))
         if metadata["descriptor"].shape[1] != expected_dim:
             raise AssertionError("MVP did not prepare the requested Zernike descriptors")
@@ -229,7 +229,7 @@ def validate_outputs(config):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default=str(ROOT / "configs/mvp_mps_300.json"))
+    parser.add_argument("--config", default=str(ROOT / "experiments/proposed/main/config_mvp.json"))
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--resume", action="store_true", help="Continue this isolated MVP after interruption")
     parser.add_argument("--single-label-source", help="Optionally test a historical best.pt; default: this MVP's new best.pt")

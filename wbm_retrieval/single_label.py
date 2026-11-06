@@ -22,7 +22,7 @@ from torch.utils.data import DataLoader
 from .common import csv_rows, digest, file_hash, load_config, read_json, write_csv, write_json
 from .diagnostics import DiagnosticImages, diagnostic_log, guard_output, normalized, source_snapshot
 from .evaluation import bootstrap_interval, query_metrics
-from .methods.handcrafted import handcrafted_descriptor
+from experiments.handcrafted.a.descriptor import handcrafted_descriptor
 from .models import Encoder, Projector
 from .regions import extract_regions, token_patch
 from .training import encoder_spec, load_checkpoint, parameter_hash
@@ -376,7 +376,7 @@ def run_single_label(source, output, device, settings, resume=False):
         raise ValueError("Output must not contain source inputs")
     code_files = [Path(__file__).with_name(name) for name in
                   ("single_label.py", "models.py", "regions.py", "evaluation.py", "diagnostics.py", "training.py", "common.py")]
-    code_files += [Path(__file__).parent / "methods/handcrafted.py",
+    code_files += [Path(__file__).parent.parent / "experiments/handcrafted/a/descriptor.py",
                   Path(__file__).parent.parent / "scripts/evaluate_single_label.py"]
     identity = {"input_sha256": hashes, "code_sha256": {str(path.name): file_hash(path) for path in code_files},
                 "settings": settings, "device": str(device), "python": sys.version, "platform": platform.platform(),

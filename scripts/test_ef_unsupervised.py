@@ -20,7 +20,7 @@ from scipy.stats import rankdata
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from wbm_retrieval.ablation_ef import build_model
+from experiments.proposed._shared.ef_suite import build_model
 from wbm_retrieval.common import digest, file_hash, get_device, read_json, seed_everything, write_csv, write_json
 from wbm_retrieval.training import load_checkpoint, parameter_hash
 
@@ -343,7 +343,8 @@ def main(argv=None):
     pairs = cross_wafer_pairs(maps, args.distribution_pairs, args.evaluation_seed)
     output.mkdir(parents=True)
     np.savez(output / "test_pool.npz", token_ids=indices, map_ids=maps, pair_left=pairs[0], pair_right=pairs[1])
-    code = {str(path.relative_to(ROOT)): file_hash(path) for path in sorted((ROOT / "wbm_retrieval").rglob("*.py"))}
+    from experiments._shared.provenance import source_hashes
+    code = source_hashes("experiments/proposed/_shared/ef_suite.py")
     code[str(Path(__file__).relative_to(ROOT))] = file_hash(__file__)
     protocol = {"arguments": vars(args), "source_sha256": hashes, "evaluation_code_sha256": code,
                 "suite_signature": suite["signature"], "pool_sha256": file_hash(output / "test_pool.npz"),

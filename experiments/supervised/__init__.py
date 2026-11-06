@@ -1,1 +1,1 @@
-"""Isolated supervised multilabel classifier; existing experiments are unchanged."""
+"""Supervised experiment families: A pair regression, B multilabel classification."""

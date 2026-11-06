@@ -68,7 +68,7 @@ def load_config(path):
         raise ValueError("min_area/top_k must be positive and padding must be nonnegative")
     if config["input_size"] < 32 or config["embedding_dim"] != 512:
         raise ValueError("WaPIRL-aligned models require input_size >= 32 and embedding_dim = 512")
-    from .methods.handcrafted import moment_orders
+    from experiments.handcrafted.a.descriptor import moment_orders
     descriptor = config["handcrafted"]
     if descriptor["type"] != "zernike" or not np.isfinite(descriptor["distance_scale"]) or descriptor["distance_scale"] <= 0:
         raise ValueError("Use a Zernike descriptor with a finite positive distance_scale")

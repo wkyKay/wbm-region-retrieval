@@ -53,8 +53,8 @@ class OpeningTests(unittest.TestCase):
             self.assertEqual(info["attempted"], 0)
 
     def test_local_scope_and_fixed_dataset_view(self):
-        from wbm_retrieval.methods.proposed import PatchDataset
-        config = read_json(ROOT / "configs/experiment_a.json")
+        from experiments.proposed.main.method import PatchDataset
+        config = read_json(ROOT / "experiments/_shared/base.json")
         self.assertEqual(config["proposal"]["top_k"], 4)
         self.assertNotIn("opening", config["augmentation"])
         with tempfile.TemporaryDirectory() as directory:

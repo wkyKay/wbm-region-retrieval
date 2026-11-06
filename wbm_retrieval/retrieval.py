@@ -95,12 +95,12 @@ def retrieve(config, protocol, methods=None):
     if not set(names) <= set(available):
         raise ValueError(f"Unknown retrieval methods: {sorted(set(names) - set(available))}")
     if "handcrafted" in names:
-        from .methods import handcrafted
+        from experiments.handcrafted.a import descriptor as handcrafted
         handcrafted.retrieve(config, protocol)
     if "proposed" in names:
-        from .methods import proposed
+        from experiments.proposed.main import method as proposed
         proposed.retrieve(config, protocol)
     global_names = [name for name in names if name.startswith("global_")]
     if global_names:
-        from .methods import supervised_global
+        from experiments.supervised.a import method as supervised_global
         supervised_global.retrieve(config, protocol, global_names)

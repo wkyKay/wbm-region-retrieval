@@ -10,9 +10,9 @@ import numpy as np
 import torch
 
 from test_core import fixture_config
-from wbm_retrieval.ablation import (RegionViews, build_model, evaluate, exclusive, load_suite,
+from experiments.proposed._shared.abcd_suite import (RegionViews, build_model, evaluate, exclusive, load_suite,
                                    prepare_suite, resize_then_pad, summarize, valid_pool)
-from wbm_retrieval.ablation_training import evaluate_variant, train_variant
+from experiments.proposed._shared.abcd_training import evaluate_variant, train_variant
 from wbm_retrieval.common import ROOT, csv_rows, file_hash, read_json, seed_everything
 from wbm_retrieval.evaluation import evaluate_ranking
 from wbm_retrieval.matching import map_similarity
@@ -23,7 +23,7 @@ from wbm_retrieval.training import load_checkpoint, parameter_hash
 class AblationTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(2)
-        self.suite, self.config = load_suite(ROOT / "configs/ablation_abcd.json", device="cpu", workers=0)
+        self.suite, self.config = load_suite(ROOT / "experiments/proposed/a/config.json", device="cpu", workers=0)
 
     def fixture(self, directory):
         config, labels = fixture_config(directory)

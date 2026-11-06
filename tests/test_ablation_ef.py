@@ -16,10 +16,10 @@ import numpy as np
 import torch
 
 from test_core import fixture_config
-from wbm_retrieval import ablation as legacy
-from wbm_retrieval.ablation_ef import (RegionViews, build_model, evaluate, fixed_window_patch,
+from experiments.proposed._shared import abcd_suite as legacy
+from experiments.proposed._shared.ef_suite import (RegionViews, build_model, evaluate, fixed_window_patch,
     load_suite, prepare_suite, summarize, validate_reference)
-from wbm_retrieval.ablation_ef_training import evaluate_variant, train_variant
+from experiments.proposed._shared.ef_training import evaluate_variant, train_variant
 from wbm_retrieval.common import ROOT, csv_rows, file_hash, read_json, seed_everything, write_json
 from wbm_retrieval.evaluation import evaluate_ranking
 from wbm_retrieval.training import load_checkpoint, parameter_hash
@@ -28,7 +28,7 @@ from wbm_retrieval.training import load_checkpoint, parameter_hash
 class EFTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(2)
-        self.suite, self.config = load_suite(ROOT / "configs/ablation_ef.json", device="cpu", workers=0)
+        self.suite, self.config = load_suite(ROOT / "experiments/proposed/e/config.json", device="cpu", workers=0)
 
     def fixture(self, directory, epochs=1):
         config, labels = fixture_config(directory)
@@ -50,7 +50,7 @@ class EFTests(unittest.TestCase):
 
     def test_configuration_and_protected_outputs(self):
         with self.assertRaises(ValueError):
-            load_suite(ROOT / "configs/ablation_ef.json", output_root="artifacts/ablation_abcd_20261019/new")
+            load_suite(ROOT / "experiments/proposed/e/config.json", output_root="artifacts/ablation_abcd_20261019/new")
         with tempfile.TemporaryDirectory() as directory:
             changed = copy.deepcopy(self.suite)
             changed["variants"]["E"]["max_shift"] = 3
@@ -58,11 +58,11 @@ class EFTests(unittest.TestCase):
             write_json(path, changed)
             with self.assertRaises(ValueError):
                 load_suite(path)
-        result = subprocess.run([sys.executable, str(ROOT / "scripts/run_ablation_ef.py"),
-                                 "--config", str(ROOT / "configs/ablation_ef.json"), "--dry-run"],
+        result = subprocess.run([sys.executable, str(ROOT / "experiments/proposed/_shared/ef_cli.py"),
+                                 "--config", str(ROOT / "experiments/proposed/e/config.json"), "--dry-run"],
                                 capture_output=True, text=True, check=True)
         self.assertEqual(set(json.loads(result.stdout)["variants"]), {"E", "F"})
-        result = subprocess.run([sys.executable, str(ROOT / "scripts/run_ablation_ef.py"), "--stage", "test"],
+        result = subprocess.run([sys.executable, str(ROOT / "experiments/proposed/_shared/ef_cli.py"), "--stage", "test"],
                                 capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("explicit --variants", result.stderr)
@@ -115,7 +115,7 @@ class EFTests(unittest.TestCase):
             torch.testing.assert_close(states["D"][key], states["E"][key], rtol=0, atol=0)
             if key != "encoder.stem.0.weight":
                 torch.testing.assert_close(states["D"][key], states["F"][key], rtol=0, atol=0)
-        old_suite, old_config = legacy.load_suite(ROOT / "configs/ablation_abcd.json")
+        old_suite, old_config = legacy.load_suite(ROOT / "experiments/proposed/a/config.json")
         seed_everything(2026)
         old = legacy.build_model(old_config, old_suite["variants"]["D"])
         for key in states["D"]:
@@ -127,7 +127,7 @@ class EFTests(unittest.TestCase):
             root = Path(config["output_dir"])
             signature = prepare_suite(suite, config)
             self.assertEqual(signature, prepare_suite(suite, config))
-            old_suite, _ = legacy.load_suite(ROOT / "configs/ablation_abcd.json")
+            old_suite, _ = legacy.load_suite(ROOT / "experiments/proposed/a/config.json")
             old_suite["valid_pool"] = suite["valid_pool"]
             old_suite["evaluate_every"] = 1
             old_config = {**config, "output_dir": str(Path(directory) / "old")}
@@ -225,12 +225,12 @@ class EFTests(unittest.TestCase):
     def test_cli_with_spawn_workers_and_read_only_legacy_reference(self):
         with tempfile.TemporaryDirectory() as directory:
             suite, config, _ = self.fixture(directory)
-            old_suite, _ = legacy.load_suite(ROOT / "configs/ablation_abcd.json")
+            old_suite, _ = legacy.load_suite(ROOT / "experiments/proposed/a/config.json")
             old_suite.update(valid_pool=suite["valid_pool"], evaluate_every=1)
             old_config = {**config, "output_dir": str(Path(directory) / "old")}
             Path(old_config["output_dir"]).mkdir()
             old_signature = legacy.prepare_suite(old_suite, old_config)
-            from wbm_retrieval.ablation_training import train_variant as old_train, evaluate_variant as old_evaluate
+            from experiments.proposed._shared.abcd_training import train_variant as old_train, evaluate_variant as old_evaluate
             old_train(old_config, old_suite, old_signature, "D")
             old_evaluate(old_config, old_suite, old_signature, "D")
             old_root = Path(old_config["output_dir"])
@@ -240,7 +240,7 @@ class EFTests(unittest.TestCase):
             suite.update(base_config=str(base_path), output_root=str(Path(directory) / "cli"))
             suite["overrides"]["local"]["epochs"] = 1
             write_json(suite_path, suite)
-            command = [sys.executable, str(ROOT / "scripts/run_ablation_ef.py"), "--config", str(suite_path),
+            command = [sys.executable, str(ROOT / "experiments/proposed/_shared/ef_cli.py"), "--config", str(suite_path),
                        "--device", "cpu", "--num-workers", "2", "--reference-abcd-root", str(old_root)]
             env = {**os.environ, "OMP_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2"}
             result = subprocess.run(command, capture_output=True, text=True, env=env)

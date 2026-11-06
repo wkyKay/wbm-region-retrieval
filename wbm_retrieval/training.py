@@ -36,9 +36,9 @@ def loader(dataset, config, seed, shuffle):
 def training_signature(config, kind):
     cache = read_json(Path(config["output_dir"]) / "cache/prepared.json")
     if kind == "local":
-        method_file = "proposed.py"
+        method_file = "experiments/proposed/main/method.py"
     elif kind.startswith("global_"):
-        method_file = "supervised_global.py"
+        method_file = "experiments/supervised/a/method.py"
     else:
         raise ValueError(f"Unknown learned method: {kind}")
     keys = ("seed", "batch_size", "input_size", "embedding_dim", "augmentation", "local", "global", "handcrafted")
@@ -46,7 +46,7 @@ def training_signature(config, kind):
                    "models": file_hash(Path(__file__).with_name("models.py")), "training": file_hash(__file__),
                    "early_stopping": file_hash(Path(__file__).with_name("early_stopping.py")),
                    "region_augmentation": file_hash(Path(__file__).with_name("augmentation.py")),
-                   "method": file_hash(Path(__file__).parent / "methods" / method_file)})
+                   "method": file_hash(Path(__file__).parent.parent / method_file)})
 
 
 def load_checkpoint(path, device="cpu"):

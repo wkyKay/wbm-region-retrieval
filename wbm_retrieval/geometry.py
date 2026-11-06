@@ -18,7 +18,7 @@ def generate_examples(config):
     import matplotlib.pyplot as plt
     from .common import get_device
     from .regions import extract_regions
-    from .methods.proposed import load_encoder
+    from experiments.proposed.main.method import load_encoder
     from .retrieval import feature_cache
 
     output = Path(config["output_dir"]) / "geometry"

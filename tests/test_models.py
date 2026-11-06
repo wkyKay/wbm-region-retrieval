@@ -36,7 +36,7 @@ class ModelTests(unittest.TestCase):
 
     def test_memory_samples_with_replacement_excludes_batch_and_keeps_raw_ema(self):
         import torch
-        from wbm_retrieval.methods.proposed import MemoryBank, nce_loss
+        from experiments.proposed.main.method import MemoryBank, nce_loss
         memory = MemoryBank(10, 8, "cpu")
         memory.buffer.copy_(torch.nn.functional.normalize(torch.rand(10, 8), dim=1))
         chosen = memory.negative_indices(torch.tensor([1, 3]), 1024)
@@ -73,7 +73,7 @@ class ModelTests(unittest.TestCase):
 
     def test_vectorized_nce_matches_wapirl_cosine_and_gradients(self):
         import torch
-        from wbm_retrieval.methods.proposed import nce_loss
+        from experiments.proposed.main.method import nce_loss
         from torch.nn import functional as F
         anchors, negatives = torch.randn(3, 8), torch.randn(17, 8)
         value = torch.randn(3, 8, requires_grad=True)
@@ -86,7 +86,7 @@ class ModelTests(unittest.TestCase):
                                    torch.autograd.grad(expected, value)[0])
 
     def test_views_change_by_epoch(self):
-        from wbm_retrieval.methods.proposed import PatchDataset
+        from experiments.proposed.main.method import PatchDataset
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "patch.npy"
             image = np.ones((1, 1, 32, 32), dtype=np.uint8)

@@ -22,7 +22,7 @@ from wbm_retrieval.training import encoder_spec
 
 
 def fixture(root, checkpoint=False):
-    config = copy.deepcopy(read_json(ROOT / "configs/experiment_a.json"))
+    config = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
     config.update(output_dir=str(root / "source"), data_file=str(root / "data.npz"),
                   split_manifest=str(root / "split.csv"), query_manifest=str(root / "queries.csv"),
                   candidate_manifest=str(root / "candidates.csv"), device="cpu", num_workers=0)

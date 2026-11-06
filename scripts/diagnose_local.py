@@ -17,7 +17,7 @@ from wbm_retrieval.diagnostics import run_diagnostics
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default="configs/experiment_a.json")
+    parser.add_argument("--config", default="experiments/_shared/base.json")
     parser.add_argument("--device", choices=("cuda", "mps", "cpu", "auto"), default=None)
     parser.add_argument("--output-dir", help="Separate directory, outside the source experiment; project-relative")
     parser.add_argument("--queries", type=int, default=500, help="Valid queries, capped to available maps; 0=all")

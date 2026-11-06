@@ -11,16 +11,16 @@ TORCH_AVAILABLE = importlib.util.find_spec("torch") is not None
 @unittest.skipUnless(TORCH_AVAILABLE, "Install requirements.txt for method dispatch verification")
 class MethodDispatchTests(unittest.TestCase):
     def test_unified_all_stage_dispatches_to_separate_methods(self):
-        import run_experiment
+        from experiments._shared import main_cli as run_experiment
 
         config = {"output_dir": "unused", "global": {"budgets": [.05, .1, .5]}}
         protocol = object()
-        with mock.patch.object(sys, "argv", ["run_experiment.py"]), \
+        with mock.patch.object(sys, "argv", ["experiments/_shared/main_cli.py"]), \
                 mock.patch.object(run_experiment, "load_config", return_value=config), \
                 mock.patch.object(run_experiment, "prepare") as prepare, \
                 mock.patch.object(run_experiment, "Protocol", return_value=protocol), \
-                mock.patch("wbm_retrieval.methods.proposed.train") as train_local, \
-                mock.patch("wbm_retrieval.methods.supervised_global.train") as train_global, \
+                mock.patch("experiments.proposed.main.method.train") as train_local, \
+                mock.patch("experiments.supervised.a.method.train") as train_global, \
                 mock.patch("wbm_retrieval.retrieval.retrieve") as retrieve, \
                 mock.patch("wbm_retrieval.evaluation.evaluate_all") as evaluate, \
                 mock.patch("wbm_retrieval.evaluation.compare_paired") as paired:
@@ -37,9 +37,9 @@ class MethodDispatchTests(unittest.TestCase):
 
         config = {"global": {"budgets": [.05, .1, .5]}}
         protocol = object()
-        with mock.patch("wbm_retrieval.methods.handcrafted.retrieve") as handcrafted, \
-                mock.patch("wbm_retrieval.methods.proposed.retrieve") as proposed, \
-                mock.patch("wbm_retrieval.methods.supervised_global.retrieve") as supervised:
+        with mock.patch("experiments.handcrafted.a.descriptor.retrieve") as handcrafted, \
+                mock.patch("experiments.proposed.main.method.retrieve") as proposed, \
+                mock.patch("experiments.supervised.a.method.retrieve") as supervised:
             retrieve(config, protocol, ["handcrafted"])
             handcrafted.assert_called_once_with(config, protocol)
             proposed.assert_not_called()
