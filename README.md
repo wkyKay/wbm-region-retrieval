@@ -7,6 +7,11 @@
 
 **实验设计、改进目的、代码位置和运行方式统一见 [experiments/README.md](experiments/README.md)。** 原来的分散说明已归档，旧链接保留跳转。
 
+F 的六种区域划分对照（4/8连通、中值、开运算、WBBS-TV、NPFC-pre）已提供
+[独立入口及远程运行说明](experiments/proposed/f_segmentation/README.md)：
+`python -u experiments/proposed/f_segmentation/run.py --device cuda --prepare-workers 4`。
+该入口默认每组100 epoch，依次完成训练、valid和完整test，支持同命令续跑。
+
 ## 实验入口
 
 | 方法 | 实验与入口 | 配置 |

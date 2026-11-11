@@ -63,6 +63,11 @@ experiments/
 
 F 不使用 bbox 补方或88＋4输入。它可能截断偏心区域，报告 `F_window_audit`。F0（相同固定窗口但只用目标区域通道）仅是曾提出的后续对照，**尚未实现**。旧“轻量化 G”已被当前 G 替换，不应混作同一个实验。
 
+2026-11-11 新增 [F 分割对照](proposed/f_segmentation/README.md)：独立运行 `cc8`、`cc4`、
+`median8`、`opening8`、`tv8`、`npfc_pre`，固定原 F 的 Top-4、面积阈值、输入和匹配，
+每组独立训练及保存产物。`python -u experiments/proposed/f_segmentation/run.py --device cuda --prepare-workers 4`
+会顺序完成六组训练、valid、完整test；默认 `best_nce`，与原 F 入口的 `all` 范围不同。
+
 **G 已知局限：** 当所有区域对分数都大于0时，零阈值计数退化为 `min(|Q|,|C|)/|Q|`，丢失相似度强弱。2026-10-27 用户提供的远程汇总中，random、best_nce、best_retrieval 与 handcrafted 的三分组全部22项指标一致，与此退化机制吻合；不能据此证明编码器没有学习，也不能证明1,000负样本导致退化。此处记录观察，不替代原始远程日志审计；本次目录整理没有改动该评分算法。
 
 ## 4. Handcrafted：两种聚合基线
