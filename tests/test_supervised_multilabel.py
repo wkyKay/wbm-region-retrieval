@@ -18,6 +18,7 @@ from experiments.supervised.b.training import better_classifier, evaluate, train
 from wbm_retrieval.common import ROOT, file_hash, read_json, seed_everything, write_csv, write_json
 from wbm_retrieval.data import containment
 from wbm_retrieval.evaluation import evaluate_ranking
+from wbm_retrieval.exact_metrics import order_scores
 from wbm_retrieval.models import Encoder, Projector
 from wbm_retrieval.training import load_checkpoint, parameter_hash
 
@@ -58,6 +59,21 @@ class SupervisedTests(unittest.TestCase):
         rows, audit = next(rank_predictions([1, 2, 3], predicted, PredictionOnlyProtocol()))
         self.assertTrue(audit["empty_prediction"])
         self.assertEqual([r[3] for r in rows], [0, 0])
+
+    def test_exact_rank_uses_sha_ties_truncation_without_ground_truth(self):
+        class PredictionOnlyProtocol:
+            queries, candidates = [1], {1: [5, 4, 3, 2]}
+            @property
+            def labels(self):
+                raise AssertionError("Ground truth leaked into ranking")
+        settings = {"metric_version": "exact_v1", "ks": [1, 3], "tie_seed": 2026}
+        predicted = np.zeros((5, 8), dtype=np.uint8)
+        rows, audit = next(rank_predictions([1, 2, 3, 4, 5], predicted, PredictionOnlyProtocol(), settings))
+        ids = np.array([5, 4, 3, 2])
+        expected = ids[order_scores(ids, np.zeros(4), 1)][:3]
+        self.assertEqual([row[2] for row in rows], expected.tolist())
+        self.assertEqual([row[1] for row in rows], [1, 2, 3])
+        self.assertTrue(audit["empty_prediction"])
 
     def test_classification_known_values_and_absent_class(self):
         y = np.array([[1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0, 0, 0]])
@@ -100,7 +116,7 @@ class SupervisedTests(unittest.TestCase):
         write_csv(folder / "queries.csv", [{"sample_id": i} for i in range(16, 20)], ["sample_id"])
         write_csv(folder / "candidates.csv", [{"query_id": q, "candidate_id": c} for q in range(16, 20)
                   for c in range(16, 20) if c != q], ["query_id", "candidate_id"])
-        base = {"data_file": str(folder / "source.npz"), "split_manifest": str(folder / "split.csv"),
+        base = {"data_protocol": "legacy", "data_file": str(folder / "source.npz"), "split_manifest": str(folder / "split.csv"),
                 "query_manifest": str(folder / "queries.csv"), "candidate_manifest": str(folder / "candidates.csv"),
                 "expected_candidates": 3, "output_dir": str(folder / "legacy")}
         write_json(folder / "base.json", base)
@@ -109,7 +125,8 @@ class SupervisedTests(unittest.TestCase):
                      device="cpu", num_workers=0, cpu_threads=2, train_diagnostic_maps=4,
                      inference_batch_size=4, valid_pool={"queries": 2, "candidates": 3, "seed": 2026})
         suite["training"].update(epochs=2, batch_size=4)
-        suite["evaluation"]["bootstrap_samples"] = 0
+        suite["evaluation"].pop("metric_version", None)
+        suite["evaluation"].update(ks=[1, 5, 10, 20], bootstrap_samples=0)
         write_json(folder / "suite.json", suite)
         return load_suite(folder / "suite.json")
 

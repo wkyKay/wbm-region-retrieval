@@ -32,6 +32,7 @@ class AblationTests(unittest.TestCase):
         config["local"].update(epochs=1, num_negatives=8, opening={"enabled": False})
         config["local"]["early_stopping"] = {"enabled": False}
         suite = copy.deepcopy(self.suite)
+        suite["selection_metric"] = "ContainmentNDCG@10"
         suite["valid_pool"].update(queries=4, candidates=5)
         suite["evaluate_every"] = 1
         return suite, config, labels

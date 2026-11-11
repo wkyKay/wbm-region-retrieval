@@ -38,6 +38,7 @@ class GTests(unittest.TestCase):
         config["local"]["opening"]["enabled"] = False
         config["matching"] = copy.deepcopy(self.config["matching"])
         suite = copy.deepcopy(self.suite)
+        suite["selection_metric"] = "ContainmentNDCG@10"
         suite["valid_pool"].update(queries=4, candidates=5)
         suite["evaluate_every"] = 1
         return suite, config, labels
@@ -240,7 +241,7 @@ class GTests(unittest.TestCase):
             self.assertEqual(before, file_hash(output / "last.pt"))
             run("--stage", "test", "--variants", "G")
             self.check_rankings(root / "handcrafted/test")
-            self.check_rankings(output / "test/best_retrieval")
+            self.check_rankings(output / "test/best_nce")
             self.assertEqual(before, file_hash(output / "last.pt"))
 
 

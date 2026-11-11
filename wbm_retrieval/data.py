@@ -11,6 +11,8 @@ import sys
 import numpy as np
 
 from .common import csv_rows, digest, file_hash, iter_csv, read_json, write_json
+from .protocol_adapter import is_deduplicated, frozen_source_hashes, audited_source, validate_split_assignments
+from .retrieval_protocol import FullGalleryPool, load_retrieval_protocol, protocol_file_hashes
 
 
 def containment(query_labels, candidate_labels):
@@ -22,7 +24,15 @@ def containment(query_labels, candidate_labels):
 
 
 class Protocol:
-    def __init__(self, config, labels=None):
+    def __init__(self, config, labels=None, maps=None):
+        from .exact_evaluation import is_exact
+        self.exact_evaluation = is_exact(config)
+        self.retrieval = None
+        self.deduplication = None
+        new_protocol = is_deduplicated(config)
+        if new_protocol:
+            labels, unique, metadata = audited_source(config, labels, maps)
+            self.deduplication = unique.summary()
         rows = csv_rows(config["split_manifest"])
         self.ids = {name: [] for name in ("train", "valid", "test")}
         self.labels = {}
@@ -48,10 +58,26 @@ class Protocol:
                     raise ValueError(f"NPZ/manifest valid_index mismatch for {sample_id}")
             self.labels[sample_id] = label
             self.ids[row["split"]].append(sample_id)
-        if labels is not None and set(self.labels) != set(valid_ids.tolist()):
-            raise ValueError("Frozen split must cover every nonempty-label source wafer exactly once")
+        if labels is not None:
+            expected = (unique.representative_ids[labels[unique.representative_ids].sum(axis=1) > 0]
+                        if new_protocol else valid_ids)
+            if set(self.labels) != set(expected.tolist()):
+                raise ValueError("Frozen split must cover every nonempty unique representative exactly once"
+                                 if new_protocol else "Frozen split must cover every nonempty-label source wafer exactly once")
         if any(not values for values in self.ids.values()):
             raise ValueError("All three splits must be nonempty")
+        if new_protocol:
+            validate_split_assignments(self.ids, labels, unique, metadata)
+            self.retrieval = load_retrieval_protocol(
+                config["retrieval_protocol_dir"], data_file=config["data_file"],
+                split_file=config["split_manifest"], valid_ids=self.ids["valid"],
+                test_ids=self.ids["test"], labels=labels)
+            self.queries = list(self.retrieval.test)
+            self.candidates = self.retrieval.test
+            expected = config.get("expected_candidates")
+            if expected is not None and expected != self.candidates.candidates_per_query:
+                raise ValueError("expected_candidates disagrees with the frozen full test gallery")
+            return
         self.queries = [int(row["sample_id"]) for row in csv_rows(config["query_manifest"])]
         if not self.queries or len(self.queries) != len(set(self.queries)):
             raise ValueError("Query IDs must be nonempty and unique")
@@ -65,25 +91,80 @@ class Protocol:
             if q not in self.candidates or c not in test or q == c:
                 raise ValueError(f"Invalid candidate edge: {q} -> {c}")
             self.candidates[q].append(c)
-        expected = config["expected_candidates"]
+        expected = config.get("expected_candidates")
         for q, values in self.candidates.items():
             if not values or len(values) != len(set(values)) or (expected is not None and len(values) != expected):
                 raise ValueError(f"Query {q}: expected {expected} unique candidates, found {len(values)}")
 
     def summary(self):
-        return {
+        result = {
             "split_sizes": {key: len(value) for key, value in self.ids.items()},
             "num_queries": len(self.queries),
-            "candidate_counts": dict(Counter(len(value) for value in self.candidates.values())),
+            "candidate_counts": ({self.candidates.candidates_per_query: len(self.queries)} if self.retrieval
+                                 else dict(Counter(len(value) for value in self.candidates.values()))),
             "label_dimensions": len(next(iter(self.labels.values()))),
             "num_signatures": len({tuple(label) for label in self.labels.values()}),
-            "relevance": "intersection(query_labels, candidate_labels) / len(query_labels)",
+            "relevance": ("exact equality of the entire nonempty defect-label combination"
+                          if self.exact_evaluation else
+                          "intersection(query_labels, candidate_labels) / len(query_labels)"),
+            "metric_version": "exact_v1" if self.exact_evaluation else "containment",
         }
+        if self.retrieval:
+            result.update(data_protocol="deduplicated_v1", deduplication=self.deduplication,
+                          retrieval_protocol_signature=self.retrieval.signature,
+                          candidate_rule="all_gallery_except_query",
+                          valid_queries=len(self.retrieval.valid),
+                          valid_candidates_per_query=self.retrieval.valid.candidates_per_query)
+        return result
 
 
 def source_fingerprint(config):
+    if is_deduplicated(config):
+        return frozen_source_hashes(config)
     names = ("data_file", "split_manifest", "query_manifest", "candidate_manifest")
     return {key: file_hash(config[key]) for key in names}
+
+
+def validation_pool(protocol, settings):
+    """Persist O(Q+G) frozen-pool identity; preserve legacy diagnostic fixtures."""
+    if protocol.retrieval is not None:
+        pool = protocol.retrieval.valid
+        frozen = protocol.retrieval.metadata["valid"]
+        if (settings.get("queries") != len(pool) or
+                settings.get("candidates") != pool.candidates_per_query or
+                settings.get("seed") != frozen["seed"]):
+            raise ValueError("Valid pool settings must match the frozen retrieval protocol")
+        return {"settings": dict(settings), "queries": pool.queries.tolist(), "gallery": pool.gallery.tolist(),
+                "candidate_rule": "all_gallery_except_query", "protocol_signature": pool.protocol_signature}
+    ids = np.asarray(sorted(protocol.ids["valid"]), dtype=np.int64)
+    nq, nc = settings["queries"], settings["candidates"]
+    if not 0 < nq <= len(ids) or not 0 < nc < len(ids):
+        raise ValueError("Valid query/candidate counts exceed available split; no silent truncation")
+    rng = np.random.default_rng(settings["seed"])
+    queries = sorted(rng.choice(ids, nq, replace=False).tolist())
+    return {"settings": settings, "queries": queries, "candidates": {
+        str(q): sorted(rng.choice(ids[ids != q], nc, replace=False).tolist()) for q in queries}}
+
+
+def decode_pool(payload):
+    if "gallery" in payload:
+        if payload.get("candidate_rule") != "all_gallery_except_query" or not payload.get("protocol_signature"):
+            raise ValueError("Invalid frozen full-gallery pool metadata")
+        pool = FullGalleryPool(payload["queries"], payload["gallery"], "valid", payload["protocol_signature"])
+        return list(pool), pool
+    return payload["queries"], {int(q): c for q, c in payload["candidates"].items()}
+
+
+def retrieval_pool_hash(config, split, valid_pool_path=None):
+    if split == "valid":
+        if valid_pool_path is None:
+            raise ValueError("A saved valid pool is required")
+        return file_hash(valid_pool_path)
+    if split != "test":
+        raise ValueError("Retrieval split must be valid or test")
+    if is_deduplicated(config):
+        return digest(protocol_file_hashes(config["retrieval_protocol_dir"]))
+    return file_hash(config["candidate_manifest"])
 
 
 def audit(config):
@@ -122,7 +203,7 @@ def prepare(config):
         raise ValueError("Expected arr_0=(N,H,W), arr_1=(N,K) in the source NPZ")
     if not np.isin(maps, [0, 1, 2, 3]).all():
         raise ValueError("Only the source 0/1/2/3 WBM encoding is supported")
-    protocol = Protocol(config, labels)
+    protocol = Protocol(config, labels, maps=maps)
     np.save(cache / "maps.npy", maps.astype(np.uint8))
     np.save(cache / "labels.npy", labels.astype(np.uint8))
     details = {}

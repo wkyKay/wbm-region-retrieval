@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from wbm_retrieval.common import ROOT, budget_name, load_config
 from wbm_retrieval.data import Protocol, audit, prepare
+from wbm_retrieval.exact_evaluation import is_exact
 
 
 def main():
@@ -32,7 +33,7 @@ def main():
     if args.dry_run:
         print(json.dumps({"config": config, "requested_stage": args.stage, "methods": args.methods or valid_names,
                           "all_stages": ["prepare", "train-local", "train-global", "retrieve", "evaluate"],
-                          "relevance": "query label containment", "training_started": False}, indent=2, ensure_ascii=False))
+                          "relevance": ("exact complete label equality" if is_exact(config) else "query label containment"), "training_started": False}, indent=2, ensure_ascii=False))
         return
     if args.stage == "audit":
         print(json.dumps(audit(config), indent=2, ensure_ascii=False))

@@ -19,6 +19,14 @@ def save(figure, output, name):
     plt.close(figure)
 
 
+def retrieval_plot_metrics(metrics):
+    cutoffs = sorted(int(key.split("@", 1)[1]) for key in metrics if key.startswith("mAP@"))
+    if cutoffs:
+        k = 10 if 10 in cutoffs else cutoffs[0]
+        return tuple(f"{name}@{k}" for name in ("Hit", "Precision", "Recall", "mAP"))
+    return ("ContainmentNDCG@10", "mAP_full")
+
+
 def learning_curves(folder):
     folder = Path(folder)
     history = read_json(folder / "history.json")
@@ -45,8 +53,9 @@ def learning_curves(folder):
     save(figure, folder / "figures", "learning_curves")
     sampled = [r for r in history if r["valid_retrieval"] is not None]
     if sampled:
-        figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
-        for ax, metric in zip(axes, ("ContainmentNDCG@10", "mAP_full")):
+        metrics = retrieval_plot_metrics(sampled[0]["valid_retrieval"])
+        figure, axes = plt.subplots(1, len(metrics), figsize=(5 * len(metrics), 4), layout="constrained")
+        for ax, metric in zip(axes, metrics):
             ax.plot([r["epoch"] for r in sampled], [r["valid_retrieval"][metric] for r in sampled], marker="o")
             ax.set(title=metric, xlabel="Epoch", ylim=(-.03, 1.03))
             ax.grid(alpha=.2)
@@ -132,7 +141,7 @@ def budget_comparison(root, split, rows):
     figure, axes = plt.subplots(1, 2, figsize=(12, 4), layout="constrained")
     x = np.arange(len(rows))
     for ax, keys, title in ((axes[0], ("macro_f1", "micro_f1", "subset_accuracy"), "Classification"),
-                             (axes[1], ("ContainmentNDCG@10", "mAP_full"), "Retrieval")):
+                             (axes[1], retrieval_plot_metrics(rows[0]), "Retrieval")):
         width = .8 / len(keys)
         for index, key in enumerate(keys):
             values = [row.get(key) if row.get(key) is not None else np.nan for row in rows]

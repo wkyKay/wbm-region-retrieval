@@ -1,11 +1,12 @@
 {
   "seed": 2026,
   "data_file": "../data/wm38k/Wafer_Map_Datasets.npz",
-  "split_manifest": "protocol/split.csv",
-  "query_manifest": "protocol/queries.csv",
-  "candidate_manifest": "protocol/candidates.csv",
-  "output_dir": "artifacts/experiment_a_top4_opening_seed2026",
-  "expected_candidates": 1000,
+  "data_protocol": "deduplicated_v1",
+  "split_manifest": "protocol/deduplicated/split.csv",
+  "deduplication_metadata": "protocol/deduplicated/metadata.json",
+  "retrieval_protocol_dir": "protocol/retrieval_v1",
+  "output_dir": "artifacts/deduplicated_exact_v1/experiment_a_top4_opening_seed2026",
+  "expected_candidates": 7198,
   "device": "cuda",
   "num_workers": 4,
   "batch_size": 256,
@@ -82,10 +83,15 @@
       1,
       5,
       10,
-      20
+      20,
+      50,
+      100,
+      500
     ],
     "bootstrap_samples": 1000,
-    "save_matches_top_k": 10
+    "save_matches_top_k": 10,
+    "metric_version": "exact_v1",
+    "tie_seed": 2026
   },
   "geometry": {
     "lambda_pos": 0.125,

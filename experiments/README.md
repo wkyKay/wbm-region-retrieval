@@ -1,6 +1,6 @@
 # 实验总览
 
-更新日期：2026-10-27。本文件统一说明现有实验的设计、改进目的、运行位置和比较边界。按 `experiments/<方法>/<实验>/` 查找代码与配置；此处的字母是实验编号，不是训练标签预算。历史结果继续留在 `artifacts/`，不随源码目录迁移。
+更新日期：2026-11-09。本文件统一说明现有实验的设计、改进目的、运行位置和比较边界。按 `experiments/<方法>/<实验>/` 查找代码与配置；此处的字母是实验编号，不是训练标签预算。正式配置现已迁移到与 `compared_methods` 相同的去重划分与固定检索池。历史结果继续留在原 `artifacts/` 目录，新协议默认写入 `artifacts/deduplicated_exact_v1/`。
 
 ## 1. 目录与使用约定
 
@@ -31,20 +31,22 @@ experiments/
 
 共用算法集中于 `_shared/`，不复制到每个字母目录。所有内部导入已使用 `experiments.proposed.*`、`experiments.handcrafted.*`、`experiments.supervised.*` 的真实模块路径，**旧兼容链接、旧实验入口及顶层 `configs/` 已删除**。`wbm_retrieval/` 仅保留共用模型、数据、匹配、指标和诊断工具。
 
-共用基础配置位于 `experiments/_shared/base.json`；MVP 配置位于 `proposed/main/config_mvp.json`。修改某个实验请编辑它自己的配置；需要改变继承的数据路径时，复制基础配置并修改该实验的 `base_config`。可以直接导入新位置的实现模块，不再依赖旧模块名或符号链接。
+共用基础配置位于 `experiments/_shared/base.json`；MVP 配置位于 `proposed/main/config_mvp.json`。正式配置的 `data_protocol` 为 `deduplicated_v1`，历史 MVP 显式为 `legacy`。修改某个实验请编辑它自己的配置；需要改变继承的数据路径时，复制基础配置并修改该实验的 `base_config`。可以直接导入新位置的实现模块，不再依赖旧模块名或符号链接。
 
 移除兼容层会改变导入路径和源码指纹。历史 `artifacts/`、模型、协议及人工记录保留，但新代码**不能直接续跑旧签名目录**，也不会篡改签名来绕过检查。新运行使用新的输出根；消融/监督B通过 `--output-root` 指定，原主实验方法在各自配置副本中修改 `output_dir`。已有结果需要原版本续跑时，应使用产生该结果的代码版本。
 
 ## 2. 共同数据、训练和评价
 
-- 数据：Mixed-WM38 原始 38,015 张图；冻结协议使用 37,015 张非空标签图，train/valid/test = 25,910/3,700/7,405，约 70%/10%/20%。保持 `protocol/` 原有 ID，不重新划分。
+- 数据：Mixed-WM38 原始38,015条记录按完整0/1/2/3原图精确去重，保留最小原始ID，过滤1,024条冗余记录；同图标签冲突报错。35,991张唯一缺陷图按37种完整 multi-hot 组合、seed=2026冻结为 train/valid/test = **25,193/3,599/7,199**。本仓库 `protocol/deduplicated/` 和 `protocol/retrieval_v1/` 是 `compared_methods` 冻结文件的逐字节镜像，不改原始NPZ，不重新编号，也不在运行时重新划分。详细规则见[协议说明](../protocol/README.md)。
 - 局部方法：原始缺陷像素 `raw==2` 的 8 连通域，`min_area=5`、每图最多 top4，不使用学习分割器。模型训练单位是区域，监督参考的训练单位是整图或整图 pair。
 - 编码器：完整 ResNet-18 `[2,2,2,2]`，原始 512 维 GAP；自监督训练使用 128 维线性 projector，检索使用 h512。除 F 为三通道外均为单通道。
 - 默认优化：100 轮、batch256、SGD lr=0.01、momentum=0.9、weight_decay=0.001、WaPIRL cosine。自监督温度 0.07、memory EMA=0.5；A～F 为 5,000 个有放回负样本，G 为 1,000 个。
 - 区域对分数：proposed 为截断到 `[0,1]` 的 h512 cosine；handcrafted 为 Zernike 距离的 `exp(-d/scale)`。分数降序贪心一对一匹配，每个区域最多参与一次，不是最大权匹配。
-- 除 G/handcrafted B 外，局部分数为 `sum(sqrt(query_area) * pair_score) / sum(sqrt(query_area))`。空图得0，候选额外区域不直接扣分，整图同分按 candidate ID 升序。
-- 标签相关性：`|query标签 ∩ candidate标签| / |query标签|`。报告 K=1/5/10/20 的 ContainmentNDCG、MeanContainment、FullCoveragePrecision/Recall/Hit，以及 mAP_full、MRR_full，区分 all/single/mixed。
-- 正式 test：2,000 个固定 query，每个 1,000 个固定 test candidate，排除自身。候选池来自历史标签关系分层抽样，结果不等同于全库检索；不会因训练负样本数改变而自动改变。
+- 除 G/handcrafted B 外，局部分数为 `sum(sqrt(query_area) * pair_score) / sum(sqrt(query_area))`。空图得0，候选额外区域不直接扣分；正式整图同分使用下述 SHA 排序，历史 MVP 仍按 candidate ID 升序。
+- 正式评价：完整标签组合相同定义正样本；报告 K=1/5/10/20/50/100/500 的 Hit、Precision、Recall、mAP，区分 query 均值、single/mixed 与类别宏平均。AP/Recall 使用完整候选库的相关数作分母。同分按 compared_methods 的 SHA 规则排序。详见 [统一评价说明](../doc/EXACT_METRICS_MIGRATION.md)。历史 MVP 仍使用 containment。
+- 固定检索池：valid 为分层冻结的500个 query，每个检索完整3,599张 valid 除自身的3,598张；test 为全部7,199张轮流查询，每个检索其余7,198张。query/gallery 不随训练seed、训练负样本数或实验组别改变，候选逐query惰性生成。
+
+正式配置已统一数据身份、完整候选库、exact_v1 评价公式和哈希破并列规则；旧 containment 产物保留用于历史复现。历史模型使用了不同训练划分，且旧train与新valid/test有交叉，必须在新train重新训练，再进行新协议评价。
 
 ## 3. Proposed：原主实验与 A～G
 
@@ -70,7 +72,7 @@ F 不使用 bbox 补方或88＋4输入。它可能截断偏心区域，报告 `F
 | [a](handcrafted/a/) | 完整区域 mask 的质心/尺度归一化 Zernike 幅值，最高阶12、47维；距离转分数后按 query 的 sqrt(area) 加权 | 无训练的形状基线，与 proposed main、A～F 的区域匹配比较；不再使用早期 Hu/直方图拼接 |
 | [b](handcrafted/b/) | 同一 Zernike 描述子，改用匹配对数/query区域数；阈值来自 G 配置 | 与 proposed G 对齐聚合规则，区分手工特征和学习特征；同样存在零阈值计数退化 |
 
-两个入口都不会启动神经网络训练。A 默认复用旧主实验缓存/输出根；B 默认复用 G 套件缓存/输出根，以保证 query、candidate 和区域完全一致。A～F 的 valid 手工对照由各自套件入口自动生成，不应将旧主实验的 test 指标直接作为这些 valid 指标的对照。
+两个入口都不会启动神经网络训练。A 默认与当前主实验共用新协议缓存/输出根；B 默认与 G 套件共用新协议缓存/输出根，以保证 query、candidate 和区域完全一致。A～F 的 valid 手工对照由各自套件入口自动生成，不应将旧协议主实验的 test 指标直接作为这些 valid 指标的对照。
 
 ## 5. Supervised：两种整图监督参考
 
@@ -92,11 +94,11 @@ F 不使用 bbox 补方或88＋4输入。它可能截断偏心区域，报告 `F
 |---|---|---|
 | proposed main | 全部 valid 区域最低 NCE，`best.pt` | 否 |
 | proposed A～G 的 `best_nce` | 全部 valid 保留区域最低 NCE；负样本数量与各自训练一致 | 否 |
-| proposed A～G 的 `best_retrieval` | 固定500个 valid query × 各1,000个候选的 NDCG@10最大，并列保留早轮次 | **是** |
+| proposed A～G 的 `best_retrieval` | 固定500个 valid query × 各3,598个候选的 mAP@10 最大，并列保留早轮次 | **是** |
 | supervised A | 固定 valid pair 的最低回归损失 | 是 |
 | supervised B | valid Macro-F1、BCE、轮次的既定规则 | 是 |
 
-区域 NCE 验证每轮遍历全部 valid 保留区域，不是只使用500张图；检索验证在第1、5、10、…、100轮额外运行。验证不反向传播、不更新 memory。A～G 历史入口仍保存两个最佳 checkpoint，且 test 的历史默认仍为 `best_retrieval`，本次仅整理代码，没有悄悄改变实验身份。
+区域 NCE 验证每轮遍历全部 valid 保留区域，不是只使用500张图；检索验证在第1、5、10、…、100轮额外运行。验证不反向传播、不更新 memory。A～G 保存两个最佳 checkpoint；正式 test 默认 `best_nce`，辅助 `best_retrieval` 监测指标改为 mAP@10。数据划分与检索池采用新协议；旧1,000候选验证成绩仅供历史追溯。
 
 **按当前要求，完整无监督主结果应预先指定 `--test-checkpoint best_nce`。** `best_retrieval` 只能另列为使用验证标签选模的对照；即使不参与梯度更新，也不是完整无监督选模。若要求整个开发/选模阶段都不接触类别标签，还需后续修改协议，关闭标签检索监控及其对超参数决策的影响；只换 test 参数不代表已完成这一改造。test 标签只在固定方案后交给评价器，不能据 test 再选 checkpoint。
 
@@ -107,9 +109,9 @@ F 不使用 bbox 补方或88＋4输入。它可能截断偏心区域，报告 `F
 ```bash
 # proposed A～G：将 g 换成 a/b/c/d/e/f 即切换实验
 python experiments/proposed/g/run.py --dry-run
-python -u experiments/proposed/g/run.py --stage all --device cuda --output-root artifacts/experiments/proposed/g
-python -u experiments/proposed/g/run.py --stage all --device cuda --resume --output-root artifacts/experiments/proposed/g
-python -u experiments/proposed/g/run.py --stage test --test-checkpoint best_nce --device cuda --output-root artifacts/experiments/proposed/g
+python -u experiments/proposed/g/run.py --stage all --device cuda --output-root artifacts/deduplicated_exact_v1/proposed_g
+python -u experiments/proposed/g/run.py --stage all --device cuda --resume --output-root artifacts/deduplicated_exact_v1/proposed_g
+python -u experiments/proposed/g/run.py --stage test --test-checkpoint best_nce --device cuda --output-root artifacts/deduplicated_exact_v1/proposed_g
 
 # 在 E/F 套件中运行 D 对照
 python experiments/proposed/d/run_ef.py --stage all --device cuda
@@ -133,7 +135,17 @@ python experiments/supervised/b/run.py --stage plot --device cpu
 
 注意各入口的既有语义：**A～G、handcrafted B、supervised B 的 `all` 不评价 test；proposed main、handcrafted A、supervised A 的 `all` 沿用原主实验流程，会评价 test。** 后三者支持 `--stage prepare/train/retrieve/evaluate/test`（handcrafted 没有 train）；需要先做训练再决定最终评价时，用 prepare、train 分阶段运行。它们的 `test` 仅执行检索和评价，不重新训练。
 
-默认输出仍为：main/handcrafted A/supervised A 共用 `artifacts/experiment_a_top4_opening_seed2026`；A～D 为 `artifacts/ablation_abcd_20261019`；D(EF)/E/F 为 `artifacts/ablation_ef_20261020`；G/handcrafted B 为 `artifacts/ablation_g_20261025`；supervised B 为 `artifacts/supervised_multilabel_seed2026`。同一输出根不能并行写入；各组科学设置发生变化时，消融/多标签入口使用新的 `--output-root`，旧主实验方法修改配置中的 `output_dir`。
+正式默认输出如下；旧目录原样保留，新目录需要从头训练，不能用旧checkpoint恢复。
+
+| 实验 | 新协议默认输出 |
+| --- | --- |
+| main / handcrafted A / supervised A | `artifacts/deduplicated_exact_v1/experiment_a_top4_opening_seed2026` |
+| A～D | `artifacts/deduplicated_exact_v1/ablation_abcd_20261019` |
+| D(EF) / E / F | `artifacts/deduplicated_exact_v1/ablation_ef_20261020` |
+| G / handcrafted B | `artifacts/deduplicated_exact_v1/ablation_g_20261025` |
+| supervised B | `artifacts/deduplicated_exact_v1/supervised_multilabel_seed2026` |
+
+同一输出根不能并行写入；各组科学设置发生变化时，消融/多标签入口使用新的 `--output-root`，原主实验方法修改配置中的 `output_dir`。E/F 的 `--reference-abcd-root` 只能引用同一去重协议下重新完成的 D，例如 `artifacts/deduplicated_exact_v1/ablation_abcd_20261019`，不能引用旧 D。监督 B 默认 `budget_source=null`，按新train建立预算；如显式引用预算来源，同样必须来自新协议。
 
 单组入口一次只运行一个字母。批量运行可使用 `python experiments/proposed/_shared/abcd_cli.py --variants A B C D`、`python experiments/proposed/_shared/ef_cli.py --variants E F`。共享实现不重复训练其他实验；各自套件仍会计算需要的手工对照。
 
@@ -149,11 +161,15 @@ python experiments/supervised/b/run.py --stage plot --device cpu
 | 监督 B 小样本 | 复用300-map协议，三组标签预算各训练2轮，检查分类/检索/图表 | `supervised/b/config_mvp.json`；[验证记录](_archive/SUPERVISED_MULTILABEL_LOCAL_VALIDATION.md) |
 | 监督学习曲线重绘 | 只读已保存的 history，补充曲线，不训练 | `scripts/plot_global_learning_curves.py` |
 
-辅助工具保持原脚本入口，不另造 A～G 字母。`proposed/main/config_mvp.json` 用于查看/复用已有 MVP 子集；首次构建子集仍运行 `scripts/run_mvp.py`。supervised B 的 MVP 配置依赖已存在的300-map数据与预算ID，不能直接当作远程正式配置。
+辅助工具保持原脚本入口，不另造 A～G 字母。`proposed/main/config_mvp.json` 用于历史 MVP 子集调试，源配置固定为 `_shared/legacy_mvp_source.json`（复制迁移前的基础配置，并显式标记 legacy），不从新的去重基础配置抽取或重新编号数据。首次构建子集仍运行 `scripts/run_mvp.py`。两个 MVP 配置显式使用 legacy 模式，supervised B 的 MVP 配置依赖已存在的300-map数据与预算ID。它们只用于历史实现调试，不能作为新协议的 smoke 或正式结果；新协议 smoke 如需新增，必须从冻结train/valid派生、使用正式valid query交集并禁止test。
+
+旧 MVP 产物原样保留。源配置路径或代码变化后，历史签名可能不再匹配，不得修改签名强制续跑或覆盖旧产物；需要重新检查时复制 MVP 配置，将其 `output_dir` 及派生数据/协议路径一并改到新的独立目录。
 
 ## 9. 迁移与历史记录
 
-整理后的源码是唯一运行实现；旧 `run_experiment.py`、`scripts/run_ablation*.py`、`scripts/run_supervised_multilabel.py`、`wbm_retrieval/ablation*.py`、`wbm_retrieval/methods/`、`experiments/g/`、supervised 的旧平铺模块及顶层 `configs/` 已移除。辅助诊断脚本仍在 `scripts/`，并已切换到新模块。训练/评分算法和数据划分没有更改，源码签名按当前真实依赖重新计算。
+2026-10-27 的目录整理后源码是唯一运行实现；旧 `run_experiment.py`、`scripts/run_ablation*.py`、`scripts/run_supervised_multilabel.py`、`wbm_retrieval/ablation*.py`、`wbm_retrieval/methods/`、`experiments/g/`、supervised 的旧平铺模块及顶层 `configs/` 已移除。辅助诊断脚本仍在 `scripts/`，并已切换到新模块。该次目录整理未改变训练/评分算法和数据划分。
+
+2026-11-09 的本次迁移改变正式数据划分和检索池，保留模型与评价算法，源码和协议签名随之更新。旧协议CSV、原始NPZ、历史运行及人工记录保留。本次代码迁移未启动正式训练或完整test，下面的83项测试记录仅描述2026-10-27的目录整理，不是本次协议迁移的验证结论。
 
 原分散文档已移到 `_archive/`，旧位置只留下导航。实验设计以本文件为统一入口，详细历史命令/记录可追溯：
 

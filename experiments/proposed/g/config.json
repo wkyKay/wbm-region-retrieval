@@ -1,6 +1,6 @@
 {
   "base_config": "experiments/_shared/base.json",
-  "output_root": "artifacts/ablation_g_20261025",
+  "output_root": "artifacts/deduplicated_exact_v1/ablation_g_20261025",
   "overrides": {
     "proposal": {
       "min_area": 5,
@@ -41,9 +41,9 @@
   "valid_pool": {
     "seed": 2026,
     "queries": 500,
-    "candidates": 1000
+    "candidates": 3598
   },
-  "selection_metric": "ContainmentNDCG@10",
+  "selection_metric": "mAP@10",
   "evaluate_every": 5,
   "variants": {
     "G": {

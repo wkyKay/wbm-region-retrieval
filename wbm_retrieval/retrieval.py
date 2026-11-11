@@ -11,6 +11,8 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 
 from .common import budget_name, file_hash, read_json, write_json
+from .exact_evaluation import is_exact
+from .exact_metrics import TIE_POLICY, order_scores
 from .matching import map_similarity
 
 
@@ -56,6 +58,9 @@ def feature_cache(encoder, source, checkpoint, target, config, device):
 
 
 def rank_local(name, groups, config, protocol, representation="learned"):
+    settings = config["evaluation"]
+    exact = is_exact(settings)
+    saved_top_k = max(settings["ks"]) if exact else None
     matching = {**config["matching"], "representation": representation}
     if representation == "zernike":
         matching["zernike_distance_scale"] = config["handcrafted"]["distance_scale"]
@@ -72,7 +77,12 @@ def rank_local(name, groups, config, protocol, representation="learned"):
         for query_index, query_id in enumerate(protocol.queries, 1):
             scored = [(candidate_id, map_similarity(groups[query_id], groups[candidate_id], matching))
                       for candidate_id in protocol.candidates[query_id]]
-            scored.sort(key=lambda value: (-value[1], value[0]))
+            if exact:
+                order = order_scores([c for c, _ in scored], [s for _, s in scored], query_id,
+                                     seed=settings.get("tie_seed", 2026))
+                scored = [scored[i] for i in order[:saved_top_k]]
+            else:
+                scored.sort(key=lambda value: (-value[1], value[0]))
             for rank, (candidate_id, score) in enumerate(scored, 1):
                 ranking_writer.writerow([query_id, rank, candidate_id, score])
                 if rank <= config["evaluation"]["save_matches_top_k"]:
@@ -85,6 +95,10 @@ def rank_local(name, groups, config, protocol, representation="learned"):
                "representation": representation, "descriptor": config["handcrafted"] if representation == "zernike" else None,
                "ranking_wall_seconds_excluding_encoding": time.perf_counter() - started,
                "num_queries": len(protocol.queries), "shape_only": True,
+               "ranking_scope": "top_max_k" if exact else "full_candidate_pool", "saved_top_k": saved_top_k,
+               "metric_version": settings.get("metric_version", "legacy_containment"),
+               "ties": TIE_POLICY if exact else "ascending candidate_id",
+               "tie_seed": settings.get("tie_seed", 2026) if exact else None,
                "empty_query_maps": sum(not len(groups[q]["area"]) for q in protocol.queries)})
 
 

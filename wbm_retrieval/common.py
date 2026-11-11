@@ -60,7 +60,11 @@ def load_config(path):
     path = Path(path).resolve()
     config = read_json(path)
     # Relative paths are always project-relative, independent of the invoking cwd.
-    for key in ("data_file", "split_manifest", "query_manifest", "candidate_manifest", "output_dir"):
+    from .protocol_adapter import is_deduplicated
+    paths = ["data_file", "split_manifest", "output_dir"]
+    paths += (["deduplication_metadata", "retrieval_protocol_dir"] if is_deduplicated(config)
+              else ["query_manifest", "candidate_manifest"])
+    for key in paths:
         value = Path(config[key]).expanduser()
         config[key] = str(value.resolve() if value.is_absolute() else (ROOT / value).resolve())
     p, m = config["proposal"], config["matching"]

@@ -33,6 +33,11 @@ class MVPSubsetTests(unittest.TestCase):
         write_csv(root / "query.csv", [{"sample_id": 240}], ["sample_id"])
         write_csv(root / "candidate.csv", [{"query_id": 240, "candidate_id": 241}], ["query_id", "candidate_id"])
         source = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
+        source["data_protocol"] = "legacy"
+        source["evaluation"].pop("metric_version", None)
+        source["evaluation"]["ks"] = [1, 5, 10, 20]
+        for key in ("deduplication_metadata", "retrieval_protocol_dir"):
+            source.pop(key, None)
         source.update(data_file=str(root / "source.npz"), split_manifest=str(root / "split.csv"),
                       query_manifest=str(root / "query.csv"), candidate_manifest=str(root / "candidate.csv"),
                       output_dir=str(root / "artifacts/formal"))

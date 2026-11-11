@@ -13,6 +13,7 @@ import torch
 
 from .ef_suite import RegionViews, build_model, evaluate
 from wbm_retrieval.common import digest, get_device, read_json, seed_everything, write_json
+from wbm_retrieval.exact_evaluation import fresh_training_evaluation_dir
 from experiments.proposed.main.method import MemoryBank, nce_loss
 from wbm_retrieval.training import (loader, load_checkpoint, optimization, optimizer_to_device, parameter_hash,
                        restore, save_checkpoint, validation_rng)
@@ -53,7 +54,8 @@ def train_variant(config, suite, suite_signature, name, resume=False, stop_after
         raise ValueError("Initialization changed (e.g. torch version); do not mix runs in one suite")
     manifest = {"signature": signature, "variant": name, "input": spec, "config": config,
                 "initial_parameter_sha256": initial_hash, "selection_metric": suite["selection_metric"],
-                "selection_note": "Uses valid labels for checkpoint selection, never for NCE optimization; no test selection",
+                "default_test_checkpoint": "best_nce",
+                "selection_note": "best_nce minimizes valid NCE; auxiliary best_retrieval uses valid labels only; no test selection",
                 "environment": {"python": sys.version, "platform": platform.platform(), "torch": torch.__version__,
                                 "numpy": np.__version__, "device": str(device), "cuda": torch.version.cuda,
                                 "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else None}}
@@ -78,7 +80,8 @@ def train_variant(config, suite, suite_signature, name, resume=False, stop_after
         bank.buffer.copy_(checkpoint["memory"].to(device))
     else:
         print(f"{name}: evaluating random initialization (not eligible for best checkpoint)", flush=True)
-        evaluate(config, suite, "valid", output / "valid/random", model=model, spec=spec, device=device)
+        random_output = fresh_training_evaluation_dir(output / "valid/random", config)
+        evaluate(config, suite, "valid", random_output, model=model, spec=spec, device=device)
         bank.initialize(model["encoder"], model["projector"], loader(train, config, config["seed"], False), device)
     for epoch in range(start, settings["epochs"]):
         started = time.monotonic()
@@ -127,9 +130,10 @@ def train_variant(config, suite, suite_signature, name, resume=False, stop_after
         nce_improved = val_loss < best_nce
         if nce_improved:
             best_nce, best_nce_epoch = val_loss, epoch+1
-        score, retrieval_improved = None, False
+        score, retrieval_improved, evaluation_dir = None, False, None
         if epoch == 0 or (epoch+1) % suite["evaluate_every"] == 0 or epoch+1 == settings["epochs"]:
-            result = evaluate(config, suite, "valid", output / "valid" / f"epoch_{epoch+1:03d}",
+            evaluation_dir = fresh_training_evaluation_dir(output / "valid" / f"epoch_{epoch+1:03d}", config)
+            result = evaluate(config, suite, "valid", evaluation_dir,
                               model=model, spec=spec, device=device)
             score = result["metrics"][suite["selection_metric"]]
             if score is None:
@@ -138,7 +142,9 @@ def train_variant(config, suite, suite_signature, name, resume=False, stop_after
             if retrieval_improved:
                 best_retrieval, best_retrieval_epoch = score, epoch+1
         history.append({"epoch": epoch+1, "train_loss": total/count, "valid_nce": val_loss,
-                        suite["selection_metric"]: score, "learning_rate": optimizer.param_groups[0]["lr"],
+                        suite["selection_metric"]: score,
+                        "evaluation_dir": str(evaluation_dir.relative_to(output)) if evaluation_dir else None,
+                        "learning_rate": optimizer.param_groups[0]["lr"],
                         "optimizer_steps": steps, "seconds": time.monotonic()-started})
         scheduler.step()
         extra = {"memory": bank.buffer.detach().cpu(), "initial_parameter_sha256": initial_hash,
@@ -153,7 +159,7 @@ def train_variant(config, suite, suite_signature, name, resume=False, stop_after
         write_json(output / "history.json", history)
         save_summary(output, settings, epoch+1, best_nce, extra, model)
         print(f"{name} epoch {epoch+1}/{settings['epochs']}: train={total/count:.5f}, valid_nce={val_loss:.5f}, "
-              f"NDCG@10={score}, best_epoch={best_retrieval_epoch}", flush=True)
+              f"{suite['selection_metric']}={score}, best_retrieval_epoch={best_retrieval_epoch}", flush=True)
         if stop_after is not None and epoch+1 >= stop_after:
             return epoch+1 == settings["epochs"]
     return True
@@ -177,4 +183,5 @@ def evaluate_variant(config, suite, suite_signature, name, split="valid", checkp
                           rankings=True, bootstrap=config["evaluation"]["bootstrap_samples"])
         result.update(epoch=checkpoint["epoch"], checkpoint=str(output / f"{kind}.pt"))
         write_json(target / "metrics.json", result)
-        print(f"{name}/{kind}/{split}: epoch={checkpoint['epoch']} NDCG@10={result['metrics']['ContainmentNDCG@10']:.5f}", flush=True)
+        print(f"{name}/{kind}/{split}: epoch={checkpoint['epoch']} "
+              f"{suite['selection_metric']}={result['metrics'][suite['selection_metric']]:.5f}", flush=True)

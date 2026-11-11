@@ -1,4 +1,5 @@
 {
+  "data_protocol": "legacy",
   "base_config": "experiments/proposed/main/config_mvp.json",
   "output_root": "artifacts/supervised_multilabel_mvp_20261025",
   "seed": 2026,

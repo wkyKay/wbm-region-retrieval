@@ -25,9 +25,11 @@ def main():
     parser.add_argument("--num-workers", type=int)
     parser.add_argument("--output-root")
     parser.add_argument("--reference-abcd-root", help="Read-only historical A-D directory for same-seed valid comparisons")
+    parser.add_argument("--skip-handcrafted", action="store_true",
+                        help="Skip the additional handcrafted baseline; learned retrieval pools and scoring stay unchanged")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--test-checkpoint", choices=("best_retrieval", "best_nce"), default="best_retrieval")
+    parser.add_argument("--test-checkpoint", choices=("best_retrieval", "best_nce"), default="best_nce")
     args = parser.parse_args()
     if args.stage == "test" and args.variants is None:
         parser.error("Test requires explicit --variants after selecting on valid")
@@ -42,6 +44,7 @@ def main():
         print(json.dumps({"stage": args.stage, "variants": {n: suite["variants"][n] for n in variants},
                           "config": config, "valid_pool": suite["valid_pool"],
                           "reference_abcd_root": args.reference_abcd_root,
+                          "skip_handcrafted": args.skip_handcrafted,
                           "selection_metric": suite["selection_metric"], "evaluate_every": suite["evaluate_every"]}, indent=2))
         return
     root = Path(config["output_dir"])
@@ -50,7 +53,7 @@ def main():
         reference = validate_reference(config, suite, args.reference_abcd_root) if args.reference_abcd_root else None
         with diagnostic_log(root):
             split = "test" if args.stage == "test" else "valid"
-            if args.stage in ("all", "evaluate", "test"):
+            if args.stage in ("all", "evaluate", "test") and not args.skip_handcrafted:
                 target = root / "handcrafted" / split
                 if not (target / "metrics.json").exists():
                     evaluate(config, suite, split, target, rankings=True, bootstrap=config["evaluation"]["bootstrap_samples"])

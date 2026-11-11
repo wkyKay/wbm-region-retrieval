@@ -13,7 +13,8 @@ from torch import nn
 from torch.utils.data import Dataset, DataLoader
 
 from wbm_retrieval.common import ROOT, digest, file_hash, read_json, write_csv, write_json
-from wbm_retrieval.data import Protocol, stratified_budget
+from wbm_retrieval.data import (Protocol, decode_pool, is_deduplicated, source_fingerprint,
+                                stratified_budget, validation_pool)
 from wbm_retrieval.models import Encoder
 from wbm_retrieval.regions import whole_map_patch
 
@@ -32,9 +33,15 @@ def load_suite(path, **overrides):
     base_path = project_path(config["base_config"])
     base = read_json(base_path)
     config["base_config"] = str(base_path)
-    for key in ("data_file", "split_manifest", "query_manifest", "candidate_manifest"):
+    for key in ("data_file", "split_manifest"):
         config[key] = str(project_path(base[key]))
-    config["expected_candidates"] = base["expected_candidates"]
+    for key in ("query_manifest", "candidate_manifest", "deduplication_metadata", "retrieval_protocol_dir"):
+        if base.get(key) is not None:
+            config[key] = str(project_path(base[key]))
+        else:
+            config.pop(key, None)
+    config["data_protocol"] = base.get("data_protocol", "legacy")
+    config["expected_candidates"] = base.get("expected_candidates")
     config["input_size"], config["embedding_dim"], config["num_labels"] = 96, 512, 8
     for key, value in overrides.items():
         if value is not None:
@@ -54,8 +61,10 @@ def load_suite(path, **overrides):
     if settings["batch_size"] < 2 or settings["epochs"] < 1 or not isinstance(settings["rotation"], bool):
         raise ValueError("Need batch_size>=2, epochs>=1 and a boolean rotation setting")
     if min(config["inference_batch_size"], config["train_diagnostic_maps"], config["evaluate_every"],
-           config["cpu_threads"], config["valid_pool"]["queries"], config["valid_pool"]["candidates"]) < 1:
+           config["cpu_threads"]) < 1:
         raise ValueError("Batch, diagnostic, pool and interval sizes must be positive")
+    if not is_deduplicated(config) and min(config["valid_pool"]["queries"], config["valid_pool"]["candidates"]) < 1:
+        raise ValueError("Legacy valid pool sizes must be positive")
     if config["num_workers"] < 0 or config["seed"] < 0 or config["evaluation"]["bootstrap_samples"] < 0:
         raise ValueError("Workers, seed and bootstrap count must be nonnegative")
     if 10 not in config["evaluation"]["ks"] or any(k < 1 for k in config["evaluation"]["ks"]):
@@ -70,7 +79,10 @@ def load_suite(path, **overrides):
     for source in protected[1:]:
         if root == source or root in source.parents or source in root.parents:
             raise ValueError(f"Output must be separate from existing experiment: {source}")
-    for key in ("base_config", "data_file", "split_manifest", "query_manifest", "candidate_manifest"):
+    for key in ("base_config", "data_file", "split_manifest", "query_manifest", "candidate_manifest",
+                "deduplication_metadata", "retrieval_protocol_dir"):
+        if key not in config:
+            continue
         if root == Path(config[key]) or root in Path(config[key]).parents:
             raise ValueError("Output must not contain source inputs")
     config["output_root"] = str(root)
@@ -97,11 +109,11 @@ def exclusive(root):
 
 def prepare(config):
     root = Path(config["output_root"])
-    source_files = [Path(config[k]) for k in ("base_config", "data_file", "split_manifest", "query_manifest", "candidate_manifest")]
+    source_files = [Path(config["base_config"])]
     if config.get("budget_source"):
         source_files += [Path(config["budget_source"]) / "models" / f"global_{100*b:g}pct" / "labeled_train_ids.csv"
                          for b in config["budgets"]]
-    sources = {str(p): file_hash(p) for p in source_files}
+    sources = {**source_fingerprint(config), **{str(p): file_hash(p) for p in source_files}}
     from experiments._shared.provenance import source_hashes
     code = source_hashes("experiments/supervised/b")
     scientific = {k: v for k, v in config.items() if k not in ("device", "num_workers", "cpu_threads", "output_root")}
@@ -127,9 +139,9 @@ def prepare(config):
         raise ValueError("Expected maps=(N,H,W) and eight binary label columns")
     if not np.isin(maps, [0, 1, 2, 3]).all():
         raise ValueError("Unknown source map pixel encoding")
-    protocol = Protocol(config, labels)
-    if config["valid_pool"]["queries"] > len(protocol.ids["valid"]) or config["valid_pool"]["candidates"] >= len(protocol.ids["valid"]):
-        raise ValueError("Valid pool exceeds available maps; configure smaller counts explicitly")
+    protocol = Protocol(config, labels, maps=maps)
+    pool = validation_pool(protocol, config["valid_pool"])
+    queries, candidates = decode_pool(pool)
     write_json(marker, manifest)
     write_json(root / "resolved_config.json", config)
     cache = root / "cache"
@@ -144,15 +156,13 @@ def prepare(config):
         del images
         np.save(cache / f"{split}_ids.npy", ids)
         np.save(cache / f"{split}_labels.npy", labels[ids].astype(np.uint8))
-    rng = np.random.default_rng(config["valid_pool"]["seed"])
-    ids = np.array(sorted(protocol.ids["valid"]))
-    queries = sorted(rng.choice(ids, config["valid_pool"]["queries"], replace=False).tolist())
-    pool = {"queries": queries, "candidates": {str(q): sorted(rng.choice(ids[ids != q], config["valid_pool"]["candidates"],
-                                                          replace=False).tolist()) for q in queries}}
     write_json(root / "protocol/valid_pool.json", pool)
     write_csv(root / "protocol/valid_queries.csv", ({"sample_id": q} for q in queries), ["sample_id"])
-    write_csv(root / "protocol/valid_candidates.csv", ({"query_id": q, "candidate_id": c} for q in queries
-              for c in pool["candidates"][str(q)]), ["query_id", "candidate_id"])
+    if is_deduplicated(config):
+        write_csv(root / "protocol/valid_gallery.csv", ({"sample_id": i} for i in pool["gallery"]), ["sample_id"])
+    else:
+        write_csv(root / "protocol/valid_candidates.csv", ({"query_id": q, "candidate_id": c} for q in queries
+                  for c in candidates[q]), ["query_id", "candidate_id"])
     for budget in config["budgets"]:
         selected = stratified_budget(protocol.ids["train"], labels, budget, config["seed"])
         if config.get("budget_source"):
@@ -181,9 +191,11 @@ def prepare(config):
 def split_protocol(config, protocol, split):
     if split == "test":
         return protocol
+    if split != "valid":
+        raise ValueError("Retrieval supports only valid and explicitly requested test")
     pool = read_json(Path(config["output_root"]) / "protocol/valid_pool.json")
-    return SimpleNamespace(queries=pool["queries"], candidates={int(q): cs for q, cs in pool["candidates"].items()},
-                           labels=protocol.labels)
+    queries, candidates = decode_pool(pool)
+    return SimpleNamespace(queries=queries, candidates=candidates, labels=protocol.labels)
 
 
 class WholeMaps(Dataset):

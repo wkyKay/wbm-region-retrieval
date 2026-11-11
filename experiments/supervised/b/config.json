@@ -1,9 +1,13 @@
 {
   "base_config": "experiments/_shared/base.json",
-  "output_root": "artifacts/supervised_multilabel_seed2026",
+  "output_root": "artifacts/deduplicated_exact_v1/supervised_multilabel_seed2026",
   "seed": 2026,
   "encoder_reference": "proposed-main",
-  "budgets": [0.05, 0.1, 0.5],
+  "budgets": [
+    0.05,
+    0.1,
+    0.5
+  ],
   "budget_source": null,
   "threshold": 0.5,
   "training": {
@@ -19,8 +23,20 @@
   "inference_batch_size": 256,
   "train_diagnostic_maps": 512,
   "evaluate_every": 5,
-  "valid_pool": {"queries": 500, "candidates": 1000, "seed": 2026},
-  "evaluation": {"ks": [1, 5, 10, 20], "bootstrap_samples": 1000},
+  "valid_pool": {
+    "queries": 500,
+    "candidates": 3598,
+    "seed": 2026
+  },
+  "evaluation": {
+    "ks": [
+      1,
+      5,
+      10,
+      20
+    ],
+    "bootstrap_samples": 1000
+  },
   "device": "cuda",
   "num_workers": 4,
   "cpu_threads": 4

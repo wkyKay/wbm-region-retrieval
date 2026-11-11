@@ -12,6 +12,7 @@ import torch
 from torch.nn import functional as F
 
 from wbm_retrieval.common import csv_rows, digest, file_hash, get_device, read_json, seed_everything, write_csv, write_json
+from wbm_retrieval.exact_evaluation import is_exact
 from wbm_retrieval.training import (encoder_spec, load_checkpoint, optimization, optimizer_to_device,
                                     parameter_hash, restore, save_checkpoint)
 from .suite import Classifier, WholeMaps, make_loader, method_name, split_protocol
@@ -155,8 +156,10 @@ def evaluate(config, protocol, signature, budget, split):
     for group in ("classification", "retrieval"):
         write_json(folder / group / split / "provenance.json", provenance)
     classification_figures(folder, split, config["output_root"])
+    ks = config["evaluation"]["ks"]
+    metric = f"mAP@{10 if 10 in ks else min(ks)}" if is_exact(config) else "ContainmentNDCG@10"
     print(f"{folder.name} {split}: macro-F1={classification['metrics']['macro_f1']:.5f}, "
-          f"NDCG@10={retrieval['metrics']['ContainmentNDCG@10']}", flush=True)
+          f"{metric}={retrieval['metrics'][metric]}", flush=True)
 
 
 def summarize(config, split):

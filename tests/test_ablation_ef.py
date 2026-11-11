@@ -43,6 +43,7 @@ class EFTests(unittest.TestCase):
         config["local"]["opening"]["enabled"] = False
         config["local"]["early_stopping"] = {"enabled": False}
         suite = copy.deepcopy(self.suite)
+        suite["selection_metric"] = "ContainmentNDCG@10"
         suite["valid_pool"].update(queries=4, candidates=5)
         suite["evaluate_every"] = 1
         Path(config["output_dir"]).mkdir()
@@ -128,6 +129,7 @@ class EFTests(unittest.TestCase):
             signature = prepare_suite(suite, config)
             self.assertEqual(signature, prepare_suite(suite, config))
             old_suite, _ = legacy.load_suite(ROOT / "experiments/proposed/a/config.json")
+            old_suite["selection_metric"] = "ContainmentNDCG@10"
             old_suite["valid_pool"] = suite["valid_pool"]
             old_suite["evaluate_every"] = 1
             old_config = {**config, "output_dir": str(Path(directory) / "old")}
@@ -226,6 +228,7 @@ class EFTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             suite, config, _ = self.fixture(directory)
             old_suite, _ = legacy.load_suite(ROOT / "experiments/proposed/a/config.json")
+            old_suite["selection_metric"] = "ContainmentNDCG@10"
             old_suite.update(valid_pool=suite["valid_pool"], evaluate_every=1)
             old_config = {**config, "output_dir": str(Path(directory) / "old")}
             Path(old_config["output_dir"]).mkdir()

@@ -14,6 +14,8 @@ from torch.utils.data import Dataset
 
 from wbm_retrieval.common import budget_name, get_device, seed_everything, write_csv, write_json
 from wbm_retrieval.data import load_regions, sample_pairs, stratified_budget
+from wbm_retrieval.exact_evaluation import is_exact
+from wbm_retrieval.exact_metrics import TIE_POLICY, order_scores
 from wbm_retrieval.models import GlobalRanker
 from wbm_retrieval.regions import augment
 from wbm_retrieval.training import (encoder_spec, loader, load_checkpoint, optimization, optimizer_to_device, parameter_hash, restore,
@@ -147,6 +149,9 @@ def train(config, protocol, resume=False):
 
 @torch.no_grad()
 def rank_global(name, model, embeddings, metadata, config, protocol, device):
+    settings = config["evaluation"]
+    exact = is_exact(settings)
+    saved_top_k = max(settings["ks"]) if exact else None
     output = Path(config["output_dir"]) / "retrieval" / name
     output.mkdir(parents=True, exist_ok=True)
     index = {int(sample_id): i for i, sample_id in enumerate(metadata["map_ids"])}
@@ -164,12 +169,21 @@ def rank_global(name, model, embeddings, metadata, config, protocol, device):
                 candidate = embeddings[[index[c] for c in chunk]]
                 query = embeddings[index[query_id]].unsqueeze(0).expand(len(chunk), -1)
                 scores.extend(model.scorer(query, candidate).cpu().tolist())
-            scored = sorted(zip(candidates, scores), key=lambda value: (-value[1], value[0]))
+            if exact:
+                order = order_scores(candidates, scores, query_id, seed=settings.get("tie_seed", 2026))
+                scored = [(candidates[i], scores[i]) for i in order[:saved_top_k]]
+            else:
+                scored = sorted(zip(candidates, scores), key=lambda value: (-value[1], value[0]))
             writer.writerows([query_id, rank, c, score] for rank, (c, score) in enumerate(scored, 1))
             if query_index % 100 == 0:
                 print(f"{name}: {query_index}/{len(protocol.queries)} queries", flush=True)
-    write_json(output / "retrieval_info.json", {"method": name, "relevance": "query_label_containment",
+    write_json(output / "retrieval_info.json", {"method": name, "training_target": "query_label_containment",
+               "relevance": "complete_label_combination_equality" if exact else "query_label_containment",
                "ranking_wall_seconds_excluding_encoding": time.perf_counter() - started,
+               "ranking_scope": "top_max_k" if exact else "full_candidate_pool", "saved_top_k": saved_top_k,
+               "metric_version": settings.get("metric_version", "legacy_containment"),
+               "ties": TIE_POLICY if exact else "ascending candidate_id",
+               "tie_seed": settings.get("tie_seed", 2026) if exact else None,
                "num_queries": len(protocol.queries), "scorer": "ordered shared-encoder MLP"})
 
 

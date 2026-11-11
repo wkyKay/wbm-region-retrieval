@@ -1,4 +1,5 @@
 {
+  "data_protocol": "legacy",
   "seed": 2026,
   "data_file": "artifacts/mvp_mps_300_top4_opening_20261018/data/subset.npz",
   "split_manifest": "artifacts/mvp_mps_300_top4_opening_20261018/protocol/split.csv",
@@ -94,7 +95,7 @@
     "examples": 2
   },
   "mvp": {
-    "source_config": "experiments/_shared/base.json",
+    "source_config": "experiments/_shared/legacy_mvp_source.json",
     "maps": 300,
     "source_mixed_signatures": [
       [

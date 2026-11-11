@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--output-root")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true", help="Print resolved plan; no data loading/training/writes")
-    parser.add_argument("--test-checkpoint", choices=("best_retrieval", "best_nce"), default="best_retrieval")
+    parser.add_argument("--test-checkpoint", choices=("best_retrieval", "best_nce"), default="best_nce")
     args = parser.parse_args()
     if args.stage == "test" and args.variants is None:
         parser.error("Test requires explicit --variants after selecting a design on valid")
@@ -47,7 +47,8 @@ def main():
             split = "test" if args.stage == "test" else "valid"
             if args.stage in ("all", "evaluate", "test"):
                 target = root / "handcrafted" / split
-                evaluate(config, suite, split, target, rankings=True, bootstrap=config["evaluation"]["bootstrap_samples"])
+                if not (target / "metrics.json").exists():
+                    evaluate(config, suite, split, target, rankings=True, bootstrap=config["evaluation"]["bootstrap_samples"])
             for name in variants:
                 if args.stage in ("all", "train"):
                     train_variant(config, suite, signature, name, resume=args.resume)

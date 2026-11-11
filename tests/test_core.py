@@ -18,12 +18,16 @@ from wbm_retrieval.regions import augment, extract_regions, token_patch
 def fixture_config(root):
     root = Path(root)
     config = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
+    config["data_protocol"] = "legacy"
+    for key in ("deduplication_metadata", "retrieval_protocol_dir"):
+        config.pop(key, None)
     config.update(data_file=str(root / "data.npz"), split_manifest=str(root / "split.csv"),
                   query_manifest=str(root / "query.csv"), candidate_manifest=str(root / "candidate.csv"),
                   output_dir=str(root / "output"), device="cpu", num_workers=0, batch_size=2,
                   inference_batch_size=4, input_size=32, embedding_dim=512, expected_candidates=3)
     config["proposal"].update(min_area=2, top_k=3, padding=2)
-    config["evaluation"].update(bootstrap_samples=10, save_matches_top_k=2)
+    config["evaluation"].pop("metric_version", None)
+    config["evaluation"].update(ks=[1, 5, 10, 20], bootstrap_samples=10, save_matches_top_k=2)
     config["geometry"]["examples"] = 1
     labels = np.array([[1, 0], [0, 1], [1, 1]] * 8, dtype=np.uint8)
     maps = np.ones((24, 16, 16), dtype=np.uint8)

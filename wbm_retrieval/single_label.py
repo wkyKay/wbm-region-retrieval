@@ -28,7 +28,9 @@ from .regions import extract_regions, token_patch
 from .training import encoder_spec, load_checkpoint, parameter_hash
 
 
-CLASS_NAMES = ("center", "donut", "edge-loc", "edge-ring", "loc", "random", "scratch", "near-full")
+from .data_protocol import BASE_CLASS_NAMES
+
+CLASS_NAMES = BASE_CLASS_NAMES
 METHODS = ("handcrafted", "proposed")
 
 

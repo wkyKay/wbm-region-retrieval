@@ -1,0 +1,218 @@
+{
+  "format_version": 1,
+  "source_sha256": "a19e791c85ccd5051c080169a3d2b17902a42545cf749e9869f6c96312bcdc69",
+  "split_sha256": "2c1d259fec3e541adb9eed7d8042936f04c252d1ec8e4572add9f9ca3f2682d0",
+  "data_file": "/Users/kayw/Documents/trae_projects/match-test/data/wm38k/Wafer_Map_Datasets.npz",
+  "split_file": "/Users/kayw/Documents/trae_projects/match-test/compared_methods/protocol/deduplicated/split.csv",
+  "candidate_rule": "all_gallery_except_query",
+  "candidate_order": "original sample_id ascending",
+  "identity": "original NPZ row IDs, globally exact-deduplicated before source split",
+  "valid": {
+    "query_count": 500,
+    "gallery_count": 3599,
+    "candidates_per_query": 3598,
+    "seed": 2026,
+    "min_per_class": 5,
+    "allocation_policy": "bounded_proportional_largest_remainder_minimum_per_class_v1",
+    "allocation_tie_break": "label_signature tuple ascending",
+    "class_allocations": [
+      {
+        "label_signature": "0",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|2",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|2|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|2|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|2|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|3",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|3|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|3|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|3|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "0|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|2",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|2|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|2|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|2|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|3",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|3|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|3|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|3|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "1|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "2",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "2|4",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "2|4|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "2|6",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "3",
+        "gallery_count": 100,
+        "query_count": 14
+      },
+      {
+        "label_signature": "3|4",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "3|4|6",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "3|6",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "4",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "4|6",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "5",
+        "gallery_count": 14,
+        "query_count": 5
+      },
+      {
+        "label_signature": "6",
+        "gallery_count": 100,
+        "query_count": 13
+      },
+      {
+        "label_signature": "7",
+        "gallery_count": 85,
+        "query_count": 11
+      }
+    ]
+  },
+  "test": {
+    "query_count": 7199,
+    "gallery_count": 7199,
+    "candidates_per_query": 7198,
+    "query_policy": "all_test_samples"
+  },
+  "files": {
+    "valid_queries.csv": "2c1a98ad7903461fad3281d5f40f889274c557baf064532e44070078d0471080",
+    "valid_gallery.csv": "fcd3db00ee17adcc05d0d1c92dcfb7a7b825b9965ca8df7bd24d4ee259c255ee",
+    "test_queries.csv": "60761a832e47bdcf07fe6e06034c72044f43ef5230dd46d6c5af2384badbfb15",
+    "test_gallery.csv": "60761a832e47bdcf07fe6e06034c72044f43ef5230dd46d6c5af2384badbfb15"
+  }
+}

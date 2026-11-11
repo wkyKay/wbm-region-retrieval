@@ -1,4 +1,4 @@
-"""Classification diagnostics and hard-label retrieval using the legacy evaluator."""
+"""Classification diagnostics and hard-label ranking with versioned evaluation."""
 
 from __future__ import annotations
 
@@ -12,6 +12,8 @@ from sklearn.metrics import (average_precision_score, accuracy_score, hamming_lo
 
 from wbm_retrieval.common import csv_rows, write_csv, write_json
 from wbm_retrieval.evaluation import evaluate_ranking
+from wbm_retrieval.exact_evaluation import is_exact, per_query_metric_name
+from wbm_retrieval.exact_metrics import TIE_POLICY, order_scores
 from .suite import make_loader
 
 
@@ -93,18 +95,21 @@ def hard_containment(query, candidates):
     return np.sum(candidates.astype(float) * query.astype(float), axis=1) / count
 
 
-def rank_predictions(ids, predicted, protocol):
+def rank_predictions(ids, predicted, protocol, settings=None):
     """Only predicted labels and candidate IDs affect ranking, never protocol.labels."""
     ids, predicted = np.asarray(ids), np.asarray(predicted)
     if len(set(ids.tolist())) != len(ids) or predicted.shape != (len(ids), 8):
         raise ValueError("Predictions must have unique map IDs and eight label columns")
     lookup = {int(sample_id): i for i, sample_id in enumerate(ids)}
+    settings = settings or {}
+    exact = is_exact(settings)
     audits = []
     for q in protocol.queries:
         candidates = np.asarray(protocol.candidates[q], dtype=np.int64)
         query = predicted[lookup[q]]
         scores = hard_containment(query, predicted[[lookup[int(c)] for c in candidates]])
-        order = np.lexsort((candidates, -scores))
+        order = (order_scores(candidates, scores, q, seed=settings.get("tie_seed", 2026))[:max(settings["ks"])]
+                 if exact else np.lexsort((candidates, -scores)))
         audits.append({"query_id": q, "empty_prediction": bool(query.sum() == 0),
                        "distinct_scores": len(np.unique(scores)), "top_score_ties": int((scores == scores.max()).sum()),
                        "all_zero_scores": bool((scores == 0).all())})
@@ -119,17 +124,22 @@ def retrieval_report(output, ids, probabilities, protocol, config, bootstrap=Non
     with (output / "rankings.csv").open("w", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["query_id", "rank", "candidate_id", "similarity_score"])
-        for rows, audit in rank_predictions(ids, probabilities >= config["threshold"], protocol):
+        for rows, audit in rank_predictions(ids, probabilities >= config["threshold"], protocol, config["evaluation"]):
             writer.writerows(rows)
             audits.append(audit)
     settings = dict(config["evaluation"])
     if bootstrap is not None:
         settings["bootstrap_samples"] = bootstrap
+    exact = is_exact(settings)
     result = evaluate_ranking(output / "rankings.csv", protocol, settings, config["seed"])
     write_csv(output / "tie_audit.csv", audits, list(audits[0]))
     write_json(output / "retrieval_info.json", {"score": "predicted_query_label_containment",
                "threshold": config["threshold"], "empty_query_policy": "all candidates score zero; retain query",
-               "ties": "candidate_id ascending; no probability tie-break",
+               "ties": TIE_POLICY if exact else "candidate_id ascending; no probability tie-break",
+               "metric_version": settings.get("metric_version", "legacy_containment"),
+               "tie_seed": settings.get("tie_seed", 2026) if exact else None,
+               "ranking_scope": "top_max_k" if exact else "full_candidate_pool",
+               "saved_top_k": max(settings["ks"]) if exact else None,
                "num_queries": len(audits), "num_candidates": [len(protocol.candidates[q]) for q in protocol.queries],
                "empty_query_rate": float(np.mean([a["empty_prediction"] for a in audits])),
                "all_zero_scores_rate": float(np.mean([a["all_zero_scores"] for a in audits])),
@@ -141,7 +151,8 @@ def retrieval_report(output, ids, probabilities, protocol, config, bootstrap=Non
         rows = [r for r in per_query if condition(int(np.sum(protocol.labels[int(r["query_id"])])))]
         metrics = {}
         for key in result["metrics"]:
-            values = [float(row[key]) for row in rows if row[key] != ""]
+            column = per_query_metric_name(key) if exact else key
+            values = [float(row[column]) for row in rows if row[column] != ""]
             metrics[key] = float(np.mean(values)) if values else None
         groups[name] = {"num_queries": len(rows), "metrics": metrics}
     write_json(output / "group_metrics.json", groups)

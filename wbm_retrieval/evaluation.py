@@ -1,13 +1,17 @@
-"""One label-containment evaluator for all methods and all frozen candidate pools."""
+"""Versioned exact-combination evaluation, with legacy containment compatibility."""
 
 from __future__ import annotations
 
 from pathlib import Path
+from itertools import groupby
 
 import numpy as np
 
 from .common import iter_csv, write_csv, write_json
 from .data import containment
+from .exact_evaluation import evaluate_suite_rankings, is_exact, per_query_metric_name
+from .exact_metrics import TIE_POLICY, order_scores
+from .retrieval_protocol import FullGalleryPool
 
 
 def dcg(values):
@@ -47,17 +51,67 @@ def bootstrap_interval(values, repetitions, rng):
     return [float(low), float(high)]
 
 
+def _ranking_groups(path, protocol, exact=False):
+    """Hold one full-gallery ranking at a time; retain legacy CSV compatibility."""
+    queries = set(protocol.queries)
+    if exact or isinstance(protocol.candidates, FullGalleryPool):
+        seen = set()
+        for q, records in groupby(iter_csv(path), key=lambda row: int(row["query_id"])):
+            if q not in queries or q in seen:
+                raise ValueError("Unknown query or repeated noncontiguous query block")
+            seen.add(q)
+            values = []
+            for row in records:
+                score = float(row["similarity_score"])
+                if np.isnan(score) or np.isposinf(score) or (not exact and np.isneginf(score)):
+                    raise ValueError("Non-finite ranking score")
+                values.append((int(row["candidate_id"]), score, int(row["rank"])))
+            yield q, values
+        if seen != queries:
+            raise ValueError("Ranking does not contain every frozen query")
+    else:
+        # Historic files may have interleaved query rows. Their small sampled
+        # candidate pools keep the previous reader and its semantics intact.
+        by_query = {q: [] for q in protocol.queries}
+        for row in iter_csv(path):
+            q, c = int(row["query_id"]), int(row["candidate_id"])
+            score = float(row["similarity_score"])
+            if q not in queries or not np.isfinite(score):
+                raise ValueError("Unknown query or non-finite ranking score")
+            by_query[q].append((c, score, int(row["rank"])))
+        yield from by_query.items()
+
+
+def _exact_rankings(path, protocol, settings):
+    """Validate stored Top-K blocks without materializing all query/candidate pairs."""
+    for q, values in _ranking_groups(path, protocol, exact=True):
+        ids = [value[0] for value in values]
+        scores = [value[1] for value in values]
+        if len(ids) > max(settings["ks"]):
+            raise ValueError(f"Exact ranking exceeds max(K) for query {q}")
+        # The canonical evaluator checks pool membership, duplicate IDs and the
+        # complete-pool positive denominator. Check the stored ranking order too.
+        order = order_scores(ids, scores, q, seed=settings.get("tie_seed", 2026))
+        if (order.tolist() != list(range(len(values))) or
+                [value[2] for value in values] != list(range(1, len(values) + 1))):
+            raise ValueError(f"Ranking order/rank column mismatch for query {q}")
+        yield q, ids
+
+
 def evaluate_ranking(path, protocol, settings, seed):
-    by_query = {q: [] for q in protocol.queries}
-    for row in iter_csv(path):
-        q, c = int(row["query_id"]), int(row["candidate_id"])
-        score = float(row["similarity_score"])
-        if q not in by_query or not np.isfinite(score):
-            raise ValueError("Unknown query or non-finite ranking score")
-        by_query[q].append((c, score, int(row["rank"])))
+    if is_exact(settings):
+        split = getattr(protocol.candidates, "split_name", "test")
+        split_ids = (protocol.ids[split] if hasattr(protocol, "ids") else
+                     getattr(protocol.candidates, "gallery", None))
+        return evaluate_suite_rankings(
+            {"evaluation": settings, "seed": seed}, protocol.labels, protocol.candidates,
+            _exact_rankings(path, protocol, settings), Path(path).parent, split, split_ids=split_ids,
+            metadata={"ranking": str(path), "ranking_scope": "top_max_k",
+                      "ties": TIE_POLICY, "tie_seed": settings.get("tie_seed", 2026),
+                      "bootstrap_samples": settings.get("bootstrap_samples", 0)},
+        )
     rows = []
-    for q in protocol.queries:
-        values = by_query[q]
+    for q, values in _ranking_groups(path, protocol):
         ids = [value[0] for value in values]
         if len(ids) != len(set(ids)) or set(ids) != set(protocol.candidates[q]):
             raise ValueError(f"Ranking candidate set differs from the frozen pool for query {q}")
@@ -68,6 +122,8 @@ def evaluate_ranking(path, protocol, settings, seed):
         # Complete candidate set, not merely returned top K, determines IDCG and recall.
         ideal = containment(protocol.labels[q], np.array([protocol.labels[c] for c in protocol.candidates[q]]))
         rows.append({"query_id": q, **query_metrics(relevance, ideal, settings["ks"])})
+    ordering = {q: index for index, q in enumerate(protocol.queries)}
+    rows.sort(key=lambda row: ordering[row["query_id"]])
     metrics = {}
     intervals = {}
     rng = np.random.default_rng(seed)
@@ -92,26 +148,35 @@ def evaluate_all(config, protocol, methods=None):
     root = Path(config["output_dir"]) / "retrieval"
     names = methods or ["handcrafted", "proposed"] + [budget_name(b) for b in config["global"]["budgets"]]
     summary = []
+    macro_summary = []
     for name in names:
         path = root / name / "rankings.csv"
         if not path.is_file():
             raise FileNotFoundError(f"Missing ranking {path}; run retrieval first")
         result = evaluate_ranking(path, protocol, config["evaluation"], config["seed"])
         summary.append({"method": name, **result["metrics"]})
+        if "class_macro_metrics" in result:
+            macro_summary.append({"method": name, **result["class_macro_metrics"]})
         print(f"Evaluated {name}: {result['metrics']}", flush=True)
     write_csv(Path(config["output_dir"]) / "comparison.csv", summary, list(summary[0]))
     write_json(Path(config["output_dir"]) / "comparison.json", summary)
+    if macro_summary:
+        write_csv(Path(config["output_dir"]) / "comparison_class_macro.csv", macro_summary, list(macro_summary[0]))
+        write_json(Path(config["output_dir"]) / "comparison_class_macro.json", macro_summary)
     return summary
 
 
-def compare_paired(config, left="proposed", right="handcrafted", metric="ContainmentNDCG@10"):
+def compare_paired(config, left="proposed", right="handcrafted", metric=None):
+    exact = is_exact(config)
+    metric = metric or ("mAP@10" if exact else "ContainmentNDCG@10")
+    column = per_query_metric_name(metric) if exact else metric
     root = Path(config["output_dir"]) / "retrieval"
     left_rows = {int(r["query_id"]): r for r in iter_csv(root / left / "per_query_metrics.csv")}
     right_rows = {int(r["query_id"]): r for r in iter_csv(root / right / "per_query_metrics.csv")}
     if set(left_rows) != set(right_rows):
         raise ValueError("Paired comparison requires identical query IDs")
-    differences = [float(left_rows[q][metric]) - float(right_rows[q][metric]) for q in left_rows
-                   if left_rows[q][metric] not in (None, "") and right_rows[q][metric] not in (None, "")]
+    differences = [float(left_rows[q][column]) - float(right_rows[q][column]) for q in left_rows
+                   if left_rows[q][column] not in (None, "") and right_rows[q][column] not in (None, "")]
     interval = bootstrap_interval(differences, config["evaluation"]["bootstrap_samples"], np.random.default_rng(config["seed"]))
     result = {"left": left, "right": right, "metric": metric,
               "mean_difference": float(np.mean(differences)) if differences else None,

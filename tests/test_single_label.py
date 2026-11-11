@@ -23,12 +23,16 @@ from wbm_retrieval.training import encoder_spec
 
 def fixture(root, checkpoint=False):
     config = copy.deepcopy(read_json(ROOT / "experiments/_shared/base.json"))
+    config["data_protocol"] = "legacy"
+    for key in ("deduplication_metadata", "retrieval_protocol_dir"):
+        config.pop(key, None)
     config.update(output_dir=str(root / "source"), data_file=str(root / "data.npz"),
                   split_manifest=str(root / "split.csv"), query_manifest=str(root / "queries.csv"),
                   candidate_manifest=str(root / "candidates.csv"), device="cpu", num_workers=0)
     config["proposal"]["top_k"] = 6
     config["local"].pop("opening")
-    config["evaluation"]["bootstrap_samples"] = 0
+    config["evaluation"].pop("metric_version", None)
+    config["evaluation"].update(ks=[1, 5, 10, 20], bootstrap_samples=0)
     signatures = [(i,) for i in range(8) for _ in range(2)] + [(0, 1), (2, 3)]
     labels, maps, rows = [], [], []
     for split in ("train", "valid", "test"):

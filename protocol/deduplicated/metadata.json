@@ -1,0 +1,52 @@
+{
+  "format_version": 1,
+  "data_file": "/Users/kayw/Documents/trae_projects/match-test/data/wm38k/Wafer_Map_Datasets.npz",
+  "source_sha256": "a19e791c85ccd5051c080169a3d2b17902a42545cf749e9869f6c96312bcdc69",
+  "source_shape": [
+    38015,
+    52,
+    52
+  ],
+  "deduplication_policy": "exact_raw_pixels_uint8_sha256_then_array_equal_min_original_id_v1",
+  "representative_policy": "smallest original NPZ row ID",
+  "identity": "all raw pixel codes 0/1/2/3; hash candidates confirmed by array_equal",
+  "label_conflicts": "rejected",
+  "seed": 2026,
+  "split_ratios": {
+    "train": 0.7,
+    "valid": 0.1,
+    "test": 0.2
+  },
+  "split_counts": {
+    "train": 25193,
+    "valid": 3599,
+    "test": 7199
+  },
+  "class_names": [
+    "center",
+    "donut",
+    "edge-loc",
+    "edge-ring",
+    "loc",
+    "near-full",
+    "scratch",
+    "random"
+  ],
+  "summary": {
+    "source_count": 38015,
+    "unique_count": 36991,
+    "removed_count": 1024,
+    "duplicate_group_count": 1023,
+    "duplicate_member_count": 2047,
+    "source_normal_count": 1000,
+    "unique_normal_count": 1000,
+    "source_defect_count": 37015,
+    "unique_defect_count": 35991
+  },
+  "normal_policy": "unique Normal IDs excluded from split.csv; runtime uses explicit normal_split counts",
+  "valid_index_policy": "index in original nonempty-label source rows, before deduplication",
+  "files": {
+    "split.csv": "2c1d259fec3e541adb9eed7d8042936f04c252d1ec8e4572add9f9ca3f2682d0",
+    "duplicates.csv": "668a6fb6ac34790c0bf7490cdc11c4336d7e74402236e2b94869f28f752bb6f3"
+  }
+}
