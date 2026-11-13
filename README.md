@@ -12,6 +12,11 @@ F 的六种区域划分对照（4/8连通、中值、开运算、WBBS-TV、NPFC-
 `python -u experiments/proposed/f_segmentation/run.py --device cuda --prepare-workers 4`。
 该入口默认每组100 epoch，依次完成训练、valid和完整test，支持同命令续跑。
 
+已有六组模型可用[径向位置＋相对面积评价入口](experiments/proposed/f_segmentation_geometry/README.md)
+补做 valid/test 的 exact 与 coverage 双指标：
+`python -u experiments/proposed/f_segmentation_geometry/run.py --device cuda --prepare-workers 4`。
+无需重训；旧结果只读，新结果默认写入 `artifacts/f_segmentation_radial_area_v1/`。
+
 ## 实验入口
 
 | 方法 | 实验与入口 | 配置 |

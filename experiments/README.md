@@ -68,6 +68,10 @@ F 不使用 bbox 补方或88＋4输入。它可能截断偏心区域，报告 `F
 每组独立训练及保存产物。`python -u experiments/proposed/f_segmentation/run.py --device cuda --prepare-workers 4`
 会顺序完成六组训练、valid、完整test；默认 `best_nce`，与原 F 入口的 `all` 范围不同。
 
+2026-11-13：[六组径向＋相对面积评价](proposed/f_segmentation_geometry/README.md)
+读取上述六组的已完成模型，固定16-bin径向β=1、面积σ=1.5及权重0.15，
+重新评分valid/test并同时输出exact/coverage指标；独立目录保存，不修改旧结果或训练签名。
+
 **G 已知局限：** 当所有区域对分数都大于0时，零阈值计数退化为 `min(|Q|,|C|)/|Q|`，丢失相似度强弱。2026-10-27 用户提供的远程汇总中，random、best_nce、best_retrieval 与 handcrafted 的三分组全部22项指标一致，与此退化机制吻合；不能据此证明编码器没有学习，也不能证明1,000负样本导致退化。此处记录观察，不替代原始远程日志审计；本次目录整理没有改动该评分算法。
 
 ## 4. Handcrafted：两种聚合基线
