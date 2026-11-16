@@ -1,7 +1,7 @@
 [
   {
     "original": "doc/ALL_METHODS_AND_METRICS.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/方法指标总览.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7d2718262440361c3cdff5c87ed51b8cd196b83ac3f34df0a12f8bc77ad04978",
     "current_topic": "doc/项目说明.md",
@@ -13,14 +13,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/方法指标总览.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%96%B9%E6%B3%95%E6%8C%87%E6%A0%87%E6%80%BB%E8%A7%88.md",
       "sha256": "9dd8a7c247e7c3369009afa0198fdcc7dbb58272d8d57e24b5ac8e4993f33738"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "690739ae8b2361ec5d4a9e5bc7947675cbe121c7c2eac38d6b570b768e4cef0d",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/DATA_PROTOCOL_MIGRATION.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/数据协议迁移.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "465856ce9e0b25379300ae3cb86ee3c9ddf37b90906a16e2820cf7ab50831127",
     "current_topic": "doc/项目说明.md",
@@ -32,14 +32,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/数据协议迁移.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%95%B0%E6%8D%AE%E5%8D%8F%E8%AE%AE%E8%BF%81%E7%A7%BB.md",
       "sha256": "eb8d1e10824c713dd616e16c2c983a8ea36e75cdcc52b2a98be199cc314c2c83"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "0c9457cab1e6a1c55c8219ce573ca214195f2f4002bb6e659ebb7d27120ce477",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/EXACT_METRICS_MIGRATION.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/精确评价迁移.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "47d4f164adc8ad3f07a925c643bebaaca7782e53039ac45df9a9d821cb00369d",
     "current_topic": "doc/项目说明.md",
@@ -64,14 +64,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/精确评价迁移.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E7%B2%BE%E7%A1%AE%E8%AF%84%E4%BB%B7%E8%BF%81%E7%A7%BB.md",
       "sha256": "983e4b4355baf1ab846783ec236a097a051999748ff247baef5b1f2735ae765c"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "03c614ed8892f5e53a2026e853f7704abcb5b8122814c02e3e393ee49bf9a91a",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F与WBBS差距.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "40404d9b51e8319213251f507a950ba77c2df95d01d9b4a542f08b7be5bbb142",
     "current_topic": "doc/项目说明.md",
@@ -132,14 +132,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F与WBBS差距.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E4%B8%8EWBBS%E5%B7%AE%E8%B7%9D.md",
       "sha256": "ac1343d1d53a9a3437a9624377f5657b1349384509cf391be4cb67a90f6b1e75"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "5533733dbf0ee04b129f9de2437c1ec76291c26662d6132fa1356ee5cae10db5",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_BIDIRECTIONAL_VALID_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F双向验证.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7fc952e637c9b4abfc5b1c5f76dad804d4f4a2e658bc83ebcafb3865874b6620",
     "current_topic": "doc/项目说明.md",
@@ -151,14 +151,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F双向验证.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%8F%8C%E5%90%91%E9%AA%8C%E8%AF%81.md",
       "sha256": "79dfbad77f0916e2968283e2706b137d10fc3bcdf5fd26147657d3b73a0a1c49"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "8b7c144970a518820c27bf8d11e4f762912edf59fae2ccbe70b301f524102a6c",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_INFERENCE_ABLATIONS_VALID_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F推断消融.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5b06d3be3df5ee77de61da333c7df969636b9f5bc90fdf5242f3ee1f1ffef610",
     "current_topic": "doc/项目说明.md",
@@ -170,14 +170,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F推断消融.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E6%8E%A8%E6%96%AD%E6%B6%88%E8%9E%8D.md",
       "sha256": "b2c6149ae97d5cb4c50f001428f4f431059045db62d42c27c734beefb670467a"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "ba58f95c8648c69f63547cde4b0fe8534c14641fb3054495da12b1431c85605a",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_RADIAL_AREA_TEST_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F径向面积测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "8cf9a3eef27acd31fa6e74723f6045730eb8d03ab6aef4707b1ea2800fcc6c29",
     "current_topic": "doc/项目说明.md",
@@ -244,14 +244,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F径向面积测试.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%BE%84%E5%90%91%E9%9D%A2%E7%A7%AF%E6%B5%8B%E8%AF%95.md",
       "sha256": "a51c4b67a1092cf976d743dd4ccbfa82b258a807428cd4a3100cc3ad9d966e78"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "26dd065c6fefe5459e39ef93eb9d209d6fa143141358b589cfcd2ea834714eb4",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_RADIAL_BETA1_TEST_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F径向测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "147e2c751cbe9f268180f73fa95efb9ff7178448af14e7a81ae5c9b673d99cf2",
     "current_topic": "doc/项目说明.md",
@@ -300,14 +300,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F径向测试.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%BE%84%E5%90%91%E6%B5%8B%E8%AF%95.md",
       "sha256": "6abfb8123f575da5bac4a6465959c860dc790712a30f88c291ebbc270d0b46fa"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "3c500fb90587c968aa1c04364d762fe6f415fac60e9782cffed3bd58862a20cf",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/F_RADIAL_SCALE_VALID_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/旧F尺度验证.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5e428567b1ba474c809a41546c380b3c725f7f88ce14e039133ba00d8a681956",
     "current_topic": "doc/项目说明.md",
@@ -368,14 +368,14 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/旧F尺度验证.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%B0%BA%E5%BA%A6%E9%AA%8C%E8%AF%81.md",
       "sha256": "d1f35132467f25636c9cdc910496d4ae42c2b0d71df69c3c37bed6d688f9b1e8"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "e0af91cc8251bdae34606a6ad1637b5244f1db794e7b0c3b489df0a3aaa288c0",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
     "original": "doc/HANDCRAFTED_TEST_20261111.md",
-    "archive": "doc/项目说明.md",
+    "archive": "doc/history/20261116/手工特征测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "6033eb8097d5cd0757782fcb3ac632cf004cdd32c648a43d05f90a6228f45936",
     "current_topic": "doc/项目说明.md",
@@ -430,9 +430,9 @@
     "archived_report": {
       "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
       "path": "doc/history/20261116/手工特征测试.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%89%8B%E5%B7%A5%E7%89%B9%E5%BE%81%E6%B5%8B%E8%AF%95.md",
       "sha256": "780a23435018192d4a1de5606f01291ddafbeddcf6f664b945c3809f65d23ef8"
     },
-    "archive_section": "历史记录"
+    "local_copy_sha256": "75cb182ecfa78557318aa6a66bcb994dc0e12617e530c87e114f5d23cd5a4165",
+    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   }
 ]

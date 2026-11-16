@@ -11,6 +11,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any
 
@@ -193,10 +194,9 @@ def generate(result_dir: Path, references: Path, output: Path) -> dict:
         path = result_dir.parent / name
         if path.exists():
             audit_sources[name] = {"path": str(path), "sha256": file_hash(path), "contents": read_json(path)}
-    # Frozen documentation source; consolidation must not change this historical comparison.
-    source_doc = 'https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E7%B2%BE%E7%A1%AE%E8%AF%84%E4%BB%B7%E8%BF%81%E7%A7%BB.md'
-    source_doc_sha256 = '983e4b4355baf1ab846783ec236a097a051999748ff247baef5b1f2735ae765c'
-    doc_link = f"[旧F精确评价记录]({source_doc})"
+    source_doc = Path(__file__).resolve().parents[1] / "doc/history/20261116/精确评价迁移.md"
+    source_doc_sha256 = file_hash(source_doc)
+    doc_link = f"[旧F精确评价记录]({os.path.relpath(source_doc, output)})"
     md = ["# F＋径向 β=1：完整 test 报告", "",
           f"对照口径与方法集合依据 {doc_link}。本报告在原七方法之外新增径向F，保留原F基线。", "",
           "## 实验边界与协议", "",
@@ -288,7 +288,7 @@ def generate(result_dir: Path, references: Path, output: Path) -> dict:
     (output / "report.md").write_text("\n".join(md), encoding="utf-8")
     hashes = {"inputs": sources, "reference_manifest": {"path": str(references/'source_manifest.json'),
               "sha256": file_hash(references/'source_manifest.json')},
-              "reference_document": {"url": source_doc, "sha256": source_doc_sha256},
+              "reference_document": {"path": str(source_doc), "sha256": source_doc_sha256},
               "generator": {"path": str(Path(__file__).resolve()), "sha256": file_hash(Path(__file__))},
               "audit_sources": {name: {k: v for k, v in value.items() if k != "contents"} for name, value in audit_sources.items()}}
     (output / "source_hashes.json").write_text(json.dumps(hashes, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
