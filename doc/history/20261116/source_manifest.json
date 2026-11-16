@@ -15,7 +15,7 @@
       "path": "doc/history/20261116/方法指标总览.md",
       "sha256": "9dd8a7c247e7c3369009afa0198fdcc7dbb58272d8d57e24b5ac8e4993f33738"
     },
-    "local_copy_sha256": "5c67bc5a9c05b2ead08f1eafa7c68f36ae9d2ee08c47215307af25e3977b5c5b",
+    "local_copy_sha256": "0a0ac3478da02fa1d000e7f505b564e01e4779f6a37e6401c171713da75576de",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/方法指标总览.md",
@@ -40,7 +40,7 @@
       "path": "doc/history/20261116/数据协议迁移.md",
       "sha256": "eb8d1e10824c713dd616e16c2c983a8ea36e75cdcc52b2a98be199cc314c2c83"
     },
-    "local_copy_sha256": "5c67bc5a9c05b2ead08f1eafa7c68f36ae9d2ee08c47215307af25e3977b5c5b",
+    "local_copy_sha256": "0a0ac3478da02fa1d000e7f505b564e01e4779f6a37e6401c171713da75576de",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/数据协议迁移.md",
@@ -78,7 +78,7 @@
       "path": "doc/history/20261116/精确评价迁移.md",
       "sha256": "983e4b4355baf1ab846783ec236a097a051999748ff247baef5b1f2735ae765c"
     },
-    "local_copy_sha256": "5c67bc5a9c05b2ead08f1eafa7c68f36ae9d2ee08c47215307af25e3977b5c5b",
+    "local_copy_sha256": "0a0ac3478da02fa1d000e7f505b564e01e4779f6a37e6401c171713da75576de",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/精确评价迁移.md",
@@ -533,5 +533,97 @@
     ],
     "local_copy_sha256": "2cea165a53b4d7debee3a2194a0e9794c83fdb79bb4e90ce1438a3f1f6142175",
     "local_copy_note": "按用户要求新增的专属实验摘要；简表来自原始指标，历史实验产物未改动"
+  },
+  {
+    "kind": "experiment_summary",
+    "archive": "doc/分割对照.md",
+    "current_topic": "doc/项目说明.md",
+    "current_section": "实验结果",
+    "scope": "六种分割分别训练的F模型，统一径向位置与相对面积评分；valid/test双指标",
+    "sources": "已登记的服务器指标、六组训练摘要、评价来源与实现；2026-11-16核对38份报告/元数据",
+    "source_chat": {
+      "hostId": "local",
+      "threadId": "01a1cb2b-4d4c-74b0-bb84-470c3bd04164"
+    },
+    "source_code_commit": "5637dc04f5ee82b6a2c62b342e4e057c0ffa2eb2",
+    "source_files": [
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "results_catalog/metrics.csv",
+        "sha256": "9bc2b1348b1cd78785a2137847aa8f4730b48921a1ea24b330c67eaa0203e73e"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/status.json",
+        "sha256": "ac52d4530636000be21476222b7c2bd95104288df5a079d41f49e74b04283dc0"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/geometry_comparison.json",
+        "sha256": "4d364a5da48464d9c2eb2d29dac10d0d7687b7c2ae7fa8940d8f3fc0821dbc35"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/cc8/evaluation_manifest.json",
+        "sha256": "96dc7fb2d58f1e095a502db6c9ee4d4e80b0084888e97890abcacbf8fd723f1b"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/cc4/evaluation_manifest.json",
+        "sha256": "0d69e7aed67250ad8618fbc7dd2d50889e8ac4897f9dbdc73dcac326fc4c9604"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/median8/evaluation_manifest.json",
+        "sha256": "e7769150a00cec9bab44e0693c6c1e4f8af2b18ce6615ce9c5c3b9c8ff93138c"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/opening8/evaluation_manifest.json",
+        "sha256": "6cd59b1da87bfaa153317213874717b622f4b107109cff80d6532a55d2fdadb9"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/tv8/evaluation_manifest.json",
+        "sha256": "c2021368432c50bda63dc4f64f8b32e62c9f6f0a2b7d294ca6a747d28c8c4579"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_radial_area_v1/npfc_pre/evaluation_manifest.json",
+        "sha256": "1df3540872b58bc4d2e85328637d0f9fdfb6f80e7b95f77ee5af17b5371c810d"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/cc8/seed_2026/F/training_summary.json",
+        "sha256": "a89c6afa2e34ad5fc57b66f7ddf8c48b94480e62c1346e676bbe5e7d0610535f"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/cc4/seed_2026/F/training_summary.json",
+        "sha256": "217f0b12a1162d348dfbc64c34bbb08b6e12c5438051cd50cf1feef7ec11a6d7"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/median8/seed_2026/F/training_summary.json",
+        "sha256": "1bd3ae770b34d575e40e1f733aacf59434059eab7125159d908aca30cc8486bf"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/opening8/seed_2026/F/training_summary.json",
+        "sha256": "5184edca3f9dc3e7c99d72a4412ef945c062ac7510dfaef40bd218977e5a4f43"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/tv8/seed_2026/F/training_summary.json",
+        "sha256": "5ba48526fad43ca4794b9f24687c8207ae3cf8b15e9fcfd7a4b7da6a24435847"
+      },
+      {
+        "repository": "wbm-region-retrieval",
+        "path": "artifacts/f_segmentation_v1/npfc_pre/seed_2026/F/training_summary.json",
+        "sha256": "9d6bf0891f45e3fdfbff63119c6c5073a3fdc6b9ca65555b4d90315af8ec3e28"
+      }
+    ],
+    "local_copy_sha256": "0a8344fc5ebb1ba30f2db728d6d59e779f58c0fc0e84fea2a47593d1aa2c899d",
+    "local_copy_note": "用户要求的专属实验摘要；简表来自原始指标，原模型与实验产物未改动"
   }
 ]
