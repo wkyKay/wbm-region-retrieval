@@ -434,29 +434,5 @@
       "sha256": "780a23435018192d4a1de5606f01291ddafbeddcf6f664b945c3809f65d23ef8"
     },
     "archive_section": "历史记录"
-  },
-  {
-    "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.md",
-    "archive": "doc/项目说明.md",
-    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
-    "original_sha256": "6f2b3d3d730cf80b97b3091bbd5bb65208a8a4b9d12a6c9a398367428516de28",
-    "current_topic": "doc/项目说明.md",
-    "scope": "旧 shape-only F 的论文草稿，不是当前方法正文。",
-    "sources": "原文 Git 版本及同目录保存的旧 LaTeX；无独立结果运行",
-    "followup": "当前正文已加入径向与面积公式，修正测试增强、对比范围及选择历史。",
-    "artifact_references": [],
-    "latex_source": {
-      "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.tex",
-      "archive": "doc/history/20261116/PAPER_DRAFT_PROBLEM_METHODS.tex",
-      "original_sha256": "213219cb2cd4232b906f9a56a671adbbdbf465ecde1b15bb33958021c61e9f3c"
-    },
-    "current_section": "论文初稿",
-    "archived_report": {
-      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
-      "path": "doc/history/20261116/旧版论文初稿.md",
-      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7%E7%89%88%E8%AE%BA%E6%96%87%E5%88%9D%E7%A8%BF.md",
-      "sha256": "506521c99380d16389ae9d3fc506ef0956e7a14f40eafb79f40217c53dd15a62"
-    },
-    "archive_section": "历史记录"
   }
 ]
