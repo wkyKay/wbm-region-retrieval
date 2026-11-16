@@ -193,7 +193,7 @@ def generate(result_dir: Path, references: Path, output: Path) -> dict:
         path = result_dir.parent / name
         if path.exists():
             audit_sources[name] = {"path": str(path), "sha256": file_hash(path), "contents": read_json(path)}
-    source_doc = Path(__file__).resolve().parents[1] / "doc/EXACT_METRICS_MIGRATION.md"
+    source_doc = Path(__file__).resolve().parents[1] / "doc/history/20261116/EXACT_METRICS_MIGRATION.md"
     doc_link = f"[EXACT_METRICS_MIGRATION.md]({source_doc})"
     md = ["# F＋径向 β=1：完整 test 报告", "",
           f"对照口径与方法集合依据 {doc_link}。本报告在原七方法之外新增径向F，保留原F基线。", "",

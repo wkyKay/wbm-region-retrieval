@@ -162,7 +162,7 @@ python run_experiment.py --config configs/experiment_a.json --device cuda</code>
 <div class="card">
 <h3>3.5 当前代码支持到哪一步？</h3>
 <div class="status-list"><div class="status"><span class="tag green">已有实现</span><p>主实验三类方法、A～F 消融、单标签推理和诊断流程。可追溯到代码与配置。</p></div><div class="status"><span class="tag green">已有本地验证记录</span><p>2026-10-20 的记录报告 59 项测试通过；E/F 在真实 300 张子集上各完成 1 轮训练、续跑和评价检查。</p></div><div class="status pending"><span class="tag amber">仍待正式实验回答</span><p>当前目录未见全量主实验和 A～F 的完整正式结果；不能宣称 proposed 或某个改动已优于基线。G 尚未实现。</p></div></div>
-<p class="caption">依据：<code>doc/EF_LOCAL_VALIDATION.md</code>、本地 validation.json 与 artifacts 目录。这里引用的是已有验证记录，并非本页面制作时重新运行了模型训练或 59 项测试。</p>
+<p class="caption">依据：<code>experiments/_archive/EF_LOCAL_VALIDATION.md</code>、本地 validation.json 与 artifacts 目录。这里引用的是已有验证记录，并非本页面制作时重新运行了模型训练或 59 项测试。</p>
 </div>
 </section>
 
@@ -221,7 +221,7 @@ python run_experiment.py --config configs/experiment_a.json --device cuda</code>
 <div><code>wbm_retrieval/regions.py / matching.py</code>连通域、标准化输入、贪心匹配与查询侧面积加权。</div>
 <div><code>wbm_retrieval/methods/proposed.py / handcrafted.py</code>局部自监督、memory bank 与 Zernike 描述子。</div>
 <div><code>wbm_retrieval/models.py / methods/supervised_global.py</code>ResNet-18、线性投影与有方向的整图评分头。</div>
-<div><code>doc/ABLATION_A_G.md / EF_LOCAL_VALIDATION.md</code>消融解释、G/F0 状态与已有本地验证记录。</div>
+<div><code>experiments/_archive/ABLATION_A_G.md / EF_LOCAL_VALIDATION.md</code>消融解释、G/F0 状态与已有本地验证记录。</div>
 <div><code>protocol/split.csv / queries.csv / candidates.csv</code>本页核对：25,910 / 3,700 / 7,405；2,000 查询，各1,000候选。</div>
 <div><code>README.md / VALIDATION.md</code>主流程说明、指标定义、验证历史；历史版本不能混用。</div>
 </div>

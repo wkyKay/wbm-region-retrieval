@@ -316,7 +316,7 @@ def generate(result_dir, radial_dir, references, output):
            f"- 新面积F/径向F全部组从逐query CSV重新聚合核对的最大误差：`{aggregation_error}`。",
            f"- 从CSV补出的缺失组：`{json.dumps(reconstructed, ensure_ascii=False)}`。",
            f"- 无数据因而保留缺失的组：`{json.dumps(missing, ensure_ascii=False)}`。", "",
-           "所有原始文件只读。参考文档为项目`doc/EXACT_METRICS_MIGRATION.md`，本生成器不改写该文档或替换既有方法。", ""]
+           "所有原始文件只读。参考文档为项目`doc/history/20261116/EXACT_METRICS_MIGRATION.md`，本生成器不改写该文档或替换既有方法。", ""]
     if selection is not None:
         md += ["### 新方案test前冻结记录", "", "```json", json.dumps(selection, ensure_ascii=False, indent=2), "```", ""]
 
