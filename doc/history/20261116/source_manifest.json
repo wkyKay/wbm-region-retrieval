@@ -15,7 +15,7 @@
       "path": "doc/history/20261116/方法指标总览.md",
       "sha256": "9dd8a7c247e7c3369009afa0198fdcc7dbb58272d8d57e24b5ac8e4993f33738"
     },
-    "local_copy_sha256": "6d9263549691417eb520f873cebd16db8dcfda63c382a2b6e4e6c6a71c1ca233",
+    "local_copy_sha256": "ffff47f636ff217f2d0126bd77b4bae31c02363c44205da228c039957de7242c",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/方法指标总览.md",
@@ -40,7 +40,7 @@
       "path": "doc/history/20261116/数据协议迁移.md",
       "sha256": "eb8d1e10824c713dd616e16c2c983a8ea36e75cdcc52b2a98be199cc314c2c83"
     },
-    "local_copy_sha256": "6d9263549691417eb520f873cebd16db8dcfda63c382a2b6e4e6c6a71c1ca233",
+    "local_copy_sha256": "ffff47f636ff217f2d0126bd77b4bae31c02363c44205da228c039957de7242c",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/数据协议迁移.md",
@@ -78,7 +78,7 @@
       "path": "doc/history/20261116/精确评价迁移.md",
       "sha256": "983e4b4355baf1ab846783ec236a097a051999748ff247baef5b1f2735ae765c"
     },
-    "local_copy_sha256": "6d9263549691417eb520f873cebd16db8dcfda63c382a2b6e4e6c6a71c1ca233",
+    "local_copy_sha256": "ffff47f636ff217f2d0126bd77b4bae31c02363c44205da228c039957de7242c",
     "local_copy_note": "已概括整合到项目说明的实验设计、数据与评价、实验结果及历史记录节；原独立 Markdown 已删除，原始实验报告不变",
     "merged_from": {
       "path": "doc/history/20261116/精确评价迁移.md",
@@ -153,25 +153,6 @@
       "sha256": "ac1343d1d53a9a3437a9624377f5657b1349384509cf391be4cb67a90f6b1e75"
     },
     "local_copy_sha256": "5533733dbf0ee04b129f9de2437c1ec76291c26662d6132fa1356ee5cae10db5",
-    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
-  },
-  {
-    "original": "doc/F_BIDIRECTIONAL_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F双向验证.md",
-    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
-    "original_sha256": "7fc952e637c9b4abfc5b1c5f76dad804d4f4a2e658bc83ebcafb3865874b6620",
-    "current_topic": "doc/项目说明.md",
-    "scope": "旧 shape-only F 的 valid 双向评分消融；不是当前几何 F 的消融。",
-    "sources": "artifacts/f_bidirectional_valid_20261111_v1/；模型源 formal_f_exact_20261109_132219/",
-    "followup": "仅 valid 的范围保持不变；“下一步检验径向”已有后续独立实验。",
-    "artifact_references": [],
-    "current_section": "实验结果",
-    "archived_report": {
-      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
-      "path": "doc/history/20261116/旧F双向验证.md",
-      "sha256": "79dfbad77f0916e2968283e2706b137d10fc3bcdf5fd26147657d3b73a0a1c49"
-    },
-    "local_copy_sha256": "8b7c144970a518820c27bf8d11e4f762912edf59fae2ccbe70b301f524102a6c",
     "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
   },
   {
