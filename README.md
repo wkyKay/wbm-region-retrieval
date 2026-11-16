@@ -1,5 +1,7 @@
 # WBM 局部区域检索实验
 
+**最新结果、原始路径和完成状态见 [当前结果总览](results_catalog/CURRENT_RESULTS.md)，自动汇总与时间型 run_id 规则见 [结果登记说明](results_catalog/README.md)。当前主方法为 cc8＋径向位置＋相对面积；融合及组合保留为扩展实验。**
+
 正式评价已迁移到 compared_methods 的完整标签组合 Hit/Precision/Recall/mAP@K；规则、分母和 F 运行方式见 [统一评价说明](doc/EXACT_METRICS_MIGRATION.md)。
 
 

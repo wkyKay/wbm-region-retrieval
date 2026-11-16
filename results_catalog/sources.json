@@ -1,0 +1,1169 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "key": "wu_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wu_valid/valid",
+      "category": "methods",
+      "method": "wu",
+      "variant": "default",
+      "split": "valid",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wu_valid/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wu_valid/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wu",
+      "required_families": [
+        "exact"
+      ]
+    },
+    {
+      "key": "wu_test",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wu_test/test",
+      "category": "methods",
+      "method": "wu",
+      "variant": "default",
+      "split": "test",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wu_test/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wu_test/completed.json",
+      "coverage": {
+        "path": "artifacts/coverage_v1_test_20261109_191909/wu/test",
+        "marker": "artifacts/coverage_v1_test_20261109_191909/wu/completed.json",
+        "manifest": "artifacts/coverage_v1_test_20261109_191909/wu/evaluation_manifest.json"
+      },
+      "supervision": "none",
+      "display": "wu",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "yu_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/yu_valid/valid",
+      "category": "methods",
+      "method": "yu",
+      "variant": "global",
+      "split": "valid",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/yu_valid/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/yu_valid/completed.json",
+      "coverage": null,
+      "supervision": "supervised",
+      "display": "yu",
+      "required_families": [
+        "exact"
+      ]
+    },
+    {
+      "key": "yu_test",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/yu_test/test",
+      "category": "methods",
+      "method": "yu",
+      "variant": "global",
+      "split": "test",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/yu_test/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/yu_test/completed.json",
+      "coverage": {
+        "path": "artifacts/coverage_v1_test_20261109_191909/yu/test",
+        "marker": "artifacts/coverage_v1_test_20261109_191909/yu/completed.json",
+        "manifest": "artifacts/coverage_v1_test_20261109_191909/yu/evaluation_manifest.json"
+      },
+      "supervision": "supervised",
+      "display": "yu",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "wbbs_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_valid/valid",
+      "category": "methods",
+      "method": "wbbs",
+      "variant": "default",
+      "split": "valid",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_valid/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_valid/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wbbs",
+      "required_families": [
+        "exact"
+      ]
+    },
+    {
+      "key": "wbbs_test",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_test_r2/test",
+      "category": "methods",
+      "method": "wbbs",
+      "variant": "default",
+      "split": "test",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_test_r2/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wbbs_test_r2/completed.json",
+      "coverage": {
+        "path": "artifacts/coverage_v1_test_20261109_191909/wbbs/test",
+        "marker": "artifacts/coverage_v1_test_20261109_191909/wbbs/completed.json",
+        "manifest": "artifacts/coverage_v1_test_20261109_191909/wbbs/evaluation_manifest.json"
+      },
+      "supervision": "none",
+      "display": "wbbs",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "nakazawa_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_valid/valid",
+      "category": "methods",
+      "method": "nakazawa",
+      "variant": "default",
+      "split": "valid",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_valid/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_valid/completed.json",
+      "coverage": null,
+      "supervision": "supervised",
+      "display": "nakazawa",
+      "required_families": [
+        "exact"
+      ]
+    },
+    {
+      "key": "nakazawa_test",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_test/test",
+      "category": "methods",
+      "method": "nakazawa",
+      "variant": "default",
+      "split": "test",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_test/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/nakazawa_test/completed.json",
+      "coverage": {
+        "path": "artifacts/coverage_v1_test_20261109_191909/nakazawa/test",
+        "marker": "artifacts/coverage_v1_test_20261109_191909/nakazawa/completed.json",
+        "manifest": "artifacts/coverage_v1_test_20261109_191909/nakazawa/evaluation_manifest.json"
+      },
+      "supervision": "supervised",
+      "display": "nakazawa",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "wmhd_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_valid_r2/valid",
+      "category": "methods",
+      "method": "wmhd",
+      "variant": "default",
+      "split": "valid",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_valid_r2/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_valid_r2/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wmhd",
+      "required_families": [
+        "exact"
+      ]
+    },
+    {
+      "key": "wmhd_test",
+      "repository": "compared_methods",
+      "path": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_test_r2/test",
+      "category": "methods",
+      "method": "wmhd",
+      "variant": "default",
+      "split": "test",
+      "manifest": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_test_r2/evaluation_manifest.json",
+      "marker": "artifacts/formal_exact_20261109_120738/evaluation/wmhd_test_r2/completed.json",
+      "coverage": {
+        "path": "artifacts/coverage_v1_test_20261109_191909/wmhd/test",
+        "marker": "artifacts/coverage_v1_test_20261109_191909/wmhd/completed.json",
+        "manifest": "artifacts/coverage_v1_test_20261109_191909/wmhd/evaluation_manifest.json"
+      },
+      "supervision": "none",
+      "display": "wmhd",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "wapirl_valid",
+      "repository": "compared_methods",
+      "path": "artifacts/wapirl_valid_v1/valid",
+      "category": "methods",
+      "method": "wapirl",
+      "variant": "f_aligned",
+      "split": "valid",
+      "manifest": "artifacts/wapirl_valid_v1/evaluation_manifest.json",
+      "marker": "artifacts/wapirl_valid_v1/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "WaPIRL 整图适配",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "wapirl_test",
+      "repository": "compared_methods",
+      "path": "artifacts/wapirl_test_v1/test",
+      "category": "methods",
+      "method": "wapirl",
+      "variant": "f_aligned",
+      "split": "test",
+      "manifest": "artifacts/wapirl_test_v1/evaluation_manifest.json",
+      "marker": "artifacts/wapirl_test_v1/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "WaPIRL 整图适配",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_cc8_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/cc8/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "cc8_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/cc8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F cc8 径向＋面积",
+      "current_main": true,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_cc8_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/cc8/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "cc8_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/cc8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F cc8 径向＋面积",
+      "current_main": true,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_cc4_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/cc4/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "cc4_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/cc4/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F cc4 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_cc4_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/cc4/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "cc4_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/cc4/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F cc4 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_median8_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/median8/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "median8_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/median8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F median8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_median8_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/median8/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "median8_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/median8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F median8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_opening8_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/opening8/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "opening8_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/opening8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F opening8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_opening8_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/opening8/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "opening8_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/opening8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F opening8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_tv8_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/tv8/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "tv8_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/tv8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F tv8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_tv8_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/tv8/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "tv8_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/tv8/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F tv8 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_npfc_pre_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/npfc_pre/valid/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "npfc_pre_radial_area",
+      "split": "valid",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/npfc_pre/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F npfc_pre 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_geometry_npfc_pre_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_segmentation_radial_area_v1/npfc_pre/test/best_nce",
+      "category": "segmentation",
+      "method": "F",
+      "variant": "npfc_pre_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_segmentation_radial_area_v1/npfc_pre/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F npfc_pre 径向＋面积",
+      "current_main": false,
+      "design_note": "cc8 主方法身份在查看历史 test 后确认；六组固定评分不按各组 test 调参。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.0",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.0",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.0",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.1_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.1",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.1",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.1",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.2_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.2",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.2",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.2",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.3_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.3",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.3",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.3",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.5_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.5",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.5",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.5",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": true,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.75_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_0.75",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.75",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.75",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_1.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/valid/alpha_1.0",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_1.0",
+      "split": "valid",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=1.0",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.0_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/test/alpha_0.0",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.0",
+      "split": "test",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.0",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_0.5_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/test/alpha_0.5",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_0.5",
+      "split": "test",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=0.5",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": true,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_fusion_1.0_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_global_fusion_v1/test/alpha_1.0",
+      "category": "fusion",
+      "method": "F+WaPIRL",
+      "variant": "alpha_1.0",
+      "split": "test",
+      "manifest": "artifacts/f_global_fusion_v1/fusion_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合 α=1.0",
+      "selection": "artifacts/f_global_fusion_v1/selection.json",
+      "selected": false,
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "f_ablation_baseline_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/baseline",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "baseline",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 baseline",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_density_2.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/density_2.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "density_2.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 density_2.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_density_5.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/density_5.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "density_5.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 density_5.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_density_10.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/density_10.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "density_10.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 density_10.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_density_20.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/density_20.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "density_20.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 density_20.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_angular_0.25_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/angular_0.25",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "angular_0.25",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 angular_0.25",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_angular_0.5_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/angular_0.5",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "angular_0.5",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 angular_0.5",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_angular_1.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/angular_1.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "angular_1.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 angular_1.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_angular_2.0_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/angular_2.0",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "angular_2.0",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 angular_2.0",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_optimal_valid",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_valid_v1/valid/optimal",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "optimal",
+      "split": "valid",
+      "manifest": "artifacts/f_fusion_ablation_valid_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 optimal",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_valid_v1/ablation_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_baseline_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_test_v1/test/baseline",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "baseline",
+      "split": "test",
+      "manifest": "artifacts/f_fusion_ablation_test_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 baseline",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_test_v1/test_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_angular_0.5_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_test_v1/test/angular_0.5",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "angular_0.5",
+      "split": "test",
+      "manifest": "artifacts/f_fusion_ablation_test_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 angular_0.5",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_test_v1/test_manifest.json"
+      ]
+    },
+    {
+      "key": "f_ablation_optimal_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_ablation_test_v1/test/optimal",
+      "category": "fusion_ablation",
+      "method": "F+WaPIRL",
+      "variant": "optimal",
+      "split": "test",
+      "manifest": "artifacts/f_fusion_ablation_test_v1/evaluation_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合消融 optimal",
+      "selection": "artifacts/f_fusion_ablation_valid_v1/selection.json",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json",
+        "artifacts/f_fusion_ablation_test_v1/test_manifest.json"
+      ]
+    },
+    {
+      "key": "f_combination_test",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_fusion_combination_test_v1/test/optimal_angular_0.5",
+      "category": "posthoc",
+      "method": "F+WaPIRL",
+      "variant": "optimal_angular_0.5",
+      "split": "test",
+      "manifest": "artifacts/f_fusion_combination_test_v1/combination_manifest.json",
+      "marker": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "融合＋角向＋最优匹配",
+      "posthoc": true,
+      "design_note": "查看前一轮 test 后提出的固定参数组合，无 test 参数搜索。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "supporting_manifests": [
+        "artifacts/f_global_fusion_v1/fusion_manifest.json"
+      ]
+    },
+    {
+      "key": "cross_wu",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/wu/test",
+      "category": "cross_combination",
+      "method": "wu",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/wu/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/wu/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wu",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_yu",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/yu/test",
+      "category": "cross_combination",
+      "method": "yu",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/yu/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/yu/completed.json",
+      "coverage": null,
+      "supervision": "supervised",
+      "display": "yu",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_wbbs",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/wbbs/test",
+      "category": "cross_combination",
+      "method": "wbbs",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/wbbs/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/wbbs/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wbbs",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_nakazawa",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/nakazawa/test",
+      "category": "cross_combination",
+      "method": "nakazawa",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/nakazawa/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/nakazawa/completed.json",
+      "coverage": null,
+      "supervision": "supervised",
+      "display": "nakazawa",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_wmhd",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/wmhd/test",
+      "category": "cross_combination",
+      "method": "wmhd",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/wmhd/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/wmhd/completed.json",
+      "coverage": null,
+      "supervision": "none",
+      "display": "wmhd",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_wapirl",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/wapirl/test",
+      "category": "cross_combination",
+      "method": "wapirl",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/wapirl/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/wapirl/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "wapirl",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "cross_f_radial_area",
+      "repository": "compared_methods",
+      "path": "artifacts/cross_coverage_seven_test_20261111_v1/f_radial_area/test",
+      "category": "cross_combination",
+      "method": "f_radial_area",
+      "variant": "exclude_exact",
+      "split": "test",
+      "manifest": "artifacts/cross_coverage_seven_test_20261111_v1/f_radial_area/evaluation_manifest.json",
+      "marker": "artifacts/cross_coverage_seven_test_20261111_v1/f_radial_area/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "f_radial_area",
+      "protocol": "coverage_cross_combination_v1",
+      "design_note": "F 使用 2026-11-11 旧径向面积模型，不是当前 cc8 分割实验。",
+      "required_families": [
+        "coverage"
+      ]
+    },
+    {
+      "key": "old_f_radial",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_radial_beta1_test_20261111_v1/test",
+      "category": "historical_reference",
+      "method": "F",
+      "variant": "old_f_radial",
+      "split": "test",
+      "manifest": "artifacts/f_radial_beta1_test_20261111_v1/selection_before_test.json",
+      "marker": "artifacts/f_radial_beta1_test_20261111_v1/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "old_f_radial",
+      "design_note": "旧 F 来源，不能替代当前 cc8 主实验。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    },
+    {
+      "key": "old_f_radial_area",
+      "repository": "wbm-region-retrieval",
+      "path": "artifacts/f_radial_area_test_20261111_v1/test",
+      "category": "historical_reference",
+      "method": "F",
+      "variant": "old_f_radial_area",
+      "split": "test",
+      "manifest": "artifacts/f_radial_area_test_20261111_v1/selection_before_test.json",
+      "marker": "artifacts/f_radial_area_test_20261111_v1/completed.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "old_f_radial_area",
+      "design_note": "旧 F 来源，不能替代当前 cc8 主实验。",
+      "required_families": [
+        "exact",
+        "coverage"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # 固定 α=0.5 的四组 valid 消融
 
+2026-11-16 状态核对：服务器对应正式评价已完成，当前成绩和原始路径见 [结果总览](../../../results_catalog/CURRENT_RESULTS.md)。下文本地验证或启动说明保留其当时的范围，不能据此判断远程任务尚未完成。
+
 仅使用冻结的 valid 500个query、3599个gallery，每query对全部3598个候选打分，排除自身。
 复用 cc8 F 的 best_nce 和已完成的 WaPIRL valid 特征，不重训、不改变原有模型/协议/源码/结果。
 入口只有 `--stage valid`，拒绝 test/all，也不提供调整 α 的参数。

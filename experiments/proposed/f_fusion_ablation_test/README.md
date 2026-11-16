@@ -1,5 +1,7 @@
 # 四组融合：冻结 valid 选择后的 test 评价
 
+2026-11-16 状态核对：服务器对应正式评价已完成，当前成绩和原始路径见 [结果总览](../../../results_catalog/CURRENT_RESULTS.md)。下文本地验证或启动说明保留其当时的范围，不能据此判断远程任务尚未完成。
+
 本入口承接 `../f_fusion_ablation/` 已完成的 valid 实验，固定 α=0.5，读取其
 `selection.json`，只评价基线、缺陷占比、外圈角向结构、最优一对一匹配四组。
 不重训、不重新运行 valid、不在 test 上搜索强度；density 与 angular 仍是各自独立的单项实验。
