@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/danini/multi-x.git",
+  "commit": "60f71708a0e02a2a9192f59b6509556137b1fa61",
+  "source_policy": "Upstream source vendored without modifications; local_adapter contains existing local integration. Upstream sample data, IDE state and compiled libraries are excluded from the parent repository.",
+  "original_git_backup": "/Users/kayw/Documents/trae_projects/match-test/.sync-backups/20261116-initial/vendor-author_multi_x.git"
+}

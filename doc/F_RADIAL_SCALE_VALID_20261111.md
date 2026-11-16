@@ -1,0 +1,194 @@
+# 2026-11-11：径向 F 的相对面积与长短轴 valid 对照
+
+本轮已完成三组固定 valid 实验。两个尺度项均改善总体结果；以完整标签组合检索为主要目标时，建议优先保留相对面积。面积组 exact mAP@10 相对径向基线提高 17.7030%，mAP@100 提高 18.3955%；长短轴组 Coverage-nDCG@10 略高，但两尺度组的 Top10 差异不足以断言稳定优胜。
+
+## 固定设置与比较边界
+
+- 500 个固定 valid query，完整 3,599 张 gallery，每 query 排除自身后评分 3,598 个候选；每方法共 1,799,000 个有向图对。保存 Top500，不能称为完整排序文件。
+- 三组都使用原正式 F 的 best_nce（epoch 100）、同一 h512 特征、同一 14,240 个区域、同一 β=1 / 16-bin 径向项、单向贪心一对一匹配和查询原始区域面积平方根加权。
+- 两尺度组共用 σ_s=1.5、λ_s=0.15；没有搜索参数、重训、加入四旋转汇聚或双向评分。本轮未评价 test。
+- 方案在评价前写入 plan_before_evaluation.json。checkpoint SHA-256：`0085bd3b8569fae0969f2cc360fa682424e89f47f93fcc356bc17b1886a406f3`。
+
+令 $A$ 为晶圆 raw∈{1,2} 的有效面积，$a$ 为完整原始区域 mask 面积。面积尺度定义为 $t=\sqrt{a/A}$，距离 $D_{area}=|\ln(t_q/t_c)|=\frac12|\ln((a_q/A_q)/(a_c/A_c))|$。
+
+长短轴从同一完整 mask 的原像素坐标总体协方差 $X^\top X/N$ 计算，$L=\sqrt{(\lambda_{max}+1)/A}$、$S=\sqrt{(\lambda_{min}+1)/A}$；$D_{axes}=0.75|\ln(L_q/L_c)|+0.25|\ln(S_q/S_c)|$。
+
+三组分别使用 $S_{radial}$、$S_{radial}[0.85+0.15e^{-D_{area}/1.5}]$、$S_{radial}[0.85+0.15e^{-D_{axes}/1.5}]$。尺度因子先作用于区域对分数，再执行原贪心匹配。
+
+这里统一的是名义线性尺度单位、容忍参数和融合权重：面积开平方消除平方增长造成的双倍惩罚，轴权重之和为1。保留PDF的“特征值＋1像素²”平滑，因此细小、细长区域的轴响应仍偏弱，不能声称严格等敏感。valid 支撑面积有72种，范围2052–2230，故轴也除以支撑面积平方根；3923/14240个区域的短轴特征值小于1。此方案是对径向F的增量适配，不是PDF原三项加权和。
+
+## 指标口径
+
+沿用 [EXACT_METRICS_MIGRATION.md](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/doc/EXACT_METRICS_MIGRATION.md) 的两组定义。exact_v1要求完整multi-hot组合相同；coverage_v1以查询标签覆盖比例作为线性gain，FullCoverage要求查询标签集合包含于候选标签集合。AP和Recall分母均取完整候选库相关数，AP不用min(R,K)。下表均为query平均、比例值；K固定1、5、10、20、50、100、500。
+
+## 完整总体指标
+
+### exact_v1
+
+| 指标 | 径向 F | 径向 F＋相对面积 | 径向 F＋长短轴 |
+| --- | --- | --- | --- |
+| Hit@1 | 0.422000000 | 0.508000000 | 0.494000000 |
+| Hit@5 | 0.816000000 | 0.852000000 | 0.846000000 |
+| Hit@10 | 0.922000000 | 0.926000000 | 0.930000000 |
+| Hit@20 | 0.970000000 | 0.974000000 | 0.972000000 |
+| Hit@50 | 0.986000000 | 0.996000000 | 0.994000000 |
+| Hit@100 | 0.998000000 | 1.000000000 | 1.000000000 |
+| Hit@500 | 1.000000000 | 1.000000000 | 1.000000000 |
+| Precision@1 | 0.422000000 | 0.508000000 | 0.494000000 |
+| Precision@5 | 0.377200000 | 0.439200000 | 0.432400000 |
+| Precision@10 | 0.355600000 | 0.395400000 | 0.394000000 |
+| Precision@20 | 0.313100000 | 0.351800000 | 0.342300000 |
+| Precision@50 | 0.250240000 | 0.275920000 | 0.268640000 |
+| Precision@100 | 0.203160000 | 0.221280000 | 0.217040000 |
+| Precision@500 | 0.099660000 | 0.104172000 | 0.103044000 |
+| Recall@1 | 0.004829670 | 0.005698357 | 0.005556943 |
+| Recall@5 | 0.021748474 | 0.024756965 | 0.024536353 |
+| Recall@10 | 0.041011766 | 0.044916361 | 0.044890554 |
+| Recall@20 | 0.070790210 | 0.078763681 | 0.076700022 |
+| Recall@50 | 0.134466589 | 0.147844433 | 0.143759518 |
+| Recall@100 | 0.214027861 | 0.233154401 | 0.228459818 |
+| Recall@500 | 0.513650794 | 0.536474747 | 0.530781385 |
+| mAP@1 | 0.004829670 | 0.005698357 | 0.005556943 |
+| mAP@5 | 0.016742399 | 0.020166944 | 0.019760607 |
+| mAP@10 | 0.027902171 | 0.032841692 | 0.032284762 |
+| mAP@20 | 0.042540968 | 0.050272884 | 0.048811809 |
+| mAP@50 | 0.065266638 | 0.077678227 | 0.075108247 |
+| mAP@100 | 0.087064731 | 0.103080728 | 0.099754690 |
+| mAP@500 | 0.135946211 | 0.156255810 | 0.152144874 |
+
+### coverage_v1
+
+| 指标 | 径向 F | 径向 F＋相对面积 | 径向 F＋长短轴 |
+| --- | --- | --- | --- |
+| Coverage-nDCG@1 | 0.793500000 | 0.821166667 | 0.827333333 |
+| Coverage-nDCG@5 | 0.778789091 | 0.806932908 | 0.807184420 |
+| Coverage-nDCG@10 | 0.769071562 | 0.789696808 | 0.791598154 |
+| Coverage-nDCG@20 | 0.751776302 | 0.774078463 | 0.772843359 |
+| Coverage-nDCG@50 | 0.721296866 | 0.740730629 | 0.739781768 |
+| Coverage-nDCG@100 | 0.693516631 | 0.711471114 | 0.710440832 |
+| Coverage-nDCG@500 | 0.664607987 | 0.679253041 | 0.676974554 |
+| MeanCoverage@1 | 0.793500000 | 0.821166667 | 0.827333333 |
+| MeanCoverage@5 | 0.773566667 | 0.802366667 | 0.801766667 |
+| MeanCoverage@10 | 0.761916667 | 0.779783333 | 0.782150000 |
+| MeanCoverage@20 | 0.738133333 | 0.759566667 | 0.757216667 |
+| MeanCoverage@50 | 0.700746667 | 0.718746667 | 0.717323333 |
+| MeanCoverage@100 | 0.668948333 | 0.685525000 | 0.684265000 |
+| MeanCoverage@500 | 0.575955333 | 0.589022000 | 0.586672000 |
+| FullCoverageHit@1 | 0.576000000 | 0.628000000 | 0.636000000 |
+| FullCoverageHit@5 | 0.904000000 | 0.912000000 | 0.906000000 |
+| FullCoverageHit@10 | 0.956000000 | 0.962000000 | 0.962000000 |
+| FullCoverageHit@20 | 0.984000000 | 0.990000000 | 0.986000000 |
+| FullCoverageHit@50 | 0.994000000 | 0.998000000 | 1.000000000 |
+| FullCoverageHit@100 | 0.998000000 | 1.000000000 | 1.000000000 |
+| FullCoverageHit@500 | 1.000000000 | 1.000000000 | 1.000000000 |
+| FullCoveragePrecision@1 | 0.576000000 | 0.628000000 | 0.636000000 |
+| FullCoveragePrecision@5 | 0.541200000 | 0.587600000 | 0.588800000 |
+| FullCoveragePrecision@10 | 0.524000000 | 0.553000000 | 0.557000000 |
+| FullCoveragePrecision@20 | 0.489900000 | 0.521700000 | 0.516700000 |
+| FullCoveragePrecision@50 | 0.440320000 | 0.463200000 | 0.460720000 |
+| FullCoveragePrecision@100 | 0.399540000 | 0.418760000 | 0.417340000 |
+| FullCoveragePrecision@500 | 0.293184000 | 0.305496000 | 0.303424000 |
+| FullCoverageRecall@1 | 0.002427217 | 0.002585228 | 0.002560015 |
+| FullCoverageRecall@5 | 0.011190220 | 0.011740443 | 0.011796320 |
+| FullCoverageRecall@10 | 0.021191651 | 0.021797623 | 0.021897658 |
+| FullCoverageRecall@20 | 0.036426286 | 0.037966024 | 0.037491819 |
+| FullCoverageRecall@50 | 0.069018778 | 0.071644079 | 0.070470634 |
+| FullCoverageRecall@100 | 0.113933060 | 0.118633340 | 0.117544432 |
+| FullCoverageRecall@500 | 0.343773676 | 0.354991709 | 0.352139151 |
+| FullCoverage_mAP@1 | 0.002427217 | 0.002585228 | 0.002560015 |
+| FullCoverage_mAP@5 | 0.009236386 | 0.009929570 | 0.009961273 |
+| FullCoverage_mAP@10 | 0.016279950 | 0.017265268 | 0.017261039 |
+| FullCoverage_mAP@20 | 0.025612427 | 0.027338690 | 0.027072998 |
+| FullCoverage_mAP@50 | 0.041433428 | 0.044493191 | 0.044034364 |
+| FullCoverage_mAP@100 | 0.060508998 | 0.065262628 | 0.064583458 |
+| FullCoverage_mAP@500 | 0.141124784 | 0.151572681 | 0.149880282 |
+
+## 分组结果
+
+下面列主要指标；完整报告列出了每组全部70项指标。
+
+| 分组 | 指标 | 径向 F | 径向 F＋相对面积 | 径向 F＋长短轴 |
+| --- | --- | --- | --- | --- |
+| 37类别宏平均 | mAP@10 | 0.036277581 | 0.041058513 | 0.040642182 |
+| 37类别宏平均 | mAP@100 | 0.098618812 | 0.114771420 | 0.111315632 |
+| 37类别宏平均 | Coverage-nDCG@10 | 0.769087771 | 0.789188745 | 0.791333875 |
+| 单缺陷（98） | mAP@10 | 0.056148493 | 0.065253797 | 0.064720955 |
+| 单缺陷（98） | mAP@100 | 0.145804564 | 0.179592084 | 0.174214918 |
+| 单缺陷（98） | Coverage-nDCG@10 | 0.766763524 | 0.807953619 | 0.813824659 |
+| 混合缺陷（402） | mAP@10 | 0.021016251 | 0.024940234 | 0.024377431 |
+| 混合缺陷（402） | mAP@100 | 0.072745070 | 0.084428705 | 0.081602694 |
+| 混合缺陷（402） | Coverage-nDCG@10 | 0.769634218 | 0.785246143 | 0.786179752 |
+| 2类缺陷（179） | mAP@10 | 0.024564144 | 0.031137548 | 0.030020722 |
+| 2类缺陷（179） | mAP@100 | 0.088360991 | 0.108840254 | 0.104195968 |
+| 2类缺陷（179） | Coverage-nDCG@10 | 0.782617255 | 0.810212182 | 0.815316101 |
+| 3类缺陷（167） | mAP@10 | 0.019833877 | 0.021716404 | 0.021689761 |
+| 3类缺陷（167） | mAP@100 | 0.064343156 | 0.069382102 | 0.067723623 |
+| 3类缺陷（167） | Coverage-nDCG@10 | 0.770319572 | 0.776446057 | 0.775527574 |
+| 4类缺陷（56） | mAP@10 | 0.013201674 | 0.014744884 | 0.014354071 |
+| 4类缺陷（56） | mAP@100 | 0.047885602 | 0.051270051 | 0.050774278 |
+| 4类缺陷（56） | Coverage-nDCG@10 | 0.726091050 | 0.731687095 | 0.724813810 |
+
+## 差异判断
+
+两种尺度项相对径向基线：总体 exact 28项中27项提高、1项持平；coverage 42项中41项提高、1项持平，没有总体指标下降。持平项分别为 Hit@500 和 FullCoverageHit@500，原本均为1。分组和逐查询并非全部提高。
+
+相对面积组 Hit@1 从0.422升至0.508（+8.6个百分点），Precision@10从0.3556升至0.3954（+3.98个百分点）。混合缺陷 exact mAP@10从0.021016251升至0.024940234，mAP@100从0.072745070升至0.084428705。
+
+面积组在总体exact的多数指标上高于长短轴组，但Hit@10为0.926，低于长短轴0.930。长短轴组Coverage-nDCG@10高0.001901346，FullCoverage_mAP@10两者几乎相同。
+
+4类缺陷查询上，长短轴组Coverage-nDCG@10为0.724813810，低于径向基线0.726091050；面积组为0.731687095。该组只有56个查询，不应仅凭这一个点估计宣称普遍退化或优势。 面积组也并非所有子指标提高：3类查询的exact Hit@10/@20和FullCoverageHit@10各下降约0.599个百分点；4类查询Coverage-nDCG@1与MeanCoverage@1下降约0.893个百分点。两方案总体及混合缺陷汇总的70项指标均无下降，但不能据此声称每个复杂度、每类或每个查询都改善。
+
+配对bootstrap使用相同query ID对齐、2000次重抽样、seed=2026，下面区间是指标原始比例值之差。它只描述固定查询下的差异，不包含跨训练seed、checkpoint选择或多轮valid调参的不确定性，未做多重比较校正。
+
+| 配对比较 | 指标 | 均值差 | 95%区间 |
+| --- | --- | --- | --- |
+| 径向 F＋相对面积−径向 | mAP@10 | +0.004939522 | [+0.004107154, +0.005858017] |
+| 径向 F＋相对面积−径向 | mAP@100 | +0.016015997 | [+0.013744921, +0.018193281] |
+| 径向 F＋相对面积−径向 | Coverage-nDCG@10 | +0.020625246 | [+0.014587472, +0.026664851] |
+| 径向 F＋相对面积−径向 | FullCoverage_mAP@10 | +0.000985317 | [+0.000635638, +0.001343277] |
+| 径向 F＋长短轴−径向 | mAP@10 | +0.004382591 | [+0.003575031, +0.005230073] |
+| 径向 F＋长短轴−径向 | mAP@100 | +0.012689959 | [+0.010614457, +0.014787427] |
+| 径向 F＋长短轴−径向 | Coverage-nDCG@10 | +0.022526591 | [+0.017014811, +0.028586037] |
+| 径向 F＋长短轴−径向 | FullCoverage_mAP@10 | +0.000981089 | [+0.000707836, +0.001256643] |
+| 面积−长短轴 | mAP@10 | +0.000556930 | [-0.000100155, +0.001237553] |
+| 面积−长短轴 | mAP@100 | +0.003326038 | [+0.002153457, +0.004612460] |
+| 面积−长短轴 | Coverage-nDCG@10 | -0.001901346 | [-0.006900562, +0.002883137] |
+| 面积−长短轴 | FullCoverage_mAP@10 | +0.000004228 | [-0.000312070, +0.000324931] |
+
+面积相对长短轴的mAP@10和Coverage-nDCG@10区间都跨0，不能把Top10微小差异解释为可靠胜出；mAP@100的面积优势区间为[0.002153457, 0.004612460]，在这组固定查询上证据更明确。因此当前建议优先选择结构更简单、完整组合检索更强的面积项，长短轴保留作对照。选择依据仅为valid，本轮不启动test。
+
+## 验证与可复现文件
+
+- 本地21项数值/兼容性检查通过：尺度量纲、+1位置、旋转平移不变性、退化轴有限值、零权重恢复、径向及已有双向工具。
+- 原始区域全部重新提取并逐像素核对；径向直方图与原缓存完全一致。三种评分各256对独立标量匹配对照，最大误差4.44e-16。
+- 径向基线500份Top500排名和分数字节一致，28项exact指标完全复现旧valid结果。
+- 独立程序从750,000条保存排名重算三组70项指标及8分组，总共1680个汇总数，最大绝对误差2.22e-16。全部身份、自身排除、排名顺序检查通过。
+- 旧数据、模型、缓存、固定协议和受保护代码的hash及mtime未变。补充审计确认旧特征缓存与当前suite/缓存签名一致。服务器评价耗时83.737秒（含几何、标量对照和两组指标），本地独立排名复核2.466秒。
+
+- [完整三方法×70指标×8分组报告](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/report.md)
+- [全部1680行指标与差值CSV](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/comparison_long.csv)
+- [逐查询配对区间：两尺度对径向](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/paired_bootstrap.csv)
+- [逐查询配对区间：面积对长短轴](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/paired_area_vs_axes.json)
+- [冻结方案](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/plan_before_evaluation.json)
+- [独立排名复核](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/independent_verification.json)
+- [来源身份审计](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/source_identity_audit.json)
+- [数值测试与下载核验](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/local_validation.json)
+- [评价脚本](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/scripts/evaluate_f_scale_valid.py)
+- [独立核验脚本](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/scripts/verify_f_scale_valid.py)
+- [完整报告生成脚本](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/scripts/report_f_scale_valid.py)
+
+各方法目录另保留metrics.json、coverage_metrics.json、per_query.csv、coverage_per_query.csv、per_class.csv、coverage_per_class.csv以及Top500排名。
+
+远程运行位置：`/data/wangkaiyan2024/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/`。本地保存完整本轮产物。
+
+复现命令（远程项目根目录，输出必须改用未存在的新目录）：
+
+```bash
+/home/wangkaiyan2024/miniconda3/envs/wbm/bin/python scripts/evaluate_f_scale_valid_20261111.py \
+  --source-run artifacts/formal_f_exact_20261109_132219/run \
+  --valid-run artifacts/f_inference_ablations_valid_20261111_v1 \
+  --data-file /data/wangkaiyan2024/data/wm38k/Wafer_Map_Datasets.npz \
+  --compared-root /data/wangkaiyan2024/compared_methods \
+  --implementation scripts/evaluate_f_inference_ablations_20261111.py \
+  --output-dir artifacts/<NEW_SCALE_VALID_RUN>
+```

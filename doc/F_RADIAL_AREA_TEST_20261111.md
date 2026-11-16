@@ -1,0 +1,169 @@
+# 2026-11-11：径向 F＋相对面积完整 test 与八方法对比
+
+已完成全部7,199个test查询，每查询对排除自身后的7,198个候选评分，共51,818,402个有向图对。沿用本次valid确定的参数，只运行径向F＋相对面积这一方案，没有test参数搜索或模型重训。
+
+新方案相对当前径向F：exact mAP@10提高18.69%，mAP@100提高21.57%，Coverage-nDCG@10提高2.0883个百分点。主要总体指标在八方法中仍为第三，位于Nakazawa CNN、WBBS之后。混合缺陷整体也改善，但不能声称全部子组或全部指标都领先。
+
+## 冻结方案
+
+- 正式F：seed=2026，best_nce，epoch100；checkpoint SHA-256为 `0085bd3b8569fae0969f2cc360fa682424e89f47f93fcc356bc17b1886a406f3`。
+- 径向β=1，16 bins；面积尺度σ=1.5，融合权重λ_s=0.15，全部沿用valid。
+- 复用同一checkpoint已归一化的h512 test特征，保留原区域、单向贪心一对一匹配及查询原始区域面积平方根加权；全部候选重新评分。
+- 有效晶圆面积A为原图像素值1或2的数量，区域面积a来自完整原始mask；本轮有28,517个区域。
+
+令 $r=a/A$，$D_{area}=\frac12|\ln(r_q/r_c)|$。区域对分数为：
+
+$$S_{new}=\operatorname{clip}(\cos(h_q,h_c),0,1)e^{-D_{radial}}\left[0.85+0.15e^{-D_{area}/1.5}\right].$$
+
+面积开平方后采用线性尺度单位；本次不使用长短轴，因此PDF的PCA“＋1”平滑不参与本轮评分。没有新增四旋转汇聚、双向评分、区域筛选或匹配阈值。
+
+本轮选型依据 [valid完整对照](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/doc/F_RADIAL_SCALE_VALID_20261111.md)，在用户选择面积方案后于新test评分前冻结设置，记录见 [selection_before_test.json](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json)。
+
+## 两组评价定义
+
+指标沿用 [EXACT_METRICS_MIGRATION.md](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/doc/EXACT_METRICS_MIGRATION.md)；K为1、5、10、20、50、100、500。
+- exact_v1：完整multi-hot标签组合相同为相关，报告Hit、Precision、Recall、mAP。
+- coverage_v1：查询类别覆盖比例为线性gain；FullCoverage要求Lq⊆Lc，报告Coverage-nDCG、MeanCoverage及四项FullCoverage指标。
+- 两组AP与Recall的分母均来自完整固定候选库，AP不使用min(R,K)。保存Top500，不将其称为全部候选的完整排行。
+- 本文总体表为query平均；完整报告另列37类别宏平均、单/混合缺陷及缺陷类别数1–4分组。九位小数仅作展示，CSV/JSON保留原始精度。
+
+## 新方案完整总体指标
+
+### exact_v1
+
+| K | Hit | Precision | Recall | mAP |
+| --- | --- | --- | --- | --- |
+| 1 | 0.553965829 | 0.553965829 | 0.002923185 | 0.002923185 |
+| 5 | 0.881928046 | 0.495457702 | 0.013113799 | 0.010764629 |
+| 10 | 0.949298514 | 0.460480622 | 0.024413770 | 0.018205384 |
+| 20 | 0.980691763 | 0.415099319 | 0.044013903 | 0.029794277 |
+| 50 | 0.994860397 | 0.345670232 | 0.090530792 | 0.052522575 |
+| 100 | 0.999027643 | 0.287135713 | 0.148442155 | 0.074827352 |
+| 500 | 1.000000000 | 0.153944992 | 0.392059265 | 0.133573685 |
+
+### coverage_v1
+
+| K | Coverage-nDCG | MeanCoverage | FullCoverageHit | FullCoveragePrecision | FullCoverageRecall | FullCoverage_mAP |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 0.850916794 | 0.850916794 | 0.667731629 | 0.667731629 | 0.001198726 | 0.001198726 |
+| 5 | 0.835091373 | 0.830251887 | 0.922767051 | 0.630670927 | 0.005586445 | 0.004793772 |
+| 10 | 0.823769419 | 0.816341390 | 0.969856925 | 0.606473121 | 0.010617083 | 0.008495210 |
+| 20 | 0.807877471 | 0.797407626 | 0.989581886 | 0.574753438 | 0.019658429 | 0.014711613 |
+| 50 | 0.779290515 | 0.763926008 | 0.997360745 | 0.523447701 | 0.041465427 | 0.027775810 |
+| 100 | 0.750798253 | 0.732465041 | 0.999722184 | 0.478244201 | 0.070058790 | 0.042439874 |
+| 500 | 0.690252084 | 0.644320068 | 1.000000000 | 0.364712043 | 0.225124115 | 0.106272751 |
+
+## 相对当前径向F
+
+| 指标 | 当前径向F | 径向F＋相对面积 | 变化（百分点） | 相对变化 |
+| --- | --- | --- | --- | --- |
+| Hit@1 | 0.496318933 | 0.553965829 | +5.764690 | +11.6149% |
+| Precision@10 | 0.406153632 | 0.460480622 | +5.432699 | +13.3760% |
+| mAP@10 | 0.015338638 | 0.018205384 | +0.286675 | +18.6897% |
+| mAP@100 | 0.061550303 | 0.074827352 | +1.327705 | +21.5711% |
+| mAP@500 | 0.112855788 | 0.133573685 | +2.071790 | +18.3579% |
+| Coverage-nDCG@10 | 0.802886554 | 0.823769419 | +2.088286 | +2.6010% |
+| FullCoverage_mAP@10 | 0.007948898 | 0.008495210 | +0.054631 | +6.8728% |
+| FullCoverageRecall@500 | 0.217207935 | 0.225124115 | +0.791618 | +3.6445% |
+
+总体70项：67项提高、2项持平、1项下降。持平为Hit@500和FullCoverageHit@500，均已为1；下降是FullCoverageHit@20，由0.989720795变为0.989581886，净少命中1/7199个query。不能表述为所有总体指标提高。
+
+## 与另外六方法的总体对比
+
+主集合共八种方案：新面积F、当前径向F及六种外部方法。以下按exact mAP@10排列；表中多数主要指标次序一致，个别指标不能据此推断。
+
+| 方法 | Hit@1 | Precision@10 | mAP@10 | mAP@100 | Coverage-nDCG@10 | FullCoverage_mAP@10 | FullCoverageRecall@500 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Nakazawa CNN | 0.865259064 | 0.855090985 | 0.042395176 | 0.373380197 | 0.959433873 | 0.016764650 | 0.434948646 |
+| WBBS | 0.671482150 | 0.581289068 | 0.024799340 | 0.132996225 | 0.878320277 | 0.010533433 | 0.286166182 |
+| 径向F＋相对面积 | 0.553965829 | 0.460480622 | 0.018205384 | 0.074827352 | 0.823769419 | 0.008495210 | 0.225124115 |
+| 当前径向F | 0.496318933 | 0.406153632 | 0.015338638 | 0.061550303 | 0.802886554 | 0.007948898 | 0.217207935 |
+| Yu | 0.408528962 | 0.351729407 | 0.013239941 | 0.038100761 | 0.736097552 | 0.007419509 | 0.049693391 |
+| WaPIRL | 0.417141270 | 0.345617447 | 0.013049122 | 0.053688067 | 0.728634236 | 0.006848469 | 0.192725202 |
+| Wu | 0.324211696 | 0.263550493 | 0.009144805 | 0.037027217 | 0.708569108 | 0.004470178 | 0.147566189 |
+| WMHD | 0.011112655 | 0.014529796 | 0.001609337 | 0.010472132 | 0.099096727 | 0.001921731 | 0.195213946 |
+
+在总体70项指标上，新面积F对Wu、Yu、WMHD全部更高，对WaPIRL为68项更高、2项持平。相对WBBS，exact mAP@10仍低0.006593956，mAP@100仍低0.058168873，Coverage-nDCG@10低5.4551个百分点。面积项使与WBBS的mAP@10差距缩小30.30%、Coverage-nDCG@10差距缩小27.68%，但尚未整体超过WBBS。
+
+新方法有6项总体指标略高于WBBS：exact Hit@100/@500和FullCoverageHit@20/@50/@100/@500。它们接近饱和，优势仅相当于1–3个query，不能以此概括为检索排序质量超过WBBS。
+
+所有方法读取同一去重test协议；各方法的监督信息和valid选择过程不同，不称为全过程无标签的统一比较，也不从本轮单checkpoint比较推断跨训练seed结论。最初原F只作为完整报告中的附加参考，不参与八方法名次。
+
+## 分组分析
+
+| 分组 | 指标 | 当前径向F | 径向F＋相对面积 | 相对变化 |
+| --- | --- | --- | --- | --- |
+| 37类别宏平均 | mAP@10 | 0.021928671 | 0.024847814 | +13.3120% |
+| 37类别宏平均 | mAP@100 | 0.078073365 | 0.091702862 | +17.4573% |
+| 37类别宏平均 | Coverage-nDCG@10 | 0.805293928 | 0.825854067 | +2.5531% |
+| 单缺陷（1399） | mAP@10 | 0.026547941 | 0.032329714 | +21.7786% |
+| 单缺陷（1399） | mAP@100 | 0.104752249 | 0.133025217 | +26.9903% |
+| 单缺陷（1399） | Coverage-nDCG@10 | 0.846500198 | 0.877112249 | +3.6163% |
+| 混合缺陷（5800） | mAP@10 | 0.012634877 | 0.014798499 | +17.1242% |
+| 混合缺陷（5800） | mAP@100 | 0.051129696 | 0.060789626 | +18.8930% |
+| 混合缺陷（5800） | Coverage-nDCG@10 | 0.792366642 | 0.810902760 | +2.3393% |
+| 2类缺陷（2600） | mAP@10 | 0.014743900 | 0.018090300 | +22.6968% |
+| 2类缺陷（2600） | mAP@100 | 0.063291491 | 0.079094918 | +24.9693% |
+| 2类缺陷（2600） | Coverage-nDCG@10 | 0.809025074 | 0.834634722 | +3.1655% |
+| 3类缺陷（2400） | mAP@10 | 0.011478121 | 0.012768628 | +11.2432% |
+| 3类缺陷（2400） | mAP@100 | 0.042427271 | 0.047646987 | +12.3027% |
+| 3类缺陷（2400） | Coverage-nDCG@10 | 0.783006026 | 0.796600104 | +1.7361% |
+| 4类缺陷（800） | mAP@10 | 0.009250820 | 0.010189756 | +10.1498% |
+| 4类缺陷（800） | mAP@100 | 0.037711136 | 0.040725344 | +7.9929% |
+| 4类缺陷（800） | Coverage-nDCG@10 | 0.766308583 | 0.776681851 | +1.3537% |
+
+混合缺陷5800个query的70项汇总均没有下降；主要exact mAP@10和mAP@100分别提高17.12%和18.89%。2/3/4类缺陷的主要mAP和Coverage-nDCG均提升。仍须保留以下限制：
+
+- 4类缺陷exact mAP@10为0.010189756，低于Yu的0.011524769，该项排第四。
+- 单缺陷FullCoverage_mAP@10为0.014985312，低于WaPIRL的0.015759603。
+- 单缺陷exact Hit@20小幅下降；2类和3类的部分FullCoverageHit也下降。总体或mixed提升不等于所有子组每项均提高。
+
+## 配对差异区间
+
+新方案与当前径向F逐query配对，2000次bootstrap，seed=2026；以下为全部test查询，单位为原始指标比例差。单/混合缺陷区间完整保存在报告中。
+
+| 指标 | 面积−径向 | 95%区间 | 改善/下降/相同query数 |
+| --- | --- | --- | --- |
+| mAP@10 | +0.002866746 | [+0.002740495, +0.002997400] | 4615/1889/695 |
+| mAP@100 | +0.013277049 | [+0.012842518, +0.013731356] | 5746/1444/9 |
+| Coverage-nDCG@10 | +0.020882865 | [+0.019466644, +0.022333809] | 4069/2157/973 |
+| FullCoverage_mAP@10 | +0.000546312 | [+0.000500040, +0.000599087] | 3896/2098/1205 |
+
+四项主要指标在总体、单缺陷、混合缺陷的12个配对区间均为正，支持面积项在当前固定查询下带来改善。区间不包含跨训练seed、valid方案选择的不确定性，未作多重比较校正；未对六种外部方法作配对显著性检验。
+
+## 验证和文件
+
+- 21项已有尺度/径向/匹配相关数值检查通过；独立指标核验器自测通过。
+- 32个valid面积查询与32个既有test径向查询的Top500候选身份和分数重放一致，最大分数误差0。
+- 全部7199张图的28517个区域重新提取并逐像素核对，径向直方图与已验证缓存一致；相对面积与原始mask/support计数完全一致。
+- 1024个独立标量匹配对照通过，最大误差5.55e-16。
+- 独立程序重算全部3,599,500条保存排名，核对70项指标×8分组共560项汇总数，最大绝对误差3.33e-16；自排除、身份与排名顺序检查通过。
+- 原始数据、固定协议、原checkpoint、缓存、脚本与已有结果均有哈希及mtime前后保护；对比参考14份指标文件哈希一致。服务器评价702.234秒，本地独立复核10.446秒。
+
+- [全部新方案指标、八方法70项并列、分组及配对区间](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/report.md)
+- [全部总体指标CSV（八主方法＋原F附加参考）](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/overall_metrics.csv)
+- [完整分组CSV：5040行](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/grouped_metrics.csv)
+- [新方法相对各方法差值CSV：4480行](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/new_vs_methods.csv)
+- [配对bootstrap](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/paired_bootstrap.csv)
+- [冻结设置](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json)
+- [独立复核](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/independent_verification.json)
+- [test原始产物](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/test)
+- [评价脚本](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/scripts/evaluate_f_radial_area_test.py)
+- [报告生成脚本](/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/scripts/report_f_radial_area_test.py)
+
+每个test产物保留两组逐query和逐类别CSV、JSON，以及Top500排名。远程原始运行目录为 `/data/wangkaiyan2024/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/`。
+
+复现命令（远程项目根目录，output须使用未存在的新目录）：
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 /home/wangkaiyan2024/miniconda3/envs/wbm/bin/python scripts/evaluate_f_radial_area_test_20261111.py \
+  --source-run artifacts/formal_f_exact_20261109_132219/run \
+  --valid-run artifacts/f_radial_scale_valid_20261111_v1 \
+  --radial-valid-run artifacts/f_inference_ablations_valid_20261111_v1 \
+  --radial-test-run artifacts/f_radial_beta1_test_20261111_v1 \
+  --data-file /data/wangkaiyan2024/data/wm38k/Wafer_Map_Datasets.npz \
+  --compared-root /data/wangkaiyan2024/compared_methods \
+  --scale-implementation scripts/evaluate_f_scale_valid_20261111.py \
+  --radial-implementation scripts/evaluate_f_inference_ablations_20261111.py \
+  --output-dir artifacts/<NEW_RADIAL_AREA_TEST>
+```

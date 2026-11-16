@@ -3,3 +3,17 @@ __pycache__/
 *.pyc
 artifacts/
 .DS_Store
+
+# Runtime output and local tooling
+*.log
+.pytest_cache/
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Vendored Multi-X: preserve source, exclude upstream IDE/sample data and binaries
+/scripts/geometric_region_audit/author_multi_x/.vs/
+/scripts/geometric_region_audit/author_multi_x/data/
+/scripts/geometric_region_audit/author_multi_x/local_adapter/*.dylib
+/scripts/geometric_region_audit/author_multi_x/local_adapter/*.so

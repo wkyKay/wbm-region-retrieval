@@ -1,0 +1,214 @@
+# Problem Formulation and Methods 初稿
+
+> 版本说明：本稿按当前项目状态撰写，采用 **Proposed F 为正式主方法**、`coverage_v1` 为主评价口径、`exact_v1` 为严格参考的论文定位。方括号中的内容是后续需要作者确认或补充的论文口径，不代表最终表述。
+
+## 2. Problem Formulation
+
+### 2.1 数据表示与任务输入
+
+设第 \(i\) 张晶圆图为
+
+\[
+X_i\in\{0,1,2,3\}^{H\times W},
+\]
+
+其中 \(H=W=52\)，像素值沿用 Mixed-WM38 的原始编码。与每张图对应的缺陷标签为八维 multi-hot 向量
+
+\[
+\mathbf y_i\in\{0,1\}^{8},\qquad
+T_i=\{k\mid y_{i,k}=1\},
+\]
+
+标签顺序固定为 `center, donut, edge-loc, edge-ring, loc, near-full, scratch, random`。本文关注非空缺陷图；Normal 图不进入缺陷检索 gallery。由原始缺陷像素得到二值缺陷掩膜
+
+\[
+D_i(u,v)=\mathbb{1}[X_i(u,v)=2].
+\]
+
+给定一张 query 晶圆 \(q\) 和一张 candidate 晶圆 \(c\)，系统需要计算一个有方向的相似度 \(S(q,c)\)，并对固定候选库进行排序。任务的应用目标是：query 中出现的缺陷模式和局部区域应尽可能在 candidate 中得到覆盖；candidate 可以包含 query 中没有的额外缺陷。因此，检索关系具有方向性，通常有
+
+\[
+S(q,c)\neq S(c,q).
+\]
+
+这一定义区别于只判断“两张图是否完全同类”的普通图像检索任务。
+
+### 2.2 区域集合与有向覆盖目标
+
+对每张晶圆图，在 \(D_i\) 上使用八连通连通域提取缺陷区域。面积小于 5 个像素的连通域被过滤；按照面积降序排列后，每张图最多保留 4 个区域。记 query 和 candidate 的区域集合分别为
+
+\[
+\mathcal Q=\{q_a\}_{a=1}^{m},\qquad
+\mathcal C=\{c_b\}_{b=1}^{n},
+\]
+
+其中每个区域包含二值 mask、面积 \(A_a\) 或 \(A_b\)，以及由晶圆中心和半径归一化得到的位置和尺度信息。区域 proposal 阶段不使用学习型分割器，也不执行腐蚀、填孔或基于缺陷类别的规则修正。
+
+设 \(f_\theta(\cdot)\) 为区域编码器，区域 \(q_a\) 和 \(c_b\) 的 512 维表征分别为 \(h^q_a=f_\theta(q_a)\) 和 \(h^c_b=f_\theta(c_b)\)。当前正式主方法采用截断余弦相似度作为区域对分数：
+
+\[
+s_{ab}=\max\left(0,\frac{h^q_a{}^{\top}h^c_b}
+{\lVert h^q_a\rVert_2\lVert h^c_b\rVert_2}\right).
+\]
+
+在实现中，区域对按 \(s_{ab}\) 从高到低排序，并依次执行贪心的一对一分配：只有当 query 区域 \(q_a\) 和 candidate 区域 \(c_b\) 都尚未被使用，且 \(s_{ab}\geq\tau\) 时，才接受该匹配。正式配置中 \(\tau=0\)。记得到的匹配集合为 \(M(\mathcal Q,\mathcal C)\)。该过程限制一个区域最多参与一次匹配，但不是 Hungarian 最大权匹配。
+
+晶圆级检索分数定义为 query 侧的面积加权匹配分数：
+
+\[
+S(\mathcal Q,\mathcal C)=
+\frac{\displaystyle\sum_{(a,b)\in M(\mathcal Q,\mathcal C)}
+\sqrt{A_a}\,s_{ab}}
+{\displaystyle\sum_{a=1}^{m}\sqrt{A_a}}.
+\]
+
+当 query 没有保留区域时，分数定义为 0。未匹配的 query 区域在分子中贡献 0；candidate 中多出的区域不进入分母，因而不会直接降低 \(S(\mathcal Q,\mathcal C)\)。这使得该分数实现了“覆盖 query、允许 candidate 额外含有缺陷”的有向检索假设。位置和尺度 affinity 已在代码中实现为可选项，但正式主结果固定为 shape-only，即 \(\lambda_{pos}=\lambda_{scale}=0\)。
+
+需要区分检索排序分数与评价标签：区域匹配由图像形态表征产生，数据集只提供晶圆级 multi-hot 标签，并没有区域级语义对应真值。因此，\(S(\mathcal Q,\mathcal C)\) 是用于排序的模型分数，而不是区域覆盖率的人工标注；coverage_v1 仅在晶圆级标签上评价检索结果。
+
+### 2.3 相关性定义与评价目标
+
+本文以有向缺陷覆盖为主任务，因此将 `coverage_v1` 作为主评价协议；同时保留 `exact_v1` 作为严格、可复现的同组合参考。
+
+首先，与有向覆盖目标一致的 coverage 相关性为
+
+\[
+\rho_{cov}(q,c)=\frac{|T_q\cap T_c|}{|T_q|},\qquad
+\rho_{full}(q,c)=\mathbb{1}[T_q\subseteq T_c].
+\]
+
+该定义允许 candidate 含有 query 没有的额外标签，并且满足 \(\rho_{cov}(q,c)\neq\rho_{cov}(c,q)\)。`coverage_v1` 使用 \(\rho_{cov}\) 衡量前 \(K\) 个结果的部分覆盖质量，并使用 \(\rho_{full}\) 计算完整覆盖的 AP 和 Recall。
+
+为避免不同方法对“部分相关”的解释差异，`exact_v1` 将完整八维 multi-hot 组合完全相同定义为正样本：
+
+\[
+\rho_{exact}(q,c)=\mathbb{1}[\mathbf y_q=\mathbf y_c].
+\]
+
+`exact_v1` 报告 Hit@\(K\)、Precision@\(K\)、Recall@\(K\) 和 mAP@\(K\)，其中 \(K\in\{1,5,10,20,50,100,500\}\)。AP 和 Recall 的相关样本数取完整 gallery 中的相关数量，而不是返回的 Top-\(K\) 截断数量；没有相关候选的 query 不参与 Recall 和 AP 的均值，但仍参与 Hit 和 Precision 的均值。`coverage_v1` 与 `exact_v1` 使用同一批固定排名，但前者衡量部分覆盖和完整覆盖，后者只衡量完整标签组合相同。
+
+令第 \(r\) 个返回结果的相关性为 \(rel(r)\in\{0,1\}\)，令完整 gallery 中的相关样本数为 \(R\)，则
+
+\[
+Hit@K=\mathbb{1}\left[\sum_{r=1}^{K}rel(r)>0\right],\quad
+Precision@K=\frac{1}{K}\sum_{r=1}^{K}rel(r),\quad
+Recall@K=\frac{1}{R}\sum_{r=1}^{K}rel(r),
+\]
+
+\[
+AP@K=\frac{1}{R}\sum_{r=1}^{K}Precision@r\cdot rel(r).
+\]
+
+
+
+## 3. Methods
+
+### 3.1 总体流程
+
+本文方法由四个阶段组成：
+
+1. 从原始晶圆图提取缺陷连通域，并为每个区域构造局部输入；
+2. 使用区域级两视图自监督学习训练共享编码器，得到区域 embedding；
+3. 对 query 和 candidate 的区域 embedding 计算相似度，并进行贪心一对一匹配；
+4. 将匹配结果聚合为有方向的晶圆级分数，在冻结 gallery 上完成排序和评价。
+
+训练阶段不需要区域级对应标注。部署阶段只使用编码器输出的 512 维 GAP 特征；用于训练对比损失的 projector 不参与最终检索。
+
+### 3.2 区域 proposal 与 Proposed F 输入构造
+
+本文正式主方法采用 F 变体。对于每个保留区域，首先计算其 mask 的质心，并将质心四舍五入到原始 52×52 网格上的整数位置。以该位置为中心截取 52×52 固定窗口；当窗口超出原始晶圆边界时，在窗口外侧补零。窗口包含三个通道：
+
+\[
+P^{(1)}=\mathbb{1}[X=2],\qquad
+P^{(2)}=\mathbb{1}[\text{pixel belongs to the target component}],
+\]
+
+\[
+P^{(3)}=\mathbb{1}[X\in\{1,2\}].
+\]
+
+第一通道描述窗口内的全部缺陷，第二通道标识当前待编码的目标区域，第三通道保留有效晶圆范围。三个通道分别使用最近邻插值缩放到 96×96，形成 \(3\times96\times96\) 的区域输入。训练和测试时只使用随机 90° 旋转作为几何增强；F 不使用主实验中的开运算、尺度变化或平移增强。
+
+该固定窗口将目标区域、周围缺陷和晶圆边界信息同时提供给编码器，但偏心或过大的区域可能被窗口截断。代码对每个区域记录截断比例，且匹配阶段仍使用原始区域面积，而不是截断后的像素数。
+
+### 3.3 区域级自监督表征学习
+
+#### 3.3.1 编码器
+
+区域编码器为 ResNet-18 风格的卷积网络，残差阶段配置为 \([2,2,2,2]\)。F 的第一层为 3 输入通道、7×7 卷积、stride=1，随后为 3×3 max-pooling 和四个残差阶段。最后使用 global average pooling 得到 512 维特征：
+
+\[
+h=f_\theta(P)\in\mathbb R^{512}.
+\]
+
+网络权重采用与 WaPIRL 对齐的初始化方式。局部检索只使用 (h)，不使用训练 projector 的输出。
+
+#### 3.3.2 两视图 NCE 目标
+
+对每个训练区域 (u)，保留一个原始视图 (P_u)，并生成一个增强视图 \(\widetilde P_u\)。线性 projector (g_\phi:\mathbb R^{512}\rightarrow\mathbb R^{128}) 将二者映射为
+
+\[
+z_u=g_\phi(f_\theta(P_u)),\qquad
+\widetilde z_u=g_\phi(f_\theta(\widetilde P_u)).
+\]
+
+为每个训练区域维护一个 memory-bank 向量 (m_u)。对于一个正视图 (v_u\in\{z_u,\widetilde z_u\})，从排除当前 batch 的 memory bank 中有放回采样负样本集合 \(\mathcal N_u\)，并定义
+
+\[
+\ell_u(v_u)=-\log
+\frac{\exp(\operatorname{cos}(m_u,v_u)/\tau)}
+{\exp(\operatorname{cos}(m_u,v_u)/\tau)+
+\sum_{k\in\mathcal N_u}\exp(\operatorname{cos}(m_k,v_u)/\tau)}.
+\]
+
+一个 batch 的训练损失为两种视图损失的等权平均：
+
+\[
+\mathcal L_{NCE}=\frac{1}{2|\mathcal B|}
+\sum_{u\in\mathcal B}
+\left[\ell_u(z_u)+\ell_u(\widetilde z_u)\right].
+\]
+
+正式 F 配置使用温度 \(\tau=0.07\)、5,000 个有放回负样本和 memory momentum \(\mu=0.5\)。训练开始前，memory bank 使用全部训练区域的一次前向结果初始化；每次更新后，仅使用原始视图的投影更新对应条目：
+
+\[
+m_u\leftarrow \mu m_u+(1-\mu)z_u.
+\]
+
+余弦相似度计算时进行归一化，但 memory 更新保存的是未归一化的线性投影值。该实现继承 WaPIRL 的 memory-bank 对比学习结构；前景保护开运算、三通道固定窗口和 stride=1 是本文工程中的方法设计，不宣称为原方法的原样复现。
+
+#### 3.3.3 优化与选模
+
+模型使用 SGD 优化，学习率为 0.01，momentum 为 0.9，weight decay 为 0.001，batch size 为 256，训练 100 个 epoch。学习率采用 WaPIRL 对齐的 cosine 调度。正式 test 使用预先固定的 `best_nce` checkpoint，即 valid 区域 NCE 最低的模型；valid 检索 mAP@10 选择的 `best_retrieval` 仅作为辅助分析，不用于主结果，也不使用 test 标签选模。
+
+### 3.4 区域匹配与晶圆级检索
+
+测试时，对每个 query 和 gallery 图像的所有保留区域提取 512 维 embedding，并按上一节定义计算区域对分数。随后执行降序贪心的一对一匹配。对每个 query，候选晶圆的最终排序分数为
+
+\[
+S(\mathcal Q,\mathcal C)=
+\frac{\sum_{(a,b)\in M}\sqrt{A_a}\,s_{ab}}
+{\sum_a\sqrt{A_a}}.
+\]
+
+该聚合方式强调面积较大的 query 区域，同时保留对小区域的贡献；它不因 candidate 存在额外区域而扣分。所有候选按照 \(S(\mathcal Q,\mathcal C)\) 降序排列。同分时使用固定的 SHA-256 tie-breaking 规则，以保证不同方法、不同运行环境下的排序可重复。
+
+### 3.5 数据划分、检索协议与评价实现
+
+原始数据包含 38,015 条记录。本文先对完整 0/1/2/3 原图进行精确去重，保留每个重复组最小原始行号；去重后得到 36,991 张唯一图，其中 35,991 张为非空缺陷图，1,000 张为 Normal 图。缺陷图按 37 种完整 multi-hot 组合、随机种子 2026 分层划分为 train/valid/test = 25,193/3,599/7,199。运行和评价始终使用原始 NPZ 行号作为 sample ID，不使用 CSV 行号重新编号。
+
+为避免不同方法使用不同候选库，valid 和 test 的 query/gallery 清单预先冻结。valid 按类别比例抽取 500 个 query，gallery 为完整 valid 集合，每个 query 排除自身后有 3,598 个候选；test 使用全部 7,199 张图轮流作为 query，每个 query 从完整 test gallery 中排除自身后检索 7,198 张候选。排序过程中只保存 Top-500，但 AP 和 Recall 的相关样本分母仍由完整 gallery 计算。
+
+正式评价首先报告 coverage_v1 的 MeanCoverage、Coverage-nDCG 以及完整覆盖 AP/Recall，并按 single-label、mixed-label 及完整组合类别分别汇总；随后在同一批固定排名上报告 exact_v1 的 Hit、Precision、Recall 和 mAP@K。所有方法共享同一份去重数据、query/gallery 清单、区域 proposal、候选排除规则和同分排序规则。
+
+### 3.6 对照方法与消融设计
+
+为区分学习表征、输入构造和匹配聚合的作用，本文设置以下对照。
+
+**手工区域基线。** 使用完整区域 mask 的 Zernike 矩幅值描述子。区域坐标先减去质心，并按最远前景点归一化到单位圆；保留最高阶 12 的 47 个幅值分量。区域间欧氏距离通过 \(\exp(-d/\text{scale})\) 转换为相似度，并复用与 Proposed 相同的贪心匹配和 query 侧面积加权聚合。
+
+**整图监督参考。** 第一种参考方法使用共享 ResNet-18 编码整张缺陷图，对有序特征 \([z_q,z_c,z_q\odot z_c,z_q-z_c]\) 输入 MLP，回归 query 标签被 candidate 覆盖的比例。第二种参考方法使用整图 ResNet-18 和八维 BCE 多标签分类头，将 sigmoid 输出以 0.5 阈值转为硬标签，再按预测标签的覆盖率排序。监督方法设置 5%、10% 和 50% 三种训练标签预算，用于比较区域级自监督与整图监督的差异。
+
+**A–G 消融。** A 关闭开运算；B 改变 resize 与 padding 顺序；C 加入 80–88 像素的尺度扰动和 ±2 像素平移；D 将编码器首层 stride 改为 1；E 组合 D 与 C 的增强；F 使用本文的三通道固定窗口；G 在 D 的基础上将负样本数降为 1,000，并将聚合改为匹配区域数除以 query 区域数。由于 G 同时改变负样本数和聚合规则，其结果只能解释为联合消融，不能归因于单一因素。
+
+Wu、Yu、WBBS、Nakazawa CNN 和 WMHD 等外部复现方法不纳入本稿当前的 Methods 主体。
