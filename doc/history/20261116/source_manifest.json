@@ -158,7 +158,7 @@
   },
   {
     "original": "doc/F_INFERENCE_ABLATIONS_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F推断消融.md",
+    "archive": "doc/history/20261116/旧F尺度相似度选择.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5b06d3be3df5ee77de61da333c7df969636b9f5bc90fdf5242f3ee1f1ffef610",
     "current_topic": "doc/项目说明.md",
@@ -172,12 +172,19 @@
       "path": "doc/history/20261116/旧F推断消融.md",
       "sha256": "b2c6149ae97d5cb4c50f001428f4f431059045db62d42c27c734beefb670467a"
     },
-    "local_copy_sha256": "ba58f95c8648c69f63547cde4b0fe8534c14641fb3054495da12b1431c85605a",
-    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
+    "local_copy_sha256": "3498337a7f3fd6ac48842054288544d006217ea36db843a9028276a841faa324",
+    "local_copy_note": "四份历史报告合并；核心表格从原始JSON读取，未改动实验产物",
+    "merged_from": {
+      "path": "doc/history/20261116/旧F推断消融.md",
+      "commit": "8e00170c5af914bc20daa86a41a56b2021c9fc7c",
+      "sha256": "ba58f95c8648c69f63547cde4b0fe8534c14641fb3054495da12b1431c85605a"
+    },
+    "merged_experiment": "实验1：推断消融（valid）",
+    "archive_section": "三、每个实验的设计和结果"
   },
   {
     "original": "doc/F_RADIAL_AREA_TEST_20261111.md",
-    "archive": "doc/history/20261116/旧F径向面积测试.md",
+    "archive": "doc/history/20261116/旧F尺度相似度选择.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "8cf9a3eef27acd31fa6e74723f6045730eb8d03ab6aef4707b1ea2800fcc6c29",
     "current_topic": "doc/项目说明.md",
@@ -246,12 +253,19 @@
       "path": "doc/history/20261116/旧F径向面积测试.md",
       "sha256": "a51c4b67a1092cf976d743dd4ccbfa82b258a807428cd4a3100cc3ad9d966e78"
     },
-    "local_copy_sha256": "26dd065c6fefe5459e39ef93eb9d209d6fa143141358b589cfcd2ea834714eb4",
-    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
+    "local_copy_sha256": "3498337a7f3fd6ac48842054288544d006217ea36db843a9028276a841faa324",
+    "local_copy_note": "四份历史报告合并；核心表格从原始JSON读取，未改动实验产物",
+    "merged_from": {
+      "path": "doc/history/20261116/旧F径向面积测试.md",
+      "commit": "8e00170c5af914bc20daa86a41a56b2021c9fc7c",
+      "sha256": "26dd065c6fefe5459e39ef93eb9d209d6fa143141358b589cfcd2ea834714eb4"
+    },
+    "merged_experiment": "实验4：径向面积测试（test）",
+    "archive_section": "三、每个实验的设计和结果"
   },
   {
     "original": "doc/F_RADIAL_BETA1_TEST_20261111.md",
-    "archive": "doc/history/20261116/旧F径向测试.md",
+    "archive": "doc/history/20261116/旧F尺度相似度选择.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "147e2c751cbe9f268180f73fa95efb9ff7178448af14e7a81ae5c9b673d99cf2",
     "current_topic": "doc/项目说明.md",
@@ -302,12 +316,19 @@
       "path": "doc/history/20261116/旧F径向测试.md",
       "sha256": "6abfb8123f575da5bac4a6465959c860dc790712a30f88c291ebbc270d0b46fa"
     },
-    "local_copy_sha256": "3c500fb90587c968aa1c04364d762fe6f415fac60e9782cffed3bd58862a20cf",
-    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
+    "local_copy_sha256": "3498337a7f3fd6ac48842054288544d006217ea36db843a9028276a841faa324",
+    "local_copy_note": "四份历史报告合并；核心表格从原始JSON读取，未改动实验产物",
+    "merged_from": {
+      "path": "doc/history/20261116/旧F径向测试.md",
+      "commit": "8e00170c5af914bc20daa86a41a56b2021c9fc7c",
+      "sha256": "3c500fb90587c968aa1c04364d762fe6f415fac60e9782cffed3bd58862a20cf"
+    },
+    "merged_experiment": "实验2：径向测试（test）",
+    "archive_section": "三、每个实验的设计和结果"
   },
   {
     "original": "doc/F_RADIAL_SCALE_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F尺度验证.md",
+    "archive": "doc/history/20261116/旧F尺度相似度选择.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5e428567b1ba474c809a41546c380b3c725f7f88ce14e039133ba00d8a681956",
     "current_topic": "doc/项目说明.md",
@@ -370,8 +391,15 @@
       "path": "doc/history/20261116/旧F尺度验证.md",
       "sha256": "d1f35132467f25636c9cdc910496d4ae42c2b0d71df69c3c37bed6d688f9b1e8"
     },
-    "local_copy_sha256": "e0af91cc8251bdae34606a6ad1637b5244f1db794e7b0c3b489df0a3aaa288c0",
-    "local_copy_note": "历史参考副本；只修正入口和引用，日常内容以项目说明为准"
+    "local_copy_sha256": "3498337a7f3fd6ac48842054288544d006217ea36db843a9028276a841faa324",
+    "local_copy_note": "四份历史报告合并；核心表格从原始JSON读取，未改动实验产物",
+    "merged_from": {
+      "path": "doc/history/20261116/旧F尺度验证.md",
+      "commit": "8e00170c5af914bc20daa86a41a56b2021c9fc7c",
+      "sha256": "e0af91cc8251bdae34606a6ad1637b5244f1db794e7b0c3b489df0a3aaa288c0"
+    },
+    "merged_experiment": "实验3：尺度验证（valid）",
+    "archive_section": "三、每个实验的设计和结果"
   },
   {
     "original": "doc/HANDCRAFTED_TEST_20261111.md",
