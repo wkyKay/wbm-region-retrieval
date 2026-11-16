@@ -1,32 +1,48 @@
 [
   {
     "original": "doc/ALL_METHODS_AND_METRICS.md",
-    "archive": "doc/history/20261116/方法指标总览.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7d2718262440361c3cdff5c87ed51b8cd196b83ac3f34df0a12f8bc77ad04978",
-    "current_topic": "doc/实验设计.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "2026-11-16 整理前的方法导航；不是新实验。",
     "sources": "results_catalog/snapshot.json 与 CURRENT_RESULTS.md",
     "followup": "新的中文主题页取代本导航。",
-    "artifact_references": []
+    "artifact_references": [],
+    "current_section": "实验设计",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/方法指标总览.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%96%B9%E6%B3%95%E6%8C%87%E6%A0%87%E6%80%BB%E8%A7%88.md",
+      "sha256": "9dd8a7c247e7c3369009afa0198fdcc7dbb58272d8d57e24b5ac8e4993f33738"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/DATA_PROTOCOL_MIGRATION.md",
-    "archive": "doc/history/20261116/数据协议迁移.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "465856ce9e0b25379300ae3cb86ee3c9ddf37b90906a16e2820cf7ab50831127",
-    "current_topic": "doc/数据划分.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "2026-11-09 数据协议迁移阶段。",
     "sources": "protocol/deduplicated/、protocol/retrieval_v1/；本地 artifacts/protocol_migration_20261109_azt96h9c/",
     "followup": "当时尚未接入 exact 或启动正式训练的陈述仅指该阶段；目前已完成多项正式评价。",
-    "artifact_references": []
+    "artifact_references": [],
+    "current_section": "数据与评价",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/数据协议迁移.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%95%B0%E6%8D%AE%E5%8D%8F%E8%AE%AE%E8%BF%81%E7%A7%BB.md",
+      "sha256": "eb8d1e10824c713dd616e16c2c983a8ea36e75cdcc52b2a98be199cc314c2c83"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/EXACT_METRICS_MIGRATION.md",
-    "archive": "doc/history/20261116/精确评价迁移.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "47d4f164adc8ad3f07a925c643bebaaca7782e53039ac45df9a9d821cb00369d",
-    "current_topic": "doc/数据划分.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "2026-11-09 旧 shape-only F；checkpoint 0085bd3b…，不是当前 cc8 checkpoint 89f1e6b3…。",
     "sources": "artifacts/formal_f_exact_20261109_132219/ 与 artifacts/formal_f_coverage_v1_test_20261109_194139/",
     "followup": "指标定义仍适用；旧 F 成绩和与 WaPIRL 的结论不能替代当前 cc8。",
@@ -43,14 +59,22 @@
         "path": "compared_methods/artifacts/wapirl_results_20261111/wapirl_test_v1/test/metrics.json",
         "availability": "仅本地"
       }
-    ]
+    ],
+    "current_section": "数据与评价",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/精确评价迁移.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E7%B2%BE%E7%A1%AE%E8%AF%84%E4%BB%B7%E8%BF%81%E7%A7%BB.md",
+      "sha256": "983e4b4355baf1ab846783ec236a097a051999748ff247baef5b1f2735ae765c"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
-    "archive": "doc/history/20261116/旧F与WBBS差距.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "40404d9b51e8319213251f507a950ba77c2df95d01d9b4a542f08b7be5bbb142",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "2026-11-11 旧径向面积 F 与 WBBS 的 test 诊断。",
     "sources": "本地 artifacts/f_area_wbbs_gap_20261111_v1/；登记 key old_f_radial_area、wbbs_test",
     "followup": "后续在 cc8 融合基线上已验证占比与角向：占比选中零，角向选中 0.5；并非在本旧基线上重做了全部假设。",
@@ -103,36 +127,60 @@
         "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_gap_verification.json",
         "availability": "仅本地"
       }
-    ]
+    ],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F与WBBS差距.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E4%B8%8EWBBS%E5%B7%AE%E8%B7%9D.md",
+      "sha256": "ac1343d1d53a9a3437a9624377f5657b1349384509cf391be4cb67a90f6b1e75"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_BIDIRECTIONAL_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F双向验证.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7fc952e637c9b4abfc5b1c5f76dad804d4f4a2e658bc83ebcafb3865874b6620",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "旧 shape-only F 的 valid 双向评分消融；不是当前几何 F 的消融。",
     "sources": "artifacts/f_bidirectional_valid_20261111_v1/；模型源 formal_f_exact_20261109_132219/",
     "followup": "仅 valid 的范围保持不变；“下一步检验径向”已有后续独立实验。",
-    "artifact_references": []
+    "artifact_references": [],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F双向验证.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%8F%8C%E5%90%91%E9%AA%8C%E8%AF%81.md",
+      "sha256": "79dfbad77f0916e2968283e2706b137d10fc3bcdf5fd26147657d3b73a0a1c49"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_INFERENCE_ABLATIONS_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F推断消融.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5b06d3be3df5ee77de61da333c7df969636b9f5bc90fdf5242f3ee1f1ffef610",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "旧 F 的 valid 四旋转、径向网格与组合。",
     "sources": "artifacts/f_inference_ablations_valid_20261111_v1/；模型源 formal_f_exact_20261109_132219/",
     "followup": "β=1 后来另行完成 test；该报告本身仍只描述 valid，不改写原选择过程。",
-    "artifact_references": []
+    "artifact_references": [],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F推断消融.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E6%8E%A8%E6%96%AD%E6%B6%88%E8%9E%8D.md",
+      "sha256": "b2c6149ae97d5cb4c50f001428f4f431059045db62d42c27c734beefb670467a"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_RADIAL_AREA_TEST_20261111.md",
-    "archive": "doc/history/20261116/旧F径向面积测试.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "8cf9a3eef27acd31fa6e74723f6045730eb8d03ab6aef4707b1ea2800fcc6c29",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "2026-11-11 旧径向面积 F，checkpoint 0085bd3b…；不是当前 cc8。",
     "sources": "artifacts/f_radial_area_test_20261111_v1/；登记 key old_f_radial_area",
     "followup": "原始数值保留；当前 cc8 使用不同模型，最新成绩见统一汇总。",
@@ -191,14 +239,22 @@
         "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/test",
         "availability": "本地和服务器"
       }
-    ]
+    ],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F径向面积测试.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%BE%84%E5%90%91%E9%9D%A2%E7%A7%AF%E6%B5%8B%E8%AF%95.md",
+      "sha256": "a51c4b67a1092cf976d743dd4ccbfa82b258a807428cd4a3100cc3ad9d966e78"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_RADIAL_BETA1_TEST_20261111.md",
-    "archive": "doc/history/20261116/旧F径向测试.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "147e2c751cbe9f268180f73fa95efb9ff7178448af14e7a81ae5c9b673d99cf2",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "旧 F 加径向 β=1 的 test，不包含相对面积项。",
     "sources": "artifacts/f_radial_beta1_test_20261111_v1/；登记 key old_f_radial",
     "followup": "后续有面积方案和新的 cc8 模型；部分 report 派生文件只在本地，原 test 产物在服务器。",
@@ -239,14 +295,22 @@
         "path": "wbm-region-retrieval/artifacts/f_radial_test_references_20261111/source_manifest.json",
         "availability": "仅本地"
       }
-    ]
+    ],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F径向测试.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%BE%84%E5%90%91%E6%B5%8B%E8%AF%95.md",
+      "sha256": "6abfb8123f575da5bac4a6465959c860dc790712a30f88c291ebbc270d0b46fa"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/F_RADIAL_SCALE_VALID_20261111.md",
-    "archive": "doc/history/20261116/旧F尺度验证.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5e428567b1ba474c809a41546c380b3c725f7f88ce14e039133ba00d8a681956",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "旧 F 的 valid 径向／相对面积／长短轴对照，checkpoint 0085bd3b…。",
     "sources": "artifacts/f_radial_scale_valid_20261111_v1/；plan_before_evaluation.json",
     "followup": "本轮不运行 test 是历史边界；面积方案的后续独立 test 已完成。",
@@ -299,14 +363,22 @@
         "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/local_validation.json",
         "availability": "仅本地"
       }
-    ]
+    ],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧F尺度验证.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7F%E5%B0%BA%E5%BA%A6%E9%AA%8C%E8%AF%81.md",
+      "sha256": "d1f35132467f25636c9cdc910496d4ae42c2b0d71df69c3c37bed6d688f9b1e8"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/HANDCRAFTED_TEST_20261111.md",
-    "archive": "doc/history/20261116/手工特征测试.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "6033eb8097d5cd0757782fcb3ac632cf004cdd32c648a43d05f90a6228f45936",
-    "current_topic": "doc/实验结果.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "Zernike47 Handcrafted A 的固定 test；表中 F 是旧 shape-only F。",
     "sources": "artifacts/formal_handcrafted_a_test_20261111/；run_manifest.json、completed.json",
     "followup": "手工方法成绩保留；与旧 F 的关系不能直接外推到当前主方法。",
@@ -353,14 +425,22 @@
         "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/verify_test.py",
         "availability": "本地和服务器"
       }
-    ]
+    ],
+    "current_section": "实验结果",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/手工特征测试.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%89%8B%E5%B7%A5%E7%89%B9%E5%BE%81%E6%B5%8B%E8%AF%95.md",
+      "sha256": "780a23435018192d4a1de5606f01291ddafbeddcf6f664b945c3809f65d23ef8"
+    },
+    "archive_section": "历史记录"
   },
   {
     "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.md",
-    "archive": "doc/history/20261116/旧版论文初稿.md",
+    "archive": "doc/项目说明.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "6f2b3d3d730cf80b97b3091bbd5bb65208a8a4b9d12a6c9a398367428516de28",
-    "current_topic": "doc/论文初稿.md",
+    "current_topic": "doc/项目说明.md",
     "scope": "旧 shape-only F 的论文草稿，不是当前方法正文。",
     "sources": "原文 Git 版本及同目录保存的旧 LaTeX；无独立结果运行",
     "followup": "当前正文已加入径向与面积公式，修正测试增强、对比范围及选择历史。",
@@ -369,6 +449,14 @@
       "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.tex",
       "archive": "doc/history/20261116/PAPER_DRAFT_PROBLEM_METHODS.tex",
       "original_sha256": "213219cb2cd4232b906f9a56a671adbbdbf465ecde1b15bb33958021c61e9f3c"
-    }
+    },
+    "current_section": "论文初稿",
+    "archived_report": {
+      "commit": "4b75b9bae05826539bdd841de6311ebc37e6ba0c",
+      "path": "doc/history/20261116/旧版论文初稿.md",
+      "url": "https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E6%97%A7%E7%89%88%E8%AE%BA%E6%96%87%E5%88%9D%E7%A8%BF.md",
+      "sha256": "506521c99380d16389ae9d3fc506ef0956e7a14f40eafb79f40217c53dd15a62"
+    },
+    "archive_section": "历史记录"
   }
 ]

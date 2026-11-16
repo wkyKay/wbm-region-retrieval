@@ -316,7 +316,7 @@ def generate(result_dir, radial_dir, references, output):
            f"- 新面积F/径向F全部组从逐query CSV重新聚合核对的最大误差：`{aggregation_error}`。",
            f"- 从CSV补出的缺失组：`{json.dumps(reconstructed, ensure_ascii=False)}`。",
            f"- 无数据因而保留缺失的组：`{json.dumps(missing, ensure_ascii=False)}`。", "",
-           "所有原始文件只读。参考文档为项目`doc/history/20261116/精确评价迁移.md`，本生成器不改写该文档或替换既有方法。", ""]
+           "所有原始文件只读。参考文档为[旧F精确评价记录](https://github.com/wkyKay/wbm-region-retrieval/blob/4b75b9bae05826539bdd841de6311ebc37e6ba0c/doc/history/20261116/%E7%B2%BE%E7%A1%AE%E8%AF%84%E4%BB%B7%E8%BF%81%E7%A7%BB.md)，本生成器不改写该文档或替换既有方法。", ""]
     if selection is not None:
         md += ["### 新方案test前冻结记录", "", "```json", json.dumps(selection, ensure_ascii=False, indent=2), "```", ""]
 
