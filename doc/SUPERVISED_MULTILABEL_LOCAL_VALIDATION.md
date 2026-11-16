@@ -1,5 +1,5 @@
-# 文档已归档
+# 历史入口
 
-实验设计、改进目的和当前目录统一见 [实验总览](../experiments/README.md)。
+当前说明见 [实验结果](实验结果.md)。
 
-原文件的详细运行说明及历史验证记录保存在 [历史记录](../experiments/_archive/SUPERVISED_MULTILABEL_LOCAL_VALIDATION.md)。归档中的旧命令和路径仅用于历史追溯，当前请使用实验总览中的新入口。
+适用范围：旧监督多标签的本地测试与签名检查，不代表当前外部方法成绩。来源为 [原历史记录](../experiments/_archive/SUPERVISED_MULTILABEL_LOCAL_VALIDATION.md)；记录中的日期、配置和产物路径限定了结论范围，旧命令不直接重跑。

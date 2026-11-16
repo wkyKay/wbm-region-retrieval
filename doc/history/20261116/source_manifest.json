@@ -1,0 +1,374 @@
+[
+  {
+    "original": "doc/ALL_METHODS_AND_METRICS.md",
+    "archive": "doc/history/20261116/ALL_METHODS_AND_METRICS.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "7d2718262440361c3cdff5c87ed51b8cd196b83ac3f34df0a12f8bc77ad04978",
+    "current_topic": "doc/实验设计.md",
+    "scope": "2026-11-16 整理前的方法导航；不是新实验。",
+    "sources": "results_catalog/snapshot.json 与 CURRENT_RESULTS.md",
+    "followup": "新的中文主题页取代本导航。",
+    "artifact_references": []
+  },
+  {
+    "original": "doc/DATA_PROTOCOL_MIGRATION.md",
+    "archive": "doc/history/20261116/DATA_PROTOCOL_MIGRATION.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "465856ce9e0b25379300ae3cb86ee3c9ddf37b90906a16e2820cf7ab50831127",
+    "current_topic": "doc/数据划分.md",
+    "scope": "2026-11-09 数据协议迁移阶段。",
+    "sources": "protocol/deduplicated/、protocol/retrieval_v1/；本地 artifacts/protocol_migration_20261109_azt96h9c/",
+    "followup": "当时尚未接入 exact 或启动正式训练的陈述仅指该阶段；目前已完成多项正式评价。",
+    "artifact_references": []
+  },
+  {
+    "original": "doc/EXACT_METRICS_MIGRATION.md",
+    "archive": "doc/history/20261116/EXACT_METRICS_MIGRATION.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "47d4f164adc8ad3f07a925c643bebaaca7782e53039ac45df9a9d821cb00369d",
+    "current_topic": "doc/数据划分.md",
+    "scope": "2026-11-09 旧 shape-only F；checkpoint 0085bd3b…，不是当前 cc8 checkpoint 89f1e6b3…。",
+    "sources": "artifacts/formal_f_exact_20261109_132219/ 与 artifacts/formal_f_coverage_v1_test_20261109_194139/",
+    "followup": "指标定义仍适用；旧 F 成绩和与 WaPIRL 的结论不能替代当前 cc8。",
+    "artifact_references": [
+      {
+        "label": "本地 coverage 原始报告",
+        "original": "../../compared_methods/artifacts/wapirl_results_20261111/wapirl_test_v1/test/coverage_metrics.json",
+        "path": "compared_methods/artifacts/wapirl_results_20261111/wapirl_test_v1/test/coverage_metrics.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "exact 原始报告",
+        "original": "../../compared_methods/artifacts/wapirl_results_20261111/wapirl_test_v1/test/metrics.json",
+        "path": "compared_methods/artifacts/wapirl_results_20261111/wapirl_test_v1/test/metrics.json",
+        "availability": "仅本地"
+      }
+    ]
+  },
+  {
+    "original": "doc/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
+    "archive": "doc/history/20261116/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "40404d9b51e8319213251f507a950ba77c2df95d01d9b4a542f08b7be5bbb142",
+    "current_topic": "doc/实验结果.md",
+    "scope": "2026-11-11 旧径向面积 F 与 WBBS 的 test 诊断。",
+    "sources": "本地 artifacts/f_area_wbbs_gap_20261111_v1/；登记 key old_f_radial_area、wbbs_test",
+    "followup": "后续在 cc8 融合基线上已验证占比与角向：占比选中零，角向选中 0.5；并非在本旧基线上重做了全部假设。",
+    "artifact_references": [
+      {
+        "label": "37类完整差距CSV",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_gap_wide.csv",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_gap_wide.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "逐类加权贡献",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_contributions_ranked.csv",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_contributions_ranked.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "单/混合及类别数分组",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/partition_gap.csv",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/partition_gap.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "8标签重叠条件组",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/label_presence_gap.csv",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/label_presence_gap.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "Top10错误类型、具体混淆与负担统计",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/retrieval_error_analysis.json",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/retrieval_error_analysis.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "逐查询区域诊断",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/geometry_queries.csv",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/geometry_queries.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "区域汇总及限制",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/geometry_summary.json",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/geometry_summary.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "类差距核验",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_gap_verification.json",
+        "path": "wbm-region-retrieval/artifacts/f_area_wbbs_gap_20261111_v1/class_gap_verification.json",
+        "availability": "仅本地"
+      }
+    ]
+  },
+  {
+    "original": "doc/F_BIDIRECTIONAL_VALID_20261111.md",
+    "archive": "doc/history/20261116/F_BIDIRECTIONAL_VALID_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "7fc952e637c9b4abfc5b1c5f76dad804d4f4a2e658bc83ebcafb3865874b6620",
+    "current_topic": "doc/实验结果.md",
+    "scope": "旧 shape-only F 的 valid 双向评分消融；不是当前几何 F 的消融。",
+    "sources": "artifacts/f_bidirectional_valid_20261111_v1/；模型源 formal_f_exact_20261109_132219/",
+    "followup": "仅 valid 的范围保持不变；“下一步检验径向”已有后续独立实验。",
+    "artifact_references": []
+  },
+  {
+    "original": "doc/F_INFERENCE_ABLATIONS_VALID_20261111.md",
+    "archive": "doc/history/20261116/F_INFERENCE_ABLATIONS_VALID_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "5b06d3be3df5ee77de61da333c7df969636b9f5bc90fdf5242f3ee1f1ffef610",
+    "current_topic": "doc/实验结果.md",
+    "scope": "旧 F 的 valid 四旋转、径向网格与组合。",
+    "sources": "artifacts/f_inference_ablations_valid_20261111_v1/；模型源 formal_f_exact_20261109_132219/",
+    "followup": "β=1 后来另行完成 test；该报告本身仍只描述 valid，不改写原选择过程。",
+    "artifact_references": []
+  },
+  {
+    "original": "doc/F_RADIAL_AREA_TEST_20261111.md",
+    "archive": "doc/history/20261116/F_RADIAL_AREA_TEST_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "8cf9a3eef27acd31fa6e74723f6045730eb8d03ab6aef4707b1ea2800fcc6c29",
+    "current_topic": "doc/实验结果.md",
+    "scope": "2026-11-11 旧径向面积 F，checkpoint 0085bd3b…；不是当前 cc8。",
+    "sources": "artifacts/f_radial_area_test_20261111_v1/；登记 key old_f_radial_area",
+    "followup": "原始数值保留；当前 cc8 使用不同模型，最新成绩见统一汇总。",
+    "artifact_references": [
+      {
+        "label": "selection_before_test.json",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "全部新方案指标、八方法70项并列、分组及配对区间",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/report.md",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/report.md",
+        "availability": "仅本地"
+      },
+      {
+        "label": "全部总体指标CSV（八主方法＋原F附加参考）",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/overall_metrics.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/overall_metrics.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "完整分组CSV：5040行",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/grouped_metrics.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/grouped_metrics.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "新方法相对各方法差值CSV：4480行",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/new_vs_methods.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/new_vs_methods.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "配对bootstrap",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/paired_bootstrap.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/report/paired_bootstrap.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "冻结设置",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "独立复核",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/independent_verification.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/independent_verification.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "test原始产物",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/test",
+        "path": "wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/test",
+        "availability": "本地和服务器"
+      }
+    ]
+  },
+  {
+    "original": "doc/F_RADIAL_BETA1_TEST_20261111.md",
+    "archive": "doc/history/20261116/F_RADIAL_BETA1_TEST_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "147e2c751cbe9f268180f73fa95efb9ff7178448af14e7a81ae5c9b673d99cf2",
+    "current_topic": "doc/实验结果.md",
+    "scope": "旧 F 加径向 β=1 的 test，不包含相对面积项。",
+    "sources": "artifacts/f_radial_beta1_test_20261111_v1/；登记 key old_f_radial",
+    "followup": "后续有面积方案和新的 cc8 模型；部分 report 派生文件只在本地，原 test 产物在服务器。",
+    "artifact_references": [
+      {
+        "label": "完整报告：70项指标、所有分组、八方法对比与差值",
+        "original": "../artifacts/f_radial_beta1_test_20261111_v1/report/report.md",
+        "path": "wbm-region-retrieval/artifacts/f_radial_beta1_test_20261111_v1/report/report.md",
+        "availability": "仅本地"
+      },
+      {
+        "label": "八方法全部总体指标CSV（560行）",
+        "original": "../artifacts/f_radial_beta1_test_20261111_v1/report/comparison_long.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_beta1_test_20261111_v1/report/comparison_long.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "八方法全部分组指标CSV（4,480行）",
+        "original": "../artifacts/f_radial_beta1_test_20261111_v1/report/grouped_metrics.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_beta1_test_20261111_v1/report/grouped_metrics.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "全部原始报告与差值JSON",
+        "original": "../artifacts/f_radial_beta1_test_20261111_v1/report/report.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_beta1_test_20261111_v1/report/report.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "独立复核记录",
+        "original": "../artifacts/f_radial_beta1_test_20261111_v1/independent_verification.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_beta1_test_20261111_v1/independent_verification.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "七方法参考资料来源、协议及哈希",
+        "original": "../artifacts/f_radial_test_references_20261111/source_manifest.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_test_references_20261111/source_manifest.json",
+        "availability": "仅本地"
+      }
+    ]
+  },
+  {
+    "original": "doc/F_RADIAL_SCALE_VALID_20261111.md",
+    "archive": "doc/history/20261116/F_RADIAL_SCALE_VALID_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "5e428567b1ba474c809a41546c380b3c725f7f88ce14e039133ba00d8a681956",
+    "current_topic": "doc/实验结果.md",
+    "scope": "旧 F 的 valid 径向／相对面积／长短轴对照，checkpoint 0085bd3b…。",
+    "sources": "artifacts/f_radial_scale_valid_20261111_v1/；plan_before_evaluation.json",
+    "followup": "本轮不运行 test 是历史边界；面积方案的后续独立 test 已完成。",
+    "artifact_references": [
+      {
+        "label": "完整三方法×70指标×8分组报告",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/report.md",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/report.md",
+        "availability": "仅本地"
+      },
+      {
+        "label": "全部1680行指标与差值CSV",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/comparison_long.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/comparison_long.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "逐查询配对区间：两尺度对径向",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/paired_bootstrap.csv",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/report/paired_bootstrap.csv",
+        "availability": "仅本地"
+      },
+      {
+        "label": "逐查询配对区间：面积对长短轴",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/paired_area_vs_axes.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/paired_area_vs_axes.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "冻结方案",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/plan_before_evaluation.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/plan_before_evaluation.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "独立排名复核",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/independent_verification.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/independent_verification.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "来源身份审计",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/source_identity_audit.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/source_identity_audit.json",
+        "availability": "仅本地"
+      },
+      {
+        "label": "数值测试与下载核验",
+        "original": "/Users/kayw/Documents/trae_projects/match-test/wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/local_validation.json",
+        "path": "wbm-region-retrieval/artifacts/f_radial_scale_valid_20261111_v1/local_validation.json",
+        "availability": "仅本地"
+      }
+    ]
+  },
+  {
+    "original": "doc/HANDCRAFTED_TEST_20261111.md",
+    "archive": "doc/history/20261116/HANDCRAFTED_TEST_20261111.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "6033eb8097d5cd0757782fcb3ac632cf004cdd32c648a43d05f90a6228f45936",
+    "current_topic": "doc/实验结果.md",
+    "scope": "Zernike47 Handcrafted A 的固定 test；表中 F 是旧 shape-only F。",
+    "sources": "artifacts/formal_handcrafted_a_test_20261111/；run_manifest.json、completed.json",
+    "followup": "手工方法成绩保留；与旧 F 的关系不能直接外推到当前主方法。",
+    "artifact_references": [
+      {
+        "label": "exact 指标",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/test/metrics.json",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/test/metrics.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "coverage 指标",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/test/coverage_metrics.json",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/test/coverage_metrics.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "完成标记",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/completed.json",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/completed.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "独立复核",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/independent_verification.json",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/independent_verification.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "运行来源及参数",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/run_manifest.json",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/run_manifest.json",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "执行脚本",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/run_test.py",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/run_test.py",
+        "availability": "本地和服务器"
+      },
+      {
+        "label": "独立复核脚本",
+        "original": "../artifacts/formal_handcrafted_a_test_20261111/verify_test.py",
+        "path": "wbm-region-retrieval/artifacts/formal_handcrafted_a_test_20261111/verify_test.py",
+        "availability": "本地和服务器"
+      }
+    ]
+  },
+  {
+    "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.md",
+    "archive": "doc/history/20261116/PAPER_DRAFT_PROBLEM_METHODS.md",
+    "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
+    "original_sha256": "6f2b3d3d730cf80b97b3091bbd5bb65208a8a4b9d12a6c9a398367428516de28",
+    "current_topic": "doc/论文初稿.md",
+    "scope": "旧 shape-only F 的论文草稿，不是当前方法正文。",
+    "sources": "原文 Git 版本及同目录保存的旧 LaTeX；无独立结果运行",
+    "followup": "当前正文已加入径向与面积公式，修正测试增强、对比范围及选择历史。",
+    "artifact_references": [],
+    "latex_source": {
+      "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.tex",
+      "archive": "doc/history/20261116/PAPER_DRAFT_PROBLEM_METHODS.tex",
+      "original_sha256": "213219cb2cd4232b906f9a56a671adbbdbf465ecde1b15bb33958021c61e9f3c"
+    }
+  }
+]

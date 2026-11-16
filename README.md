@@ -1,66 +1,29 @@
 # WBM 局部区域检索实验
 
-**最新结果、原始路径和完成状态见 [当前结果总览](results_catalog/CURRENT_RESULTS.md)，自动汇总与时间型 run_id 规则见 [结果登记说明](results_catalog/README.md)。当前主方法为 cc8＋径向位置＋相对面积；融合及组合保留为扩展实验。**
+研究 Mixed-WM38 上有方向的缺陷区域检索。当前主方法是 **F：cc8 八连通＋径向位置＋相对面积**；融合和组合保留为扩展实验。
 
-正式评价已迁移到 compared_methods 的完整标签组合 Hit/Precision/Recall/mAP@K；规则、分母和 F 运行方式见 [统一评价说明](doc/EXACT_METRICS_MIGRATION.md)。
+| 入口 | 内容 |
+|---|---|
+| [文档目录](doc/README.md) | 四篇简明主题文档与历史索引 |
+| [实验设计](doc/实验设计.md) | 方法、对照与选择边界 |
+| [实验结果](doc/实验结果.md) | 完成状态、结论及保存位置 |
+| [数据划分](doc/数据划分.md) | 冻结去重协议、exact 与 coverage |
+| [论文初稿](doc/论文初稿.md) | 与当前方法一致的简版正文 |
+| [自动结果总览](results_catalog/CURRENT_RESULTS.md) | 从原报告生成的成绩和来源 |
 
+## 代码与运行
 
-本项目研究 Mixed-WM38 上有方向的缺陷区域检索：query 的缺陷区域应在 candidate 中得到覆盖，candidate 可以含有额外缺陷。代码独立于同级 `wbm-wdm-matching/`，不下载预训练模型权重。
+- 当前方法：[径向位置＋相对面积入口](experiments/proposed/f_segmentation_geometry/README.md)，主实验显式指定 `--methods cc8`，复用冻结的 `best_nce`，不重训。
+- 分割对照：[六种分割入口](experiments/proposed/f_segmentation/README.md)。
+- 其他实验：[代码目录与入口说明](experiments/README.md)，A～G 等早期系列不等于当前主方法。
+- 公共实现位于 `wbm_retrieval/`；回归测试位于 `tests/`。使用已有 PyTorch 环境；依赖见 `requirements.txt`，监督变体另见 `requirements-supervised.txt`。
 
-**实验设计、改进目的、代码位置和运行方式统一见 [experiments/README.md](experiments/README.md)。** 原来的分散说明已归档，旧链接保留跳转。
+默认原始数据为 `../data/wm38k/Wafer_Map_Datasets.npz`，不随 Git 发布。冻结 train/valid/test 为 25,193/3,599/7,199；valid 固定 500 query，test 全量 query，各自检索同集合全部其他图像。详细清单见 [protocol](protocol/README.md)。
 
-F 的六种区域划分对照（4/8连通、中值、开运算、WBBS-TV、NPFC-pre）已提供
-[独立入口及远程运行说明](experiments/proposed/f_segmentation/README.md)：
-`python -u experiments/proposed/f_segmentation/run.py --device cuda --prepare-workers 4`。
-该入口默认每组100 epoch，依次完成训练、valid和完整test，支持同命令续跑。
+## 结果与维护
 
-已有六组模型可用[径向位置＋相对面积评价入口](experiments/proposed/f_segmentation_geometry/README.md)
-补做 valid/test 的 exact 与 coverage 双指标：
-`python -u experiments/proposed/f_segmentation_geometry/run.py --device cuda --prepare-workers 4`。
-无需重训；旧结果只读，新结果默认写入 `artifacts/f_segmentation_radial_area_v1/`。
+当前 F、六组分割、融合及相关扩展已有完成结果；普通比较与跨组合评价分表。exact 和 coverage 评价同一排名，Top-500 不能称为完整排名。cc8 主方法身份在查看历史 test 后确认，组合实验为事后补充；保留这些事实。
 
-## 实验入口
+新实验必须使用真实启动时间型 run_id、新输出目录并登记；现有登记器接入新时间身份的前置要求见 [AGENTS.md](AGENTS.md)。已有目录和历史命令不直接作为新实验输出模板。
 
-| 方法 | 实验与入口 | 配置 |
-|---|---|---|
-| Proposed | [main](experiments/proposed/main/run.py)：原主实验；[a](experiments/proposed/a/run.py)、[b](experiments/proposed/b/run.py)、[c](experiments/proposed/c/run.py)、[d](experiments/proposed/d/run.py)、[e](experiments/proposed/e/run.py)、[f](experiments/proposed/f/run.py)、[g](experiments/proposed/g/run.py)：消融 | 每个实验目录的 `config.json` |
-| Handcrafted | [a](experiments/handcrafted/a/run.py)：Zernike 面积加权；[b](experiments/handcrafted/b/run.py)：区域计数 | 每个实验目录的 `config.json` |
-| Supervised | [a](experiments/supervised/a/run.py)：整图 pair 包含率回归；[b](experiments/supervised/b/run.py)：多标签分类与预测标签包含率检索 | 每个实验目录的 `config.json`，均含5%/10%/50%预算 |
-
-每个入口只运行对应实验。A～D、E/F 的训练循环集中于 `experiments/proposed/_shared/`，其他通用模型、数据、指标工具仍在 `wbm_retrieval/`。旧实验代码路径、兼容链接和顶层 `configs/` 已删除，统一使用新入口；共享基础配置位于 `experiments/_shared/base.json`。
-
-## 开始运行
-
-使用已有的 PyTorch 环境；新环境安装 `requirements.txt`，监督多标签实验另需 `requirements-supervised.txt`。先确认数据和配置，再启动训练：
-
-```bash
-python experiments/proposed/g/run.py --dry-run
-python experiments/supervised/b/run.py --dry-run
-python experiments/handcrafted/a/run.py --dry-run
-
-# G 训练及 valid 评价
-python -u experiments/proposed/g/run.py --stage all --device cuda --output-root artifacts/deduplicated_exact_v1/proposed_g
-# 固定无监督选模规则后，显式评价 test
-python -u experiments/proposed/g/run.py --stage test --test-checkpoint best_nce --device cuda --output-root artifacts/deduplicated_exact_v1/proposed_g
-```
-
-默认数据为 `../data/wm38k/Wafer_Map_Datasets.npz`。正式配置现使用与 `compared_methods` 逐字节一致的去重清单：train/valid/test = **25,193/3,599/7,199**，原始 NPZ 行号保持不变。valid 固定500个 query，每个检索完整 valid 除自身的3,598个候选；test 的7,199张图全部轮流查询，每个检索其余7,198张。清单位于 `protocol/deduplicated/` 和 `protocol/retrieval_v1/`，运行时校验哈希，不重新划分或抽样。详见 [协议说明](protocol/README.md)。
-
-正式配置已统一为 `compared_methods` 的 exact_v1 指标与 SHA 同分排序：完整标签组合相同才是正样本，报告 Hit/Precision/Recall/mAP@K。旧 containment 结果只用于历史复现，不能与新结果混表。
-
-A～G 同时保存 `best_nce` 与使用 valid 标签选择的 `best_retrieval`。完整无监督主结果应预先指定 `best_nce`；本次数据协议迁移保留训练和选模规则，严格禁止接触 valid 标签的流程还需要独立协议修改。各入口 `all` 是否包含 test 不完全相同，运行前请看 [统一运行说明](experiments/README.md#7-运行示例)。
-
-## 验证与历史资料
-
-```bash
-python -m unittest discover -s tests -p 'test_experiment_layout.py' -v
-python -m unittest discover -s tests -v
-```
-
-- [统一实验设计与比较边界](experiments/README.md)
-- [去重协议迁移与验证记录](doc/DATA_PROTOCOL_MIGRATION.md)
-- [原主实验详细方法和命令](experiments/_archive/MAIN_EXPERIMENT.md)
-- [E/F 冻结模型无标签测试](experiments/_archive/EF_UNSUPERVISED_TEST.md)
-- [原本地验证记录](experiments/_archive/VALIDATION.md)
-
-正式配置的默认输出已迁至 `artifacts/deduplicated_exact_v1/` 下的新目录。旧协议、模型、缓存、结果及 `record/` 均保留；旧训练划分与新 valid/test 有交叉，旧 checkpoint 不能作为新协议的训练来源，须从新 train 重新训练。历史300图 MVP 显式使用 `data_protocol="legacy"`，仅供实现调试，不属于新协议正式结果。此次代码迁移本身不代表已完成新协议训练或 test。
+本地、服务器和 GitHub 同步代码、文档及轻量汇总，数据、模型、原始排名保持原位。服务器项目为 `/data/wangkaiyan2024/wbm-region-retrieval/`。旧协议、旧 checkpoint 和历史报告只能在各自适用版本下解释，不能与当前结果混表。

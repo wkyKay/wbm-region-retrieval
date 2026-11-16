@@ -1,5 +1,7 @@
 # 实验总览
 
+> 本页侧重代码入口与早期实验系列。当前主方法和简明对照见 [实验设计](../doc/实验设计.md)，完成结果见 [实验结果](../doc/实验结果.md)。下面固定目录命令仅用于理解入口；新实验必须按 [AGENTS.md](../AGENTS.md) 使用真实时间身份及新输出目录，不能直接复用历史示例输出。
+
 更新日期：2026-11-09。本文件统一说明现有实验的设计、改进目的、运行位置和比较边界。按 `experiments/<方法>/<实验>/` 查找代码与配置；此处的字母是实验编号，不是训练标签预算。正式配置现已迁移到与 `compared_methods` 相同的去重划分与固定检索池。历史结果继续留在原 `artifacts/` 目录，新协议默认写入 `artifacts/deduplicated_exact_v1/`。
 
 ## 1. 目录与使用约定
@@ -43,7 +45,7 @@ experiments/
 - 默认优化：100 轮、batch256、SGD lr=0.01、momentum=0.9、weight_decay=0.001、WaPIRL cosine。自监督温度 0.07、memory EMA=0.5；A～F 为 5,000 个有放回负样本，G 为 1,000 个。
 - 区域对分数：proposed 为截断到 `[0,1]` 的 h512 cosine；handcrafted 为 Zernike 距离的 `exp(-d/scale)`。分数降序贪心一对一匹配，每个区域最多参与一次，不是最大权匹配。
 - 除 G/handcrafted B 外，局部分数为 `sum(sqrt(query_area) * pair_score) / sum(sqrt(query_area))`。空图得0，候选额外区域不直接扣分；正式整图同分使用下述 SHA 排序，历史 MVP 仍按 candidate ID 升序。
-- 正式评价：完整标签组合相同定义正样本；报告 K=1/5/10/20/50/100/500 的 Hit、Precision、Recall、mAP，区分 query 均值、single/mixed 与类别宏平均。AP/Recall 使用完整候选库的相关数作分母。同分按 compared_methods 的 SHA 规则排序。详见 [统一评价说明](../doc/EXACT_METRICS_MIGRATION.md)。历史 MVP 仍使用 containment。
+- 正式评价：完整标签组合相同定义正样本；报告 K=1/5/10/20/50/100/500 的 Hit、Precision、Recall、mAP，区分 query 均值、single/mixed 与类别宏平均。AP/Recall 使用完整候选库的相关数作分母。同分按 compared_methods 的 SHA 规则排序。详见 [统一评价说明](../doc/数据划分.md)。历史 MVP 仍使用 containment。
 - 固定检索池：valid 为分层冻结的500个 query，每个检索完整3,599张 valid 除自身的3,598张；test 为全部7,199张轮流查询，每个检索其余7,198张。query/gallery 不随训练seed、训练负样本数或实验组别改变，候选逐query惰性生成。
 
 正式配置已统一数据身份、完整候选库、exact_v1 评价公式和哈希破并列规则；旧 containment 产物保留用于历史复现。历史模型使用了不同训练划分，且旧train与新valid/test有交叉，必须在新train重新训练，再进行新协议评价。

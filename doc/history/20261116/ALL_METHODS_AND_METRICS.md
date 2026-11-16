@@ -1,0 +1,35 @@
+> 历史记录｜适用版本：2026-11-16 整理前的方法导航；不是新实验。
+> 来源：results_catalog/snapshot.json 与 CURRENT_RESULTS.md。
+> 后续状态：新的中文主题页取代本导航。
+> 阅读当前内容：[返回实验设计](../../实验设计.md)。旧命令、未完成状态和建议均按原记录日期理解，不作为新运行指令。
+> 原文证据：[整理前版本](https://github.com/wkyKay/wbm-region-retrieval/blob/35b7399cd0cd3a05f6860589a23688435804694b/doc/ALL_METHODS_AND_METRICS.md)；下文只修正引用位置，原指标与结论按历史版本保留。
+
+# 当前方法与评价指标入口
+
+更新日期：2026-11-16。当前结果、原始路径和自动生成的对照表统一见 [当前结果总览](../../../results_catalog/CURRENT_RESULTS.md)，登记与更新方式见 [结果目录说明](../../../results_catalog/README.md)。
+
+## 当前方法
+
+主方法是 F 的 cc8 八连通＋径向位置＋相对面积，min_area=5、Top-4、52×52 三通道窗口、h512、单向贪心一对一匹配、查询区域 sqrt(area) 聚合，固定 best_nce。几何量来自完整原始区域 mask；位置是径向分布，不是绝对二维坐标。
+
+区域对分数为 `clip(cos(h_q,h_c),0,1) * exp(-D_radial) * (0.85 + 0.15 * exp(-D_area/1.5))`。详细公式、代码入口和来源保护见 [主实验说明](../../../experiments/proposed/f_segmentation_geometry/README.md)。
+
+对比方法共六种：Wu、Yu、WBBS、Nakazawa CNN、WMHD、WaPIRL 整图适配。Yu 与 Nakazawa 使用监督分类训练；WaPIRL 与 F 使用自监督训练；其他三种不训练。论文复现边界以各方法 README 为准。
+
+六种分割对照均已完成 valid/test。F 与 WaPIRL 融合及单项消融也已完成，valid 选中整图权重 0.5、角向强度 0.5、占比强度 0。角向＋最优匹配组合 test 已完成，但属于查看前一轮 test 后提出的补充实验。当前主方法的身份在查看历史 test 后确认，不把后续融合默认替换为主方法。
+
+## 评价与比较边界
+
+- 冻结去重 train/valid/test=25,193/3,599/7,199；valid 固定 500 query，每 query 3,598 候选；test 全部 7,199 query，每 query 7,198 候选。
+- exact 要求完整 multi-hot 标签组合相同；coverage 使用查询标签覆盖率，FullCoverage 允许候选具有额外标签。两者共享排名。
+- AP/Recall 分母及 coverage IDCG 使用完整候选库，保存 Top-500，mAP@K 是截断指标。K=1/5/10/20/50/100/500，保留总体、类别宏平均、单／混合及标签数量分组。
+- 跨组合 test 额外排除同标签组合候选，属于独立协议；七方法已全部完成。其中 F 是 2026-11-11 的旧径向面积来源，不替代当前 cc8。
+- 当前论文保留 coverage 与 exact 两套评价。新增融合权重及角向强度的实际选参标准是 valid exact/all/Precision@10，不改写为使用 coverage 选参。
+
+指标公式见 [统一评价迁移说明](EXACT_METRICS_MIGRATION.md)，完整最新数值以 [机器生成的指标长表](../../../results_catalog/metrics.csv) 为准。不要从旧日期文档抄数后混入当前表。
+
+## 历史记录
+
+原 2026-11-10 的“五方法＋旧 F”全文保存在 [历史总览](../../../experiments/_archive/ALL_METHODS_AND_METRICS_20261110.md)。其中“当前”“尚未完成”等描述是当时状态；旧 F 无几何评分的描述、旧成绩、旧运行命令均不代表本页更新后的状态。
+
+历史训练、排名、模型、压缩包和运行目录未迁移或改写。当前登记将报告来源与运行身份显式保存，GitHub 不保存原始大产物。
