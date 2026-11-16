@@ -17,3 +17,26 @@ artifacts/
 /scripts/geometric_region_audit/author_multi_x/data/
 /scripts/geometric_region_audit/author_multi_x/local_adapter/*.dylib
 /scripts/geometric_region_audit/author_multi_x/local_adapter/*.so
+
+# Historical bundles and large generated artifacts (frozen protocol/ stays tracked)
+/archives/
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.7z
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.safetensors
+*.so
+*.dylib
