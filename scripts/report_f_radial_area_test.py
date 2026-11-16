@@ -317,7 +317,7 @@ def generate(result_dir, radial_dir, references, output):
            f"- 新面积F/径向F全部组从逐query CSV重新聚合核对的最大误差：`{aggregation_error}`。",
            f"- 从CSV补出的缺失组：`{json.dumps(reconstructed, ensure_ascii=False)}`。",
            f"- 无数据因而保留缺失的组：`{json.dumps(missing, ensure_ascii=False)}`。", "",
-           f"所有原始文件只读。参考文档为[旧F精确评价记录]({os.path.relpath(ROOT / 'doc/history/20261116/精确评价迁移.md', output)})，本生成器不改写该文档或替换既有方法。", ""]
+           f"所有原始文件只读。参考文档为[旧F历史评价与来源]({os.path.relpath(ROOT / 'doc/项目说明.md', output)}#历史记录)，本生成器不改写该文档或替换既有方法。", ""]
     if selection is not None:
         md += ["### 新方案test前冻结记录", "", "```json", json.dumps(selection, ensure_ascii=False, indent=2), "```", ""]
 
