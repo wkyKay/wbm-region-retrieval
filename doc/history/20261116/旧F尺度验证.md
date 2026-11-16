@@ -25,7 +25,7 @@
 
 ## 指标口径
 
-沿用 [EXACT_METRICS_MIGRATION.md](EXACT_METRICS_MIGRATION.md) 的两组定义。exact_v1要求完整multi-hot组合相同；coverage_v1以查询标签覆盖比例作为线性gain，FullCoverage要求查询标签集合包含于候选标签集合。AP和Recall分母均取完整候选库相关数，AP不用min(R,K)。下表均为query平均、比例值；K固定1、5、10、20、50、100、500。
+沿用 [精确评价迁移.md](精确评价迁移.md) 的两组定义。exact_v1要求完整multi-hot组合相同；coverage_v1以查询标签覆盖比例作为线性gain，FullCoverage要求查询标签集合包含于候选标签集合。AP和Recall分母均取完整候选库相关数，AP不用min(R,K)。下表均为query平均、比例值；K固定1、5、10、20、50、100、500。
 
 ## 完整总体指标
 

@@ -23,11 +23,11 @@ $$S_{new}=\operatorname{clip}(\cos(h_q,h_c),0,1)e^{-D_{radial}}\left[0.85+0.15e^
 
 面积开平方后采用线性尺度单位；本次不使用长短轴，因此PDF的PCA“＋1”平滑不参与本轮评分。没有新增四旋转汇聚、双向评分、区域筛选或匹配阈值。
 
-本轮选型依据 [valid完整对照](F_RADIAL_SCALE_VALID_20261111.md)，在用户选择面积方案后于新test评分前冻结设置，记录见 selection_before_test.json（本地和服务器产物：`wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json`；不随 Git 发布）。
+本轮选型依据 [valid完整对照](旧F尺度验证.md)，在用户选择面积方案后于新test评分前冻结设置，记录见 selection_before_test.json（本地和服务器产物：`wbm-region-retrieval/artifacts/f_radial_area_test_20261111_v1/selection_before_test.json`；不随 Git 发布）。
 
 ## 两组评价定义
 
-指标沿用 [EXACT_METRICS_MIGRATION.md](EXACT_METRICS_MIGRATION.md)；K为1、5、10、20、50、100、500。
+指标沿用 [精确评价迁移.md](精确评价迁移.md)；K为1、5、10、20、50、100、500。
 - exact_v1：完整multi-hot标签组合相同为相关，报告Hit、Precision、Recall、mAP。
 - coverage_v1：查询类别覆盖比例为线性gain；FullCoverage要求Lq⊆Lc，报告Coverage-nDCG、MeanCoverage及四项FullCoverage指标。
 - 两组AP与Recall的分母均来自完整固定候选库，AP不使用min(R,K)。保存Top500，不将其称为全部候选的完整排行。

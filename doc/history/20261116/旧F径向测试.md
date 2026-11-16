@@ -10,7 +10,7 @@
 固定使用valid mAP@10已选定的β=1、16-bin径向直方图及原F `best_nce`（epoch100、seed2026）。
 没有重新训练、没有在test上选参、没有四旋转汇聚或双向评分。原模型、缓存和历史结果保持不变。
 
-对照依据为 [EXACT_METRICS_MIGRATION.md](EXACT_METRICS_MIGRATION.md)。使用七方法完整原始JSON的未舍入值，
+对照依据为 [精确评价迁移.md](精确评价迁移.md)。使用七方法完整原始JSON的未舍入值，
 没有从文档舍入数值重建指标；原七方法保留，新径向F作为第八个对比条目。
 
 ## 完整报告与数据

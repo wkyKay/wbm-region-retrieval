@@ -1,7 +1,7 @@
 [
   {
     "original": "doc/ALL_METHODS_AND_METRICS.md",
-    "archive": "doc/history/20261116/ALL_METHODS_AND_METRICS.md",
+    "archive": "doc/history/20261116/方法指标总览.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7d2718262440361c3cdff5c87ed51b8cd196b83ac3f34df0a12f8bc77ad04978",
     "current_topic": "doc/实验设计.md",
@@ -12,7 +12,7 @@
   },
   {
     "original": "doc/DATA_PROTOCOL_MIGRATION.md",
-    "archive": "doc/history/20261116/DATA_PROTOCOL_MIGRATION.md",
+    "archive": "doc/history/20261116/数据协议迁移.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "465856ce9e0b25379300ae3cb86ee3c9ddf37b90906a16e2820cf7ab50831127",
     "current_topic": "doc/数据划分.md",
@@ -23,7 +23,7 @@
   },
   {
     "original": "doc/EXACT_METRICS_MIGRATION.md",
-    "archive": "doc/history/20261116/EXACT_METRICS_MIGRATION.md",
+    "archive": "doc/history/20261116/精确评价迁移.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "47d4f164adc8ad3f07a925c643bebaaca7782e53039ac45df9a9d821cb00369d",
     "current_topic": "doc/数据划分.md",
@@ -47,7 +47,7 @@
   },
   {
     "original": "doc/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
-    "archive": "doc/history/20261116/F_AREA_WBBS_GAP_ANALYSIS_20261111.md",
+    "archive": "doc/history/20261116/旧F与WBBS差距.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "40404d9b51e8319213251f507a950ba77c2df95d01d9b4a542f08b7be5bbb142",
     "current_topic": "doc/实验结果.md",
@@ -107,7 +107,7 @@
   },
   {
     "original": "doc/F_BIDIRECTIONAL_VALID_20261111.md",
-    "archive": "doc/history/20261116/F_BIDIRECTIONAL_VALID_20261111.md",
+    "archive": "doc/history/20261116/旧F双向验证.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "7fc952e637c9b4abfc5b1c5f76dad804d4f4a2e658bc83ebcafb3865874b6620",
     "current_topic": "doc/实验结果.md",
@@ -118,7 +118,7 @@
   },
   {
     "original": "doc/F_INFERENCE_ABLATIONS_VALID_20261111.md",
-    "archive": "doc/history/20261116/F_INFERENCE_ABLATIONS_VALID_20261111.md",
+    "archive": "doc/history/20261116/旧F推断消融.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5b06d3be3df5ee77de61da333c7df969636b9f5bc90fdf5242f3ee1f1ffef610",
     "current_topic": "doc/实验结果.md",
@@ -129,7 +129,7 @@
   },
   {
     "original": "doc/F_RADIAL_AREA_TEST_20261111.md",
-    "archive": "doc/history/20261116/F_RADIAL_AREA_TEST_20261111.md",
+    "archive": "doc/history/20261116/旧F径向面积测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "8cf9a3eef27acd31fa6e74723f6045730eb8d03ab6aef4707b1ea2800fcc6c29",
     "current_topic": "doc/实验结果.md",
@@ -195,7 +195,7 @@
   },
   {
     "original": "doc/F_RADIAL_BETA1_TEST_20261111.md",
-    "archive": "doc/history/20261116/F_RADIAL_BETA1_TEST_20261111.md",
+    "archive": "doc/history/20261116/旧F径向测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "147e2c751cbe9f268180f73fa95efb9ff7178448af14e7a81ae5c9b673d99cf2",
     "current_topic": "doc/实验结果.md",
@@ -243,7 +243,7 @@
   },
   {
     "original": "doc/F_RADIAL_SCALE_VALID_20261111.md",
-    "archive": "doc/history/20261116/F_RADIAL_SCALE_VALID_20261111.md",
+    "archive": "doc/history/20261116/旧F尺度验证.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "5e428567b1ba474c809a41546c380b3c725f7f88ce14e039133ba00d8a681956",
     "current_topic": "doc/实验结果.md",
@@ -303,7 +303,7 @@
   },
   {
     "original": "doc/HANDCRAFTED_TEST_20261111.md",
-    "archive": "doc/history/20261116/HANDCRAFTED_TEST_20261111.md",
+    "archive": "doc/history/20261116/手工特征测试.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "6033eb8097d5cd0757782fcb3ac632cf004cdd32c648a43d05f90a6228f45936",
     "current_topic": "doc/实验结果.md",
@@ -357,7 +357,7 @@
   },
   {
     "original": "doc/PAPER_DRAFT_PROBLEM_METHODS.md",
-    "archive": "doc/history/20261116/PAPER_DRAFT_PROBLEM_METHODS.md",
+    "archive": "doc/history/20261116/旧版论文初稿.md",
     "original_commit": "35b7399cd0cd3a05f6860589a23688435804694b",
     "original_sha256": "6f2b3d3d730cf80b97b3091bbd5bb65208a8a4b9d12a6c9a398367428516de28",
     "current_topic": "doc/论文初稿.md",
