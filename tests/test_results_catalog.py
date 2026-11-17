@@ -42,7 +42,22 @@ class CollectionTests(unittest.TestCase):
                                 "required_families": ["exact"]}]}
 
     def seal(self):
-        build.dump(self.marker, {"files": {"metrics.json": build.sha(self.report)}})
+        files = {"metrics.json": build.sha(self.report)}
+        identity = self.folder / "run_identity.json"
+        if identity.exists():
+            files[identity.name] = build.sha(identity)
+        build.dump(self.marker, {"files": files})
+
+    def identity(self, **updates):
+        path = self.folder / "run_identity.json"
+        value = {"schema_version": 1, "key": "fixture_valid", "split": "valid",
+                 "started_at": "2026-11-17T09:30:00+08:00",
+                 "run_id": "20261117T093000+0800__fixture_valid"}
+        value.update(updates)
+        build.dump(path, value)
+        self.specs["runs"][0].update(identity_schema_version=1, identity=str(path.relative_to(self.root)))
+        self.seal()
+        return path
 
     def collect(self, previous=None):
         with patch.object(build.subprocess, "check_output", return_value="fixture-head\n"):
@@ -105,6 +120,98 @@ class CollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Completed run changed"):
             self.collect(first)
 
+    def test_persisted_start_identity_is_bound_and_stable(self):
+        identity = self.identity()
+        first = self.collect()
+        run = first["runs"][0]
+        self.assertEqual(run["run_id"], "20261117T093000+0800__fixture_valid")
+        self.assertEqual(run["id_time"], {"value": "2026-11-17T09:30:00+08:00", "basis": "started_at",
+                                         "source": "artifacts/example/valid/run_identity.json",
+                                         "is_execution_start": True})
+        self.assertEqual(run["provenance"]["identity"]["sha256"], build.sha(identity))
+        before = {str(p): (p.read_bytes(), p.stat().st_mtime_ns) for p in self.workspace.rglob("*") if p.is_file()}
+        self.collect(first)
+        after = {str(p): (p.read_bytes(), p.stat().st_mtime_ns) for p in self.workspace.rglob("*") if p.is_file()}
+        self.assertEqual(before, after)
+        for path in (identity, self.marker):
+            stamp = path.stat().st_mtime + 86400
+            os.utime(path, (stamp, stamp))
+        second = self.collect(first)
+        fresh = self.collect()
+        self.assertEqual(first["runs"][0], second["runs"][0])
+        self.assertEqual(first["runs"][0], fresh["runs"][0])
+
+    def test_declared_identity_cannot_fall_back_to_mtime(self):
+        self.identity().unlink()
+        with self.assertRaisesRegex(ValueError, "Missing declared run identity"):
+            self.collect()
+        self.specs["runs"][0].pop("identity")
+        with self.assertRaisesRegex(ValueError, "requires identity_schema_version"):
+            self.collect()
+
+    def test_identity_requires_schema_timezone_matching_key_and_split(self):
+        cases = [({"schema_version": 2}, "schema/key/split"),
+                 ({"schema_version": True}, "schema/key/split"),
+                 ({"key": "other"}, "schema/key/split"),
+                 ({"split": "test"}, "schema/key/split"),
+                 ({"started_at": "2026-11-17T09:30:00"}, "seconds and \\+08:00"),
+                 ({"started_at": "2026-11-17T01:30:00+00:00"}, "seconds and \\+08:00"),
+                 ({"started_at": "2026-02-30T09:30:00+08:00"}, "Invalid started_at"),
+                 ({"run_id": "20261117T093001+0800__fixture_valid"}, "does not match"),
+                 ({"run_id": "20261117T093000+0800__other"}, "does not match")]
+        for updates, message in cases:
+            with self.subTest(updates=updates):
+                self.identity(**updates)
+                with self.assertRaisesRegex(ValueError, message):
+                    self.collect()
+
+    def test_identity_must_be_completed_and_immutable(self):
+        path = self.identity()
+        first = self.collect()
+        value = build.read(path)
+        value["started_at"] = "2026-11-17T09:31:00+08:00"
+        value["run_id"] = "20261117T093100+0800__fixture_valid"
+        build.dump(path, value)
+        with self.assertRaisesRegex(ValueError, "identity hash mismatch"):
+            self.collect(first)
+        self.seal()
+        with self.assertRaisesRegex(ValueError, "Completed run changed"):
+            self.collect(first)
+
+    def test_registered_identity_cannot_be_removed_or_relabelled(self):
+        self.identity()
+        first = self.collect()
+        self.specs["runs"][0].pop("identity")
+        self.specs["runs"][0].pop("identity_schema_version")
+        with self.assertRaisesRegex(ValueError, "Registered run identity changed"):
+            self.collect(first)
+
+    def test_manifest_with_new_identity_requires_explicit_declaration(self):
+        manifest = self.folder / "manifest.json"
+        build.dump(manifest, {"run_id": "20261117T093000+0800__fixture_valid",
+                              "started_at": "2026-11-17T09:30:00+08:00"})
+        self.specs["runs"][0]["manifest"] = str(manifest.relative_to(self.root))
+        with self.assertRaisesRegex(ValueError, "explicit identity source"):
+            self.collect()
+
+    def test_identity_path_cannot_escape_the_run(self):
+        self.identity()
+        for name in ("../run_identity.json", str(self.folder / "run_identity.json"), "run_identity.json"):
+            with self.subTest(name=name):
+                self.specs["runs"][0]["identity"] = name
+                with self.assertRaisesRegex(ValueError, "repository-relative|inside the completed run"):
+                    self.collect()
+
+    def test_artificial_outputs_are_inventoried_without_changing_artifacts(self):
+        output = self.root / "artificial/experiment_20261117T093000+0800"
+        output.mkdir(parents=True)
+        build.dump(output / "status.json", {"status": "running"})
+        result = self.collect()
+        entries = {item["path"]: item for item in result["inventory"] if item["repository"] == "compared_methods"}
+        self.assertEqual(entries["artifacts/example"]["registered_results"], ["fixture_valid"])
+        self.assertEqual(entries[str(output.relative_to(self.root))]["recorded_status"], "running")
+        self.assertEqual(entries[str(output.relative_to(self.root))]["role"], "not_in_current_tables")
+
 
 class ReportTests(unittest.TestCase):
     @classmethod
@@ -153,6 +260,29 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(self.output, build.render(copy.deepcopy(self.snapshot)))
         groups = dict(build.metric_groups({"metrics": {"mAP@1": None}, "groups": {}}))
         self.assertIsNone(groups["all"]["mAP@1"])
+
+    def test_existing_generated_files_are_unchanged(self):
+        for name, content in self.output.items():
+            with self.subTest(name=name):
+                self.assertEqual((CATALOG / name).read_text(), content)
+
+    def test_new_fusion_test_is_appended_without_valid_or_cross_contamination(self):
+        snapshot = copy.deepcopy(self.snapshot)
+        template = next(r for r in snapshot["runs"] if r["key"] == "f_combination_test")
+        for key, split, protocol in [("new_fusion_test", "test", "retrieval_v1"),
+                                     ("new_fusion_valid", "valid", "retrieval_v1"),
+                                     ("new_fusion_cross", "test", "coverage_cross_combination_v1")]:
+            item = copy.deepcopy(template)
+            item.update(key=key, run_id="20261117T093000+0800__" + key, split=split,
+                        protocol=protocol, category="fusion_ablation", display=key)
+            snapshot["runs"].append(item)
+        text = build.render(snapshot)["CURRENT_RESULTS.md"]
+        section = text.split("## 融合及消融\n", 1)[1].split("## 跨组合 test", 1)[0]
+        self.assertIn("`new_fusion_test`", section)
+        self.assertNotIn("`new_fusion_valid`", section)
+        self.assertNotIn("`new_fusion_cross`", section)
+        self.assertLess(section.index("`f_combination_test`"), section.index("`new_fusion_test`"))
+        self.assertNotIn("最后一行组合", section)
 
 
 if __name__ == "__main__":

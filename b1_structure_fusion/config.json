@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "recipe": "b1_tv_joint_v1",
+  "sigma_d": 9.0,
+  "noise_threshold": 0.32,
+  "block_size": 256,
+  "bins": [8, 4, 4],
+  "axis_order": ["rho", "stick", "ball"],
+  "normalization": "per_image_channel_max_before_denoising; zero_channel_to_zero",
+  "soft_bins": "uniform_endpoint_nodes; trilinear_hat_weights; equal_point_mass",
+  "empty_policy": "both_empty_distance_zero; one_empty_distance_one",
+  "distance": "ordinary_hellinger_float64",
+  "families": ["R", "T", "I", "J"],
+  "lambda_grid": [0.0, 0.25, 0.5, 1.0, 2.0],
+  "ks": [1, 5, 10, 20, 50, 100, 500],
+  "tie_seed": 2026,
+  "selection_metric": "exact/all/Precision@10",
+  "selection_tie_rule": "smaller_strength_including_zero",
+  "baseline": "(0.5*F_optimal+0.5*G)*exp(-0.5*D_angle)",
+  "posthoc_design": true,
+  "test_parameter_search": false,
+  "training_required": false
+}

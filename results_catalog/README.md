@@ -25,9 +25,23 @@
 
 格式为 `YYYYMMDDTHHMMSS+0800__稳定语义key`，例如 `20261109T121535+0800__wu_valid`。时间用于排序，语义后缀避免同秒或同批多方法重名；不修改原始目录名。
 
-历史运行缺少统一的开始时间字段，因此当前登记使用完成标记 `completed.json` 的文件 mtime，`id_time.basis=completion_marker_mtime`，`is_execution_start=false`。这是可核对的文件时间，不宣称是训练或评价开始时间。`collected_at` 单独记录本次采集时间。已有 ID 在重采集时保留，即使复制文件改变 mtime，也不重新分配 ID。
+历史运行缺少统一的开始时间字段，保留完成标记 `completed.json` 的文件 mtime 作为登记时间依据，`id_time.basis=completion_marker_mtime`，`is_execution_start=false`。这是可核对的文件时间，不宣称是训练或评价开始时间。`collected_at` 单独记录本次采集时间。已有 ID 在重采集时保留，即使复制文件改变 mtime，也不重新分配 ID。
 
-新增实验应在启动时记录带时区的真实 `started_at`，后续可扩展登记器读取该字段；不要为旧实验补造开始时间。`key` 和原始结果目录一经登记保持绑定；已完成产物内容改变时拒绝复用原 key，应另建实验和登记。
+新增实验在实际启动时记录真实时间。每个“变体×split”的来源条目声明 `identity_schema_version: 1` 和 `identity`；后者是身份文件相对于所属仓库的路径，例如 `artificial/<本次运行>/valid/<变体>/run_identity.json`。身份文件内容为：
+
+```json
+{
+  "schema_version": 1,
+  "key": "example_valid",
+  "split": "valid",
+  "started_at": "2026-11-17T09:30:00+08:00",
+  "run_id": "20261117T093000+0800__example_valid"
+}
+```
+
+示例时间不能代替实际启动时间。`started_at` 必须精确到秒并带 `+08:00`；run_id 的时间部分必须与之相符，后缀必须等于登记 key。身份文件必须位于该完成标记覆盖的目录内，并纳入 `completed.json` 的文件哈希。登记为 `id_time.basis=started_at`、`is_execution_start=true`，同时保存身份文件及哈希。断点续跑保持原身份。
+
+已声明新格式但身份缺失、损坏、key/split 不符或时间不合法时拒绝采集，不回退到 mtime。manifest 已包含 `run_id/started_at` 却未声明身份来源也会拒绝。旧运行不补造开始时间，已有 key 不切换时间依据；`key`、身份和原始结果目录一经登记保持绑定，已完成产物内容改变时须另建实验和登记。
 
 ## 更新命令
 
@@ -48,6 +62,8 @@ python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v
 ```
 
 新增结果先编辑 `sources.json`，再在有完整产物的服务器 `collect`。修改来源清单后直接离线 render/check 会拒绝，避免使用旧快照。相同快照生成的文件逐字节稳定；`check` 只检查已提交文件是否与快照一致，不连接服务器，也不代表源模型或原始排名已重新核验。
+
+`artifacts/` 与 `artificial/` 下的运行目录均进入只读目录盘点；目录存在不等于已完成或已登记。普通协议下新增的 `fusion`、`fusion_ablation`、`posthoc` 类别 test 结果会追加到总览融合表，valid 与跨组合结果仍分开处理。新增方法的注册入口可以生成来源条目，只有报告、完成标记和冻结选择全部就绪后才能写入唯一 `sources.json`；登记器不依赖任何具体实验包。
 
 ## 指标读取规则
 

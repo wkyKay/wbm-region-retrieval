@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import math
+import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -71,6 +72,57 @@ def metric_groups(data):
     yield from walk(data.get("groups", {}), "")
 
 
+def execution_identity(root, spec, marker, manifest):
+    """Read explicit new-run identities; legacy sources keep their mtime basis."""
+    identity_name = spec.get("identity")
+    identity_schema = spec.get("identity_schema_version")
+    if identity_name is not None or identity_schema is not None:
+        if type(identity_schema) is not int or identity_schema != 1 or not isinstance(identity_name, str) or not identity_name:
+            raise ValueError(f"New run requires identity_schema_version=1 and identity: {spec['key']}")
+        relative = Path(identity_name)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"Identity must be a repository-relative path: {spec['key']}")
+        path = root / relative
+        try:
+            path.resolve().relative_to(root.resolve())
+            marker_relative = str(path.relative_to(marker.parent))
+        except ValueError as error:
+            raise ValueError(f"Identity must be inside the completed run: {spec['key']}") from error
+        if not path.is_file():
+            raise ValueError(f"Missing declared run identity: {path}")
+        expected = read(marker).get("files", {}).get(marker_relative)
+        if expected is None or sha(path) != expected:
+            raise ValueError(f"Run identity hash mismatch or missing completion binding: {path}")
+        identity = read(path)
+        if (not isinstance(identity, dict) or type(identity.get("schema_version")) is not int or
+                identity.get("schema_version") != 1 or identity.get("key") != spec["key"] or
+                identity.get("split") != spec["split"]):
+            raise ValueError(f"Run identity schema/key/split mismatch: {spec['key']}")
+        stamp_text = identity.get("started_at")
+        if not isinstance(stamp_text, str) or not re.fullmatch(
+                r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+08:00", stamp_text):
+            raise ValueError(f"started_at must contain seconds and +08:00: {spec['key']}")
+        try:
+            stamp = datetime.fromisoformat(stamp_text)
+        except ValueError as error:
+            raise ValueError(f"Invalid started_at: {spec['key']}") from error
+        key = spec["key"]
+        if not isinstance(key, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", key):
+            raise ValueError(f"Invalid run identity key: {key}")
+        run_id = stamp.strftime("%Y%m%dT%H%M%S%z") + "__" + key
+        if identity.get("run_id") != run_id:
+            raise ValueError(f"run_id does not match started_at/key: {key}")
+        return run_id, {"value": stamp_text, "basis": "started_at", "source": identity_name,
+                        "is_execution_start": True}, {"identity": ref(root, path), "identity_data": identity}
+    if "started_at" in manifest or "run_id" in manifest:
+        raise ValueError(f"Manifest declares a new run identity; add an explicit identity source: {spec['key']}")
+    # Historical sources have no persisted start identity. Do not invent one.
+    stamp = datetime.fromtimestamp(marker.stat().st_mtime, TZ)
+    return (stamp.strftime("%Y%m%dT%H%M%S%z") + "__" + spec["key"],
+            {"value": stamp.isoformat(timespec="seconds"), "basis": "completion_marker_mtime",
+             "source": str(marker.relative_to(root)), "is_execution_start": False}, {})
+
+
 def collect(workspace, specs, previous=None):
     workspace = workspace.resolve()
     roots = {name: workspace / name for name in ("compared_methods", "wbm-region-retrieval")}
@@ -129,20 +181,21 @@ def collect(workspace, specs, previous=None):
             signature = derived.get("base_protocol_signature") if derived else d.get("retrieval_protocol_signature", d.get("metadata", {}).get("retrieval_protocol_signature"))
             if (family == "exact" or derived or signature is not None) and signature != BASE_PROTOCOL_SIGNATURE:
                 raise ValueError(f"Report frozen protocol signature mismatch: {spec['key']}/{family}")
-        # Historical IDs use an observed completion-file timestamp, never an invented start time.
-        stamp = datetime.fromtimestamp(marker.stat().st_mtime, TZ)
-        time_info = {"value": stamp.isoformat(timespec="seconds"),
-                     "basis": "completion_marker_mtime", "source": str(marker.relative_to(root)),
-                     "is_execution_start": False}
-        run_id = stamp.strftime("%Y%m%dT%H%M%S%z") + "__" + spec["key"]
+        run_id, time_info, identity_provenance = execution_identity(root, spec, marker, manifest)
         if spec["key"] in old:
             prior = old[spec["key"]]
             if prior["repository"] != spec["repository"] or prior["path"] != spec["path"]:
                 raise ValueError(f"Existing key moved; allocate a new key: {spec['key']}")
             if prior["completion"]["sha256"] != sha(marker):
                 raise ValueError(f"Completed run changed; allocate a new key: {spec['key']}")
+            if (prior["id_time"]["basis"] != time_info["basis"] or
+                    time_info["is_execution_start"] and (prior["run_id"] != run_id or
+                    prior["id_time"] != time_info or
+                    prior.get("provenance", {}).get("identity") != identity_provenance.get("identity"))):
+                raise ValueError(f"Registered run identity changed; allocate a new key: {spec['key']}")
             run_id, time_info = prior["run_id"], prior["id_time"]
         provenance = {"manifest": ref(root, manifest_path), "manifest_data": manifest} if manifest_path else {}
+        provenance.update(identity_provenance)
         if cov:
             provenance["coverage_manifest"] = ref(root, root / cov["manifest"])
             provenance["coverage_manifest_data"] = extra
@@ -164,7 +217,9 @@ def collect(workspace, specs, previous=None):
         raise ValueError("Duplicate run IDs or keys")
     inventory = []
     for name, root in roots.items():
-        for p in sorted((root / "artifacts").iterdir()):
+        outputs = [p for directory in ("artifacts", "artificial") if (root / directory).is_dir()
+                   for p in sorted((root / directory).iterdir())]
+        for p in outputs:
             if not p.is_dir():
                 continue
             members = [r["key"] for r in runs if r["repository"] == name and r["path"].startswith(str(p.relative_to(root)) + "/")]
@@ -246,9 +301,16 @@ def render(snapshot):
     lines.extend(["Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WMHD 数值代表当前实现和适配设置，不等于原论文结论。当前主方法在上述指标上仍低于 WBBS 和 Nakazawa。", ""])
     table("六种分割对照", [r for r in runs if r["category"] == "segmentation" and r["split"] == "test"])
     keys = ["f_geometry_cc8_test", "f_fusion_0.5_test", "f_ablation_angular_0.5_test", "f_ablation_optimal_test", "f_combination_test"]
-    table("融合及消融", [by_key[k] for k in keys])
-    lines.extend(["融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。最后一行组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。", "",
+    # Historical endpoints duplicate the F/WaPIRL or original fusion reference rows.
+    reference_aliases = {"f_fusion_0.0_test", "f_fusion_1.0_test", "f_ablation_baseline_test"}
+    additional_fusion = [r for r in runs if r["key"] not in keys and r["key"] not in reference_aliases and r["split"] == "test"
+                         and r.get("protocol", "retrieval_v1") == "retrieval_v1" and table_filters["fusion"](r)]
+    table("融合及消融", [by_key[k] for k in keys] + additional_fusion)
+    historical_combination = "历史角向＋最优匹配组合" if additional_fusion else "最后一行组合"
+    lines.extend([f"融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。{historical_combination}是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。", "",
                   "组合与角向单项的差值不代表统计显著或跨种子稳定收益。valid 参数网格、所有 test 对照和分组见 [融合长表](tables/fusion.csv)。", ""])
+    if additional_fusion:
+        lines.extend(["新增融合实验按各自已冻结的 valid 选择记录评价；监督信息、事后设计背景和来源见登记表及 manifest，不将新增变体自动替换为当前主方法。", ""])
     table("跨组合 test", [r for r in runs if r["category"] == "cross_combination"], True)
     lines.extend(["本表额外排除同标签组合候选，每 query 6,999–7,170 个候选。999 个 query 无 FullCoverage 正样本；仅对应 Recall/AP 平均排除，保留其余指标，Recall/AP 有效 query=6,200。七方法均已完成；F 是 2026-11-11 的旧径向面积来源，不能替代当前 cc8。与普通 test 独立展示。", "",
                   "## 保存位置与追溯", "",
@@ -268,8 +330,8 @@ def main():
     parser.add_argument("--catalog", type=Path, default=HERE)
     args = parser.parse_args()
     folder = args.catalog.resolve()
-    if "artifacts" in folder.parts or "archives" in folder.parts or "protocol" in folder.parts:
-        parser.error("Catalog output must be outside experiment artifacts, archives and protocol")
+    if any(name in folder.parts for name in ("artifacts", "artificial", "archives", "protocol")):
+        parser.error("Catalog output must be outside experiment artifacts, artificial, archives and protocol")
     snapshot_path = folder / "snapshot.json"
     if args.command == "collect":
         if not args.workspace:

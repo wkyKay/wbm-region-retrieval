@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 artifacts/
+artificial/
 .DS_Store
 
 # Runtime output and local tooling
