@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "recipe": "b1_fixed_component_ablation_v1",
+  "structure_strength": 2.0,
+  "angular_gamma": 0.5,
+  "fusion_weight": 0.5,
+  "ks": [1, 5, 10, 20, 50, 100, 500],
+  "tie_seed": 2026,
+  "parameter_selection": "none; fixed deletion from frozen J_2",
+  "training_required": false,
+  "posthoc_research": true,
+  "test_parameter_search": false,
+  "valid_variants": ["no_local", "no_global", "no_angle", "greedy", "structure_only"],
+  "test_additional_variants": ["I_2"]
+}
