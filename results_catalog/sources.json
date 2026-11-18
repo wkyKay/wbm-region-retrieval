@@ -2203,6 +2203,64 @@
         "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
       ],
       "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T183806_0800_valid_no_global_angle",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T183806+0800/valid/no_global_angle",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_global_angle",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T183806+0800/valid/no_global_angle/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T183806+0800/valid/no_global_angle/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T183806+0800/valid/no_global_angle/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_global_angle",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T183806+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T183806+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T183806+0800/verification_valid.json"
+      ],
+      "design_note": "Joint deletion of global CNN G and angular A: F_optimal * exp(-2 D_J), local weight 1, angular gamma 0. Frozen original J strength 2; no retraining or new parameter search. Designed after observing prior B1 and component-ablation test. J still uses the full wafer; not a purely local method."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T183806_0800_test_no_global_angle",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T183806+0800/test/no_global_angle",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_global_angle",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T183806+0800/test/no_global_angle/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T183806+0800/test/no_global_angle/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T183806+0800/test/no_global_angle/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_global_angle",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T183806+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T183806+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T183806+0800/verification_test.json"
+      ],
+      "design_note": "Joint deletion of global CNN G and angular A: F_optimal * exp(-2 D_J), local weight 1, angular gamma 0. Frozen original J strength 2; no retraining or new parameter search. Designed after observing prior B1 and component-ablation test. J still uses the full wafer; not a purely local method."
     }
   ]
 }
