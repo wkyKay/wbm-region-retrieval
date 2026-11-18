@@ -48,10 +48,12 @@ def identity():
     return result
 
 
-def inventory(source, reference=None):
+def inventory(source, reference=None, protected_roots=()):
     files = sorted(p for p in source.rglob("*") if p.is_file())
     if reference is not None:
         files += sorted(p for p in reference.rglob("*") if p.is_file())
+    for protected in protected_roots:
+        files += sorted(p for p in protected.rglob("*") if p.is_file())
     files += sorted(p for p in (ROOT / "b1_structure_fusion").rglob("*") if p.is_file() and "__pycache__" not in p.parts)
     return {str(p): {"sha256": file_hash(p), "size": p.stat().st_size,
                     "mtime_ns": p.stat().st_mtime_ns} for p in files}
@@ -174,8 +176,10 @@ def benchmark(scorer, descriptors, pool, device, ks, settings=None):
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source-root", default=DEFAULT_SOURCE)
-    p.add_argument("--recipe", choices=("components", "no_global_angle"), default="components")
+    p.add_argument("--recipe", choices=("components", "no_global_angle", "no_local_angle"), default="components")
     p.add_argument("--reference-ablation-root", help="Completed component ablation used read-only for joint-deletion comparisons")
+    p.add_argument("--protected-root", action="append", default=[],
+                   help="Additional completed run to protect read-only; does not add an analysis comparison")
     out = p.add_mutually_exclusive_group()
     out.add_argument("--output-root"); out.add_argument("--resume-root")
     p.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
@@ -187,14 +191,15 @@ def parser():
 
 def main(argv=None):
     args = parser().parse_args(argv)
-    config = Path(__file__).with_name("config_no_global_angle.json") if args.recipe == "no_global_angle" else None
+    config = Path(__file__).with_name(f"config_{args.recipe}.json") if args.recipe != "components" else None
     settings = scoring.load_settings(config)
     reference = (path(args.reference_ablation_root or DEFAULT_REFERENCE_ABLATION)
-                 if args.recipe == "no_global_angle" else None)
+                 if args.recipe != "components" else None)
     if args.recipe == "components" and args.reference_ablation_root:
         raise ValueError("Reference ablation is only used by the joint-deletion recipe")
     source, output = path(args.source_root), choose_output(args)
-    separate_output(output, [source, ROOT / "artifacts", ROOT / "protocol", ROOT / "results_catalog", *([reference] if reference else [])])
+    protected = sorted({path(p) for p in args.protected_root} - {source, reference}, key=str)
+    separate_output(output, [source, ROOT / "artifacts", ROOT / "protocol", ROOT / "results_catalog", *([reference] if reference else []), *protected])
     plan = {"version": VERSION, "source_root": str(source), "settings": settings,
             "valid": scoring.specs("valid", settings), "test": scoring.specs("test", settings),
             "reuse": {"valid/I_2": str(source / "valid/I_2"), "baseline": str(source)},
@@ -205,10 +210,20 @@ def main(argv=None):
     if reference is not None:
         plan["reference_ablation_root"] = str(reference)
         plan["reuse"]["component_controls"] = ["no_global", "no_angle", "no_local"]
+    if protected:
+        plan["protected_roots"] = [str(p) for p in protected]
     if args.dry_run:
         print(json.dumps(plan, ensure_ascii=False, indent=2)); return 0
     if args.device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("Original PyTorch CUDA environment required")
+    protected_identities = {}
+    for protected_root in protected:
+        if (ROOT / "artificial") not in protected_root.parents:
+            raise ValueError("Extra protection requires an isolated artificial/ run")
+        if read_json(protected_root / "status.json").get("status") != "completed":
+            raise ValueError("Additional protected run must already be completed")
+        fusion.signed_manifest(protected_root / "run_manifest.json")
+        protected_identities[str(protected_root)] = file_hash(protected_root / "run_manifest.json")
     bundle, contexts = load_inputs(source, args.device)
     reference_identity = None
     if reference is not None:
@@ -230,6 +245,10 @@ def main(argv=None):
                "inputs": {s: v[4] for s, v in contexts.items()}}
     if reference_identity is not None:
         context["reference_ablation"] = reference_identity
+    if protected_identities:
+        context["protected_run_manifests"] = protected_identities
+    def protected_inventory():
+        return inventory(source, reference, protected) if protected else inventory(source, reference)
     with exclusive(output):
         manifest_file = output / "run_manifest.json"
         if manifest_file.exists():
@@ -243,7 +262,7 @@ def main(argv=None):
                                "batch_id": stamp.strftime("%Y%m%dT%H%M%S%z") + "__b1_ablation",
                                "output": str(output), "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()})
             write_json(manifest_file, manifest); write_json(output / "plan_before_evaluation.json", plan)
-            before = inventory(source, reference); write_json(output / "source_protection_before.json", before)
+            before = protected_inventory(); write_json(output / "source_protection_before.json", before)
         with diagnostic_log(output):
             try:
                 from b1_ablation.verify import audit_source_sample, verify_evaluation
@@ -276,10 +295,10 @@ def main(argv=None):
                                 analysis_sources(output, source, split, provenance, settings, reference), bundle.labels,
                                 list(map(int, pool)), list(map(int, pool.gallery)), split=split,
                                 ks=settings["ks"], bootstrap_replicates=10000, seed=2026,
-                                anchor="no_global_angle" if reference is not None else "J_2")
+                                anchor=args.recipe if reference is not None else "J_2")
                     write_json(output / f"benchmark_{split}.json", benchmark(scorer, descriptors, pool, args.device, settings["ks"], settings))
                 fusion.checked_files(ROOT, code)
-                after = inventory(source, reference)
+                after = protected_inventory()
                 if before != after:
                     raise ValueError("Protected B1 or reference ablation files changed during evaluation")
                 write_json(output / "source_protection_after.json", {"status": "unchanged", "files": len(after), "inventory_digest": digest(after)})

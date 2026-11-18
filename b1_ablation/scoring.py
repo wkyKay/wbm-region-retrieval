@@ -27,11 +27,19 @@ NO_GLOBAL_ANGLE_SETTINGS = {
 }
 
 
+NO_LOCAL_ANGLE_SETTINGS = {
+    **DEFAULT_SETTINGS,
+    "recipe": "b1_no_local_angle_v1",
+    "valid_variants": ["no_local_angle"],
+    "test_additional_variants": [],
+}
+
+
 def validate_settings(settings):
     if not isinstance(settings, Mapping) or set(settings) != set(DEFAULT_SETTINGS):
         raise ValueError("Unknown ablation settings keys")
     result = dict(settings)
-    expected = next((item for item in (DEFAULT_SETTINGS, NO_GLOBAL_ANGLE_SETTINGS)
+    expected = next((item for item in (DEFAULT_SETTINGS, NO_GLOBAL_ANGLE_SETTINGS, NO_LOCAL_ANGLE_SETTINGS)
                      if result.get("recipe") == item["recipe"]), None)
     if expected is None or any(result[key] != value for key, value in expected.items() if key != "ks"):
         raise ValueError("Only the frozen component ablation recipe is supported")
@@ -56,6 +64,8 @@ def specs(split, settings=None):
                 "local_weight": lw, "global_weight": gw, "angular_gamma": gamma}
     if settings["recipe"] == NO_GLOBAL_ANGLE_SETTINGS["recipe"]:
         return {"no_global_angle": spec("optimal", 1., 0., 0.)}
+    if settings["recipe"] == NO_LOCAL_ANGLE_SETTINGS["recipe"]:
+        return {"no_local_angle": spec("none", 0., 1., 0.)}
     result = {
         "no_local": spec("none", 0., 1.),
         "no_global": spec("optimal", 1., 0.),
@@ -69,7 +79,8 @@ def specs(split, settings=None):
 
 
 def validate_spec(spec):
-    known = {**specs("test"), **specs("test", NO_GLOBAL_ANGLE_SETTINGS)}
+    known = {**specs("test"), **specs("test", NO_GLOBAL_ANGLE_SETTINGS),
+             **specs("test", NO_LOCAL_ANGLE_SETTINGS)}
     if (not isinstance(spec, Mapping) or not any(dict(spec) == item for item in known.values())
             or any(isinstance(spec.get(key), bool) for key in
                    ("strength", "local_weight", "global_weight", "angular_gamma"))):

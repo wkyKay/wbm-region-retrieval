@@ -86,6 +86,12 @@ def proposal(output, *, root=ROOT):
                     "Frozen original J strength 2; no retraining or new parameter search. "
                     "Designed after observing prior B1 and component-ablation test. "
                     "J still uses the full wafer; not a purely local method.")
+            elif settings["recipe"] == scoring.NO_LOCAL_ANGLE_SETTINGS["recipe"]:
+                item["design_note"] = ("Joint deletion of local F and angular A: "
+                    "G * exp(-2 D_J), global weight 1, angular gamma 0. "
+                    "Frozen original J strength 2; no retraining or new parameter search. "
+                    "Designed after observing prior B1 and component-ablation test. "
+                    "No local region score or matching contributes to the ranking.")
             catalog.execution_identity(root, item, marker, evaluation)
             runs.append(item)
     if len({r["key"] for r in runs}) != len(runs):

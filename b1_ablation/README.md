@@ -21,6 +21,8 @@ valid 新增前五项；test 新增六项；valid I_2 和原 B0/R/T/I/J/J_only �
 
 2026-11-18新增独立配方 `no_global_angle`：同时删除整图G与角向A，固定 `S=F_o*exp(-2D_J)`，局部分支权重归一为1，保留最优匹配、F内的径向面积项及联合结构J。只运行valid/test各1项，不改变旧5/6项默认矩阵、不重训或调参。对照只读引用上一轮完成目录的no_global、no_angle、no_local及原B1；统计差值以新变体为anchor。J仍来自完整原图，不能称为纯局部方法。2026-11-18正式valid/test各1项及验证、统计已完成，输出 `artificial/b1_ablation_20261118T183806+0800/`；旧B1及首轮消融共513个保护文件保持不变。当前37项消融测试、旧B1 26项及登记器19项通过，结论见项目说明。
 
+新增独立配方 `no_local_angle`：同时删除完整局部F与角向A，固定 `S=G*exp(-2D_J)`，整图权重归一为1。仅新增valid/test各1项，不重新调参或训练；统计以新变体为anchor，与完整B1、首轮no_local/no_angle/no_global、J_only及可用WBBS对照比较。评分不使用局部区域分数或区域匹配；验证流程仍计算并保存原分项用于核对，不能据运行耗时宣称独立部署速度。当前实现待正式评价。
+
 ## 使用
 
 激活原 PyTorch CUDA 环境后，在仓库根目录执行：
@@ -37,7 +39,15 @@ bash b1_ablation/launch_tmux.sh
 bash b1_ablation/launch_tmux.sh --recipe no_global_angle
 ```
 
-默认只读对照为 `artificial/b1_ablation_20261118T150805+0800/`，可用 `--reference-ablation-root` 指定同一B1来源的已完成旧组件消融。新运行前后核对原B1和该对照目录全部文件。恢复新配方时也必须传 `--recipe no_global_angle`；源码变化后旧运行需检出其原Git版本续跑，不能修改历史签名。
+执行仅保留G与J的消融，并保护上一轮F与J的运行产物：
+
+```bash
+bash b1_ablation/launch_tmux.sh --recipe no_local_angle --protected-root artificial/b1_ablation_20261118T183806+0800
+```
+
+`--protected-root`可重复指定已完成运行，仅纳入前后文件保护，不自动加入统计对照；路径及manifest哈希进入新运行身份。恢复时需保留原recipe和这些路径。
+
+默认只读对照为 `artificial/b1_ablation_20261118T150805+0800/`，可用 `--reference-ablation-root` 指定同一B1来源的已完成旧组件消融。新运行前后核对原B1和该对照目录全部文件。恢复独立配方时也必须传对应的 `--recipe`；源码变化后旧运行需检出其原Git版本续跑，不能修改历史签名。
 
 启动器默认运行完整 valid→test→验证→统计流程，创建 `artificial/b1_ablation_真实启动时间/`，打印 tmux 会话和输出位置。实际评价各自保存带 Asia/Shanghai 时区的 run_id/started_at。日志为 launch.log/run.log，状态为 status.json；以完成标记及验证文件判定完成。
 
