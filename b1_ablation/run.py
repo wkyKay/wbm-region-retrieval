@@ -30,6 +30,7 @@ from b1_ablation import scoring, pipeline
 TZ = ZoneInfo("Asia/Shanghai")
 VERSION = "b1_ablation_v1"
 DEFAULT_SOURCE = "artificial/b1_structure_all_20261117T193244+0800"
+DEFAULT_REFERENCE_ABLATION = "artificial/b1_ablation_20261118T150805+0800"
 
 
 def path(value):
@@ -42,13 +43,15 @@ def signed(value):
 
 def identity():
     result = oldrun.code_identity()
-    for item in sorted(Path(__file__).parent.glob("*.py")) + [Path(__file__).parent / "config.json"]:
+    for item in sorted(Path(__file__).parent.glob("*.py")) + sorted(Path(__file__).parent.glob("config*.json")):
         result[str(item.relative_to(ROOT))] = file_hash(item)
     return result
 
 
-def inventory(source):
+def inventory(source, reference=None):
     files = sorted(p for p in source.rglob("*") if p.is_file())
+    if reference is not None:
+        files += sorted(p for p in reference.rglob("*") if p.is_file())
     files += sorted(p for p in (ROOT / "b1_structure_fusion").rglob("*") if p.is_file() and "__pycache__" not in p.parts)
     return {str(p): {"sha256": file_hash(p), "size": p.stat().st_size,
                     "mtime_ns": p.stat().st_mtime_ns} for p in files}
@@ -127,11 +130,15 @@ def load_inputs(source, device):
     return bundle, contexts
 
 
-def analysis_sources(output, source, split, provenance):
+def analysis_sources(output, source, split, provenance, settings=None, reference=None):
     index = read_json(source / f"evaluation_index_{split}.json")
-    selected = {"B0", "R_0.25", "T_0.25", "I_1", "J_2", "J_only", "I_2"}
+    selected = ({"B0", "J_2", "J_only"} if reference is not None else
+                {"B0", "R_0.25", "T_0.25", "I_1", "J_2", "J_only", "I_2"})
     result = {name: {"exact_dir": source / split / name} for name in index["variants"] if name in selected}
-    result.update({name: {"exact_dir": output / split / name} for name in scoring.specs(split)})
+    result.update({name: {"exact_dir": output / split / name} for name in scoring.specs(split, settings)})
+    if reference is not None:
+        for name in ("no_global", "no_angle", "no_local"):
+            result[name] = {"exact_dir": reference / split / name}
     reports = provenance["reference"]["reports"]
     if "coverage" in reports:
         exact = ROOT.parent / "compared_methods" / reports["exact"]["path"]
@@ -141,7 +148,7 @@ def analysis_sources(output, source, split, provenance):
     return result
 
 
-def benchmark(scorer, descriptors, pool, device, ks):
+def benchmark(scorer, descriptors, pool, device, ks, settings=None):
     from wbm_retrieval.exact_metrics import order_scores
     # The audit records per-class IDs; caller supplies them using all pool rows below.
     ids = sorted(map(int, pool))[:10]
@@ -152,7 +159,7 @@ def benchmark(scorer, descriptors, pool, device, ks):
         start = time.perf_counter(); values = scorer.components(q, c); component_s = time.perf_counter()-start
         start = time.perf_counter(); d = distances.for_query(q, c); distance_s = time.perf_counter()-start
         variants = {}
-        for name, spec in scoring.specs(pool.split_name).items():
+        for name, spec in scoring.specs(pool.split_name, settings).items():
             start = time.perf_counter(); score = scoring.score_variant(values, d, spec)
             order_scores(c, score, q, 2026)[:max(ks)]
             variants[name] = time.perf_counter()-start
@@ -167,6 +174,8 @@ def benchmark(scorer, descriptors, pool, device, ks):
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source-root", default=DEFAULT_SOURCE)
+    p.add_argument("--recipe", choices=("components", "no_global_angle"), default="components")
+    p.add_argument("--reference-ablation-root", help="Completed component ablation used read-only for joint-deletion comparisons")
     out = p.add_mutually_exclusive_group()
     out.add_argument("--output-root"); out.add_argument("--resume-root")
     p.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
@@ -178,27 +187,49 @@ def parser():
 
 def main(argv=None):
     args = parser().parse_args(argv)
-    settings = scoring.load_settings()
+    config = Path(__file__).with_name("config_no_global_angle.json") if args.recipe == "no_global_angle" else None
+    settings = scoring.load_settings(config)
+    reference = (path(args.reference_ablation_root or DEFAULT_REFERENCE_ABLATION)
+                 if args.recipe == "no_global_angle" else None)
+    if args.recipe == "components" and args.reference_ablation_root:
+        raise ValueError("Reference ablation is only used by the joint-deletion recipe")
     source, output = path(args.source_root), choose_output(args)
-    separate_output(output, [source, ROOT / "artifacts", ROOT / "protocol", ROOT / "results_catalog"])
+    separate_output(output, [source, ROOT / "artifacts", ROOT / "protocol", ROOT / "results_catalog", *([reference] if reference else [])])
     plan = {"version": VERSION, "source_root": str(source), "settings": settings,
-            "valid": scoring.specs("valid"), "test": scoring.specs("test"),
+            "valid": scoring.specs("valid", settings), "test": scoring.specs("test", settings),
             "reuse": {"valid/I_2": str(source / "valid/I_2"), "baseline": str(source)},
             "parameter_search": False, "posthoc_design": True, "training_required": False,
             "audit_queries": "minimum original ID within each frozen complete label combination in each split",
             "bootstrap": {"replicates": 10000, "seed": 2026, "strata": "37 frozen multi-hot combinations"},
             "mode": "audit_only" if args.audit_only else "all", "device": args.device}
+    if reference is not None:
+        plan["reference_ablation_root"] = str(reference)
+        plan["reuse"]["component_controls"] = ["no_global", "no_angle", "no_local"]
     if args.dry_run:
         print(json.dumps(plan, ensure_ascii=False, indent=2)); return 0
     if args.device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("Original PyTorch CUDA environment required")
     bundle, contexts = load_inputs(source, args.device)
+    reference_identity = None
+    if reference is not None:
+        from b1_ablation.register import proposal
+        previous = fusion.signed_manifest(reference / "run_manifest.json")
+        if (Path(previous["context"]["plan"]["source_root"]).resolve() != source or
+            previous["context"]["plan"]["settings"] != scoring.DEFAULT_SETTINGS):
+            raise ValueError("Reference must be the frozen component ablation of the same B1 source")
+        proposal(reference)
+        reference_identity = {"manifest_sha256": file_hash(reference / "run_manifest.json"),
+                              "indexes": {split: file_hash(reference / f"evaluation_index_{split}.json")
+                                          for split in ("valid", "test")}}
+        print("Verified read-only component controls:", reference, flush=True)
     if args.check_inputs:
         print("Inputs verified; no output or evaluation created."); return 0
     code = identity()
     context = {"plan": plan, "code": code, "source_manifest_sha256": file_hash(source / "run_manifest.json"),
                "source_selection_sha256": file_hash(source / "selection.json"),
                "inputs": {s: v[4] for s, v in contexts.items()}}
+    if reference_identity is not None:
+        context["reference_ablation"] = reference_identity
     with exclusive(output):
         manifest_file = output / "run_manifest.json"
         if manifest_file.exists():
@@ -212,12 +243,12 @@ def main(argv=None):
                                "batch_id": stamp.strftime("%Y%m%dT%H%M%S%z") + "__b1_ablation",
                                "output": str(output), "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()})
             write_json(manifest_file, manifest); write_json(output / "plan_before_evaluation.json", plan)
-            before = inventory(source); write_json(output / "source_protection_before.json", before)
+            before = inventory(source, reference); write_json(output / "source_protection_before.json", before)
         with diagnostic_log(output):
             try:
                 from b1_ablation.verify import audit_source_sample, verify_evaluation
                 from b1_ablation.analysis import postprocess
-                for split, (pool, scorer, descriptors, reference, provenance) in contexts.items():
+                for split, (pool, scorer, descriptors, wbbs_reference, provenance) in contexts.items():
                     write_json(output / "status.json", {"status": "running", "phase": "source_audit", "split": split})
                     audit_file = output / f"source_audit_{split}.json"
                     if not audit_file.exists():
@@ -231,25 +262,26 @@ def main(argv=None):
                     if args.audit_only:
                         continue
                     inputs = signed({"parent_signature": manifest["signature"], "split": split, "provenance": provenance,
-                                     "specs": scoring.specs(split), "code": code})
+                                     "specs": scoring.specs(split, settings), "code": code})
                     oldrun.pipeline.record(output / f"inputs_{split}.json", inputs)
                     pipeline.evaluate(output, inputs["signature"], scorer, pool, bundle, settings["ks"], 2026,
-                                      descriptors, settings, device=args.device, reference=reference)
+                                      descriptors, settings, device=args.device, reference=wbbs_reference)
                     verification = {}
                     evaluation_index = read_json(output / f"evaluation_index_{split}.json")
-                    for name, spec in scoring.specs(split).items():
+                    for name, spec in scoring.specs(split, settings).items():
                         variant_signature = evaluation_index["variant_signatures"][name]
                         verification[name] = verify_evaluation(output / split / name, pool, bundle, settings["ks"], variant_signature, 2026)
                     write_json(output / f"verification_{split}.json", verification)
                     postprocess(output / "analysis" / split,
-                                analysis_sources(output, source, split, provenance), bundle.labels,
+                                analysis_sources(output, source, split, provenance, settings, reference), bundle.labels,
                                 list(map(int, pool)), list(map(int, pool.gallery)), split=split,
-                                ks=settings["ks"], bootstrap_replicates=10000, seed=2026, anchor="J_2")
-                    write_json(output / f"benchmark_{split}.json", benchmark(scorer, descriptors, pool, args.device, settings["ks"]))
+                                ks=settings["ks"], bootstrap_replicates=10000, seed=2026,
+                                anchor="no_global_angle" if reference is not None else "J_2")
+                    write_json(output / f"benchmark_{split}.json", benchmark(scorer, descriptors, pool, args.device, settings["ks"], settings))
                 fusion.checked_files(ROOT, code)
-                after = inventory(source)
+                after = inventory(source, reference)
                 if before != after:
-                    raise ValueError("Original B1 source files changed during ablation")
+                    raise ValueError("Protected B1 or reference ablation files changed during evaluation")
                 write_json(output / "source_protection_after.json", {"status": "unchanged", "files": len(after), "inventory_digest": digest(after)})
                 write_json(output / "status.json", {"status": "audited" if args.audit_only else "completed",
                            "mode": plan["mode"], "output": str(output), "test_evaluated": not args.audit_only})

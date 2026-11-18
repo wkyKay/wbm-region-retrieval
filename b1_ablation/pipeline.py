@@ -67,7 +67,7 @@ def evaluate(output, signature, scorer, pool, bundle, ks, tie_seed, descriptor_v
     """One full-gallery pass per split shares components across all fixed variants."""
     settings = scoring.validate_settings(settings)
     split = getattr(pool, "split_name", None)
-    variants = scoring.specs(split)
+    variants = scoring.specs(split, settings)
     if list(ks) != settings["ks"] or tie_seed != settings["tie_seed"]:
         raise ValueError("Evaluation K/tie seed differs from frozen settings")
     if max(ks) > pool.candidates_per_query:

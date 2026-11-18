@@ -19,11 +19,21 @@ DEFAULT_SETTINGS = {
 }
 
 
+NO_GLOBAL_ANGLE_SETTINGS = {
+    **DEFAULT_SETTINGS,
+    "recipe": "b1_no_global_angle_v1",
+    "valid_variants": ["no_global_angle"],
+    "test_additional_variants": [],
+}
+
+
 def validate_settings(settings):
     if not isinstance(settings, Mapping) or set(settings) != set(DEFAULT_SETTINGS):
         raise ValueError("Unknown ablation settings keys")
     result = dict(settings)
-    if any(result[key] != value for key, value in DEFAULT_SETTINGS.items() if key != "ks"):
+    expected = next((item for item in (DEFAULT_SETTINGS, NO_GLOBAL_ANGLE_SETTINGS)
+                     if result.get("recipe") == item["recipe"]), None)
+    if expected is None or any(result[key] != value for key, value in expected.items() if key != "ks"):
         raise ValueError("Only the frozen component ablation recipe is supported")
     ks = result["ks"]
     if (not isinstance(ks, list) or not ks or any(type(k) is not int or k < 1 for k in ks)
@@ -37,12 +47,15 @@ def load_settings(path=None):
         return validate_settings(json.load(handle))
 
 
-def specs(split):
+def specs(split, settings=None):
     if split not in ("valid", "test"):
         raise ValueError("Ablations require an explicit valid/test split")
+    settings = validate_settings(DEFAULT_SETTINGS if settings is None else settings)
     def spec(local, lw, gw, gamma=.5, family="J"):
         return {"family": family, "strength": 2., "local_mode": local,
                 "local_weight": lw, "global_weight": gw, "angular_gamma": gamma}
+    if settings["recipe"] == NO_GLOBAL_ANGLE_SETTINGS["recipe"]:
+        return {"no_global_angle": spec("optimal", 1., 0., 0.)}
     result = {
         "no_local": spec("none", 0., 1.),
         "no_global": spec("optimal", 1., 0.),
@@ -56,7 +69,7 @@ def specs(split):
 
 
 def validate_spec(spec):
-    known = specs("test")
+    known = {**specs("test"), **specs("test", NO_GLOBAL_ANGLE_SETTINGS)}
     if (not isinstance(spec, Mapping) or not any(dict(spec) == item for item in known.values())
             or any(isinstance(spec.get(key), bool) for key in
                    ("strength", "local_weight", "global_weight", "angular_gamma"))):

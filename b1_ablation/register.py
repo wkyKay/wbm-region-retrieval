@@ -35,24 +35,26 @@ def proposal(output, *, root=ROOT):
         raise ValueError("Original B1 manifest changed")
     if read_json(output / "source_protection_after.json").get("status") != "unchanged":
         raise ValueError("Source protection verification is required")
-    # Register the original completed B1 once, without moving or editing its outputs.
-    runs = original.proposal(source, root=root)["runs"]
+    settings = scoring.validate_settings(manifest["context"]["plan"]["settings"])
+    # Historical recipes retain byte-identical proposals. New recipes register only
+    # new evaluations, preserving curated metadata of already-registered sources.
+    original_runs = original.proposal(source, root=root)["runs"]
+    runs = original_runs if settings["recipe"] == scoring.DEFAULT_SETTINGS["recipe"] else []
     for split in ("valid", "test"):
         inp = signed_manifest(output / f"inputs_{split}.json")
-        if inp.get("parent_signature") != manifest["signature"] or inp.get("specs") != scoring.specs(split):
+        if inp.get("parent_signature") != manifest["signature"] or inp.get("specs") != scoring.specs(split, settings):
             raise ValueError("Invalid fixed ablation input specification")
         index = read_json(output / f"evaluation_index_{split}.json")
         verify = read_json(output / f"verification_{split}.json")
-        if index["variants"] != scoring.specs(split) or set(verify) != set(scoring.specs(split)):
+        if index["variants"] != scoring.specs(split, settings) or set(verify) != set(scoring.specs(split, settings)):
             raise ValueError("Incomplete fixed matrix or verification")
         if not (output / "analysis" / split).is_dir() or not (output / f"source_audit_{split}.json").is_file():
             raise ValueError("Missing analysis or independent source audit")
         audit = signed_manifest(output / f"source_audit_{split}.json")
         if audit.get("status") != "verified" or audit.get("input_context_signature") != digest(manifest["context"]):
             raise ValueError("Missing or stale successful source audit")
-        for name, spec in scoring.specs(split).items():
+        for name, spec in scoring.specs(split, settings).items():
             folder = output / split / name
-            settings = manifest["context"]["plan"]["settings"]
             signature = digest({"evaluation": inp["signature"], "variant": name, "spec": spec,
                                 "split": split, "settings": settings, "device": manifest["context"]["plan"]["device"],
                                 "retrieval_protocol_signature": inp["provenance"]["protocol_signature"]})
@@ -78,6 +80,12 @@ def proposal(output, *, root=ROOT):
                     "supporting_manifests": [rel(output / "run_manifest.json"), rel(output / f"inputs_{split}.json"),
                                              rel(output / f"verification_{split}.json")],
                     "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."}
+            if settings["recipe"] == scoring.NO_GLOBAL_ANGLE_SETTINGS["recipe"]:
+                item["design_note"] = ("Joint deletion of global CNN G and angular A: "
+                    "F_optimal * exp(-2 D_J), local weight 1, angular gamma 0. "
+                    "Frozen original J strength 2; no retraining or new parameter search. "
+                    "Designed after observing prior B1 and component-ablation test. "
+                    "J still uses the full wafer; not a purely local method.")
             catalog.execution_identity(root, item, marker, evaluation)
             runs.append(item)
     if len({r["key"] for r in runs}) != len(runs):
