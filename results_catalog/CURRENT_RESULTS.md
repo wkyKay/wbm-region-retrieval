@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-18T19:00:02+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-18T19:31:54+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 94 个评价结果、49,392 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 96 个评价结果、50,512 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -63,6 +63,7 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | B1 ablation structure_only | 74.0797 | 64.4034 | 31.7216 | 90.4703 | `b1_ablation_b1_ablation_20261118T150805_0800_test_structure_only` |
 | B1 ablation I_2 | 71.4822 | 62.1934 | 29.1148 | 89.9621 | `b1_ablation_b1_ablation_20261118T150805_0800_test_I_2` |
 | B1 ablation no_global_angle | 72.9546 | 63.0685 | 29.5261 | 89.5171 | `b1_ablation_b1_ablation_20261118T183806_0800_test_no_global_angle` |
+| B1 ablation no_local_angle | 74.1214 | 64.8743 | 32.1313 | 90.1253 | `b1_ablation_b1_ablation_20261118T190927_0800_test_no_local_angle` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
