@@ -19,7 +19,7 @@ valid 新增前五项；test 新增六项；valid I_2 和原 B0/R/T/I/J/J_only �
 
 全体正式候选参与评分，按原 SHA 同分规则保存 Top500。每个 query 的 F/G/A 和结构距离只计算一次，供该split全部变体共享。exact 与 coverage 使用相同排名及完整候选分母；valid缺少WBBS coverage时显示NA。
 
-2026-11-18新增独立配方 `no_global_angle`：同时删除整图G与角向A，固定 `S=F_o*exp(-2D_J)`，局部分支权重归一为1，保留最优匹配、F内的径向面积项及联合结构J。只运行valid/test各1项，不改变旧5/6项默认矩阵、不重训或调参。对照只读引用上一轮完成目录的no_global、no_angle、no_local及原B1；统计差值以新变体为anchor。J仍来自完整原图，不能称为纯局部方法。
+2026-11-18新增独立配方 `no_global_angle`：同时删除整图G与角向A，固定 `S=F_o*exp(-2D_J)`，局部分支权重归一为1，保留最优匹配、F内的径向面积项及联合结构J。只运行valid/test各1项，不改变旧5/6项默认矩阵、不重训或调参。对照只读引用上一轮完成目录的no_global、no_angle、no_local及原B1；统计差值以新变体为anchor。J仍来自完整原图，不能称为纯局部方法。2026-11-18 18:38已启动，输出 `artificial/b1_ablation_20261118T183806+0800/`，当前运行中。
 
 ## 使用
 
