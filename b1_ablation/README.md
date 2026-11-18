@@ -70,6 +70,17 @@ python b1_ablation/run.py --resume-root artificial/b1_ablation_实际时间 --de
 - Top1/10错误分为exact、仅多、仅少、同时缺失和额外、无共同标签。案例同时保留改善与退化，按固定规则选择并记录分项。
 - 保存共享分量、结构距离和各公式排序计时，明确排除编码、TV与IO；不将共享批次耗时当某一变体独立耗时，不据此宣称相对WBBS的速度优势。
 
+## J 与 A×J 的专项复核
+
+`verify_structure_pair.py` 使用冻结描述子，对全部7,199个test查询及每个查询7,198个候选重新评分，严格核对原J（`exp(-D_J)`）、当前J（`exp(-2D_J)`）及A×J（`exp(-0.5D_angle)*exp(-2D_J)`）的Top-500。F/G不参与本次评分；不重训、不重新提取描述子。
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python -m unittest b1_ablation.tests.test_structure_pair_check -v
+PYTHONDONTWRITEBYTECODE=1 python b1_ablation/verify_structure_pair.py --device cuda
+```
+
+启动时新建 `artificial/b1_ablation_structure_pair_check_真实时间/`，保存计划、来源签名、逐query核对和前后文件保护。仅在两种J强度的Top-500身份与顺序对所有query完全相同时，复用原J的K≤500指标，并新增A×J−J的10,000次分层配对bootstrap。原J公式与评价身份保留；不将该复核重复登记为新评价。出现强度排序差异时保存明细并拒绝复用，需另行评价新强度；源评分重放失败与强度等价失败分别报告。完成以根目录 `completed.json` 及其文件哈希为准，不宣称全部7,198名顺序相同或跨后端恒等。
+
 ## 输出与登记
 
 每项结果含 run_identity.json、evaluation_manifest.json、rankings.csv、metrics.json、coverage_metrics.json、逐query/类别报告及completed.json。根目录保存原始计划、来源清单、抽样审计、分组验证、旧文件保护报告及analysis/{valid,test}/统计。完整排名、模型和缓存不加入Git。
