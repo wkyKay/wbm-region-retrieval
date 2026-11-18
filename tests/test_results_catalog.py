@@ -254,7 +254,15 @@ class ReportTests(unittest.TestCase):
         self.assertEqual({r["protocol"] for r in cross}, {"coverage_cross_combination_v1"})
         self.assertEqual({r["metric_version"] for r in cross}, {"coverage_v1"})
         fusion = list(csv.DictReader(io.StringIO(self.output["tables/fusion.csv"])))
-        self.assertEqual({r["key"] for r in fusion if r["posthoc"] == "True"}, {"f_combination_test"})
+        source_runs = {r["key"]: r for r in self.snapshot["runs"]}
+        expected_posthoc = {
+            r["key"] for r in self.snapshot["runs"]
+            if r["category"] in ("fusion", "fusion_ablation", "posthoc") and r.get("posthoc")
+        }
+        self.assertIn("f_combination_test", expected_posthoc)
+        self.assertEqual({r["key"] for r in fusion if r["posthoc"] == "True"}, expected_posthoc)
+        for row in fusion:
+            self.assertEqual(row["posthoc"], str(bool(source_runs[row["key"]].get("posthoc"))))
 
     def test_repeated_render_is_byte_identical_and_preserves_null(self):
         self.assertEqual(self.output, build.render(copy.deepcopy(self.snapshot)))

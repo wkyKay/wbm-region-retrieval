@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-16T18:30:30+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-18T16:11:03+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 57 个评价结果、28,672 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 92 个评价结果、48,272 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -50,10 +50,24 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | 融合消融 angular_0.5 | 63.3977 | 54.2575 | 19.4941 | 85.8467 | `f_ablation_angular_0.5_test` |
 | 融合消融 optimal | 58.0775 | 48.7971 | 15.6342 | 83.2057 | `f_ablation_optimal_test` |
 | 融合＋角向＋最优匹配 | 63.4671 | 54.2770 | 19.6678 | 85.8737 | `f_combination_test` |
+| B1 B0 | 63.4671 | 54.2770 | 19.6678 | 85.8737 | `b1_b1_structure_all_20261117T193244_0800_test_B0` |
+| B1 R_0.25 | 67.3982 | 58.1581 | 24.0310 | 87.1687 | `b1_b1_structure_all_20261117T193244_0800_test_R_0p25` |
+| B1 T_0.25 | 68.6484 | 60.0167 | 24.3136 | 88.8788 | `b1_b1_structure_all_20261117T193244_0800_test_T_0p25` |
+| B1 I_1 | 72.3989 | 63.0754 | 29.4024 | 90.1313 | `b1_b1_structure_all_20261117T193244_0800_test_I_1` |
+| B1 J_2 | 74.7326 | 65.4674 | 32.3490 | 90.4509 | `b1_b1_structure_all_20261117T193244_0800_test_J_2` |
+| B1 J_only | 73.1352 | 63.2546 | 30.7561 | 89.8759 | `b1_b1_structure_all_20261117T193244_0800_test_J_only` |
+| B1 ablation no_local | 75.1910 | 65.6883 | 32.9771 | 90.6263 | `b1_ablation_b1_ablation_20261118T150805_0800_test_no_local` |
+| B1 ablation no_global | 73.5797 | 64.0339 | 30.3289 | 90.0250 | `b1_ablation_b1_ablation_20261118T150805_0800_test_no_global` |
+| B1 ablation no_angle | 73.6769 | 64.5951 | 31.5305 | 89.9571 | `b1_ablation_b1_ablation_20261118T150805_0800_test_no_angle` |
+| B1 ablation greedy | 74.7604 | 65.3966 | 32.2573 | 90.4329 | `b1_ablation_b1_ablation_20261118T150805_0800_test_greedy` |
+| B1 ablation structure_only | 74.0797 | 64.4034 | 31.7216 | 90.4703 | `b1_ablation_b1_ablation_20261118T150805_0800_test_structure_only` |
+| B1 ablation I_2 | 71.4822 | 62.1934 | 29.1148 | 89.9621 | `b1_ablation_b1_ablation_20261118T150805_0800_test_I_2` |
 
-融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。最后一行组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
+融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
 组合与角向单项的差值不代表统计显著或跨种子稳定收益。valid 参数网格、所有 test 对照和分组见 [融合长表](tables/fusion.csv)。
+
+新增融合实验按各自已冻结的 valid 选择记录评价；监督信息、事后设计背景和来源见登记表及 manifest，不将新增变体自动替换为当前主方法。
 
 ## 跨组合 test
 

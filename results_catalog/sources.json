@@ -1164,6 +1164,1045 @@
         "exact",
         "coverage"
       ]
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_B0",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/B0",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/B0",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/B0/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/B0/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/B0/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 B0",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_R_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/R_0.25",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 R_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_R_0p5",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.5",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/R_0.5",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.5/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.5/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/R_0.5/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 R_0.5",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_R_1",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/R_1",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/R_1",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/R_1/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/R_1/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/R_1/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 R_1",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_R_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/R_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/R_2",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/R_2/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/R_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/R_2/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 R_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_T_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/T_0.25",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 T_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_T_0p5",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.5",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/T_0.5",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.5/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.5/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/T_0.5/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 T_0.5",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_T_1",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/T_1",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/T_1",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/T_1/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/T_1/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/T_1/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 T_1",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_T_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/T_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/T_2",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/T_2/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/T_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/T_2/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 T_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_I_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/I_0.25",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 I_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_I_0p5",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.5",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/I_0.5",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.5/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.5/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/I_0.5/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 I_0.5",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_I_1",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/I_1",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/I_1",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/I_1/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/I_1/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/I_1/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 I_1",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_I_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/I_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/I_2",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/I_2/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/I_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/I_2/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 I_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_J_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_0.25",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 J_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_J_0p5",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.5",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_0.5",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.5/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.5/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/J_0.5/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 J_0.5",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_J_1",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/J_1",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_1",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/J_1/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/J_1/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/J_1/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 J_1",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_J_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/J_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_2",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/J_2/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/J_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/J_2/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 J_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_valid_J_only",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/valid/J_only",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_only",
+      "split": "valid",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/valid/J_only/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/valid/J_only/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/valid/J_only/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "untrained",
+      "display": "B1 J_only",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_valid.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_valid.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis. This J_only control ranks only by the fixed TV joint distribution; it uses no learned CNN score. Supervision metadata corrected in the curated catalogue without editing historical proposal or artifacts."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_B0",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/B0",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/B0",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/B0/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/B0/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/B0/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 B0",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_R_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/R_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/R_0.25",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/R_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/R_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/R_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 R_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_T_0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/T_0.25",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/T_0.25",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/T_0.25/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/T_0.25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/T_0.25/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 T_0.25",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_I_1",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/I_1",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/I_1",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/I_1/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/I_1/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/I_1/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 I_1",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_J_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/J_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_2",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/J_2/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/J_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/J_2/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 J_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis."
+    },
+    {
+      "key": "b1_b1_structure_all_20261117T193244_0800_test_J_only",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_structure_all_20261117T193244+0800/test/J_only",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1/J_only",
+      "split": "test",
+      "manifest": "artificial/b1_structure_all_20261117T193244+0800/test/J_only/evaluation_manifest.json",
+      "marker": "artificial/b1_structure_all_20261117T193244+0800/test/J_only/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_structure_all_20261117T193244+0800/test/J_only/run_identity.json",
+      "selection": "artificial/b1_structure_all_20261117T193244+0800/selection.json",
+      "coverage": null,
+      "supervision": "untrained",
+      "display": "B1 J_only",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_structure_all_20261117T193244+0800/run_manifest.json",
+        "artificial/b1_structure_all_20261117T193244+0800/inputs_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/evaluation_index_test.json",
+        "artificial/b1_structure_all_20261117T193244+0800/verification_test.json"
+      ],
+      "design_note": "Frozen cc8/WaPIRL models; no retraining. TV structure score strength selected only on valid. Research direction follows historical test observations; J is the primary hypothesis. This J_only control ranks only by the fixed TV joint distribution; it uses no learned CNN score. Supervision metadata corrected in the curated catalogue without editing historical proposal or artifacts."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_valid_no_local",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/valid/no_local",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_local",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/valid/no_local/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/valid/no_local/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/valid/no_local/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_local",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_valid.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_valid_no_global",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/valid/no_global",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_global",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/valid/no_global/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/valid/no_global/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/valid/no_global/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_global",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_valid.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_valid_no_angle",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/valid/no_angle",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_angle",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/valid/no_angle/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/valid/no_angle/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/valid/no_angle/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_angle",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_valid.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_valid_greedy",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/valid/greedy",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/greedy",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/valid/greedy/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/valid/greedy/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/valid/greedy/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation greedy",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_valid.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_valid_structure_only",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/valid/structure_only",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/structure_only",
+      "split": "valid",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/valid/structure_only/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/valid/structure_only/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/valid/structure_only/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "untrained",
+      "display": "B1 ablation structure_only",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_valid.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_valid.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_no_local",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/no_local",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_local",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/no_local/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/no_local/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/no_local/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_local",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_no_global",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/no_global",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_global",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/no_global/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/no_global/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/no_global/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_global",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_no_angle",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/no_angle",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/no_angle",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/no_angle/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/no_angle/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/no_angle/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation no_angle",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_greedy",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/greedy",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/greedy",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/greedy/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/greedy/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/greedy/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation greedy",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_structure_only",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/structure_only",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/structure_only",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/structure_only/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/structure_only/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/structure_only/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "untrained",
+      "display": "B1 ablation structure_only",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
+    },
+    {
+      "key": "b1_ablation_b1_ablation_20261118T150805_0800_test_I_2",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/b1_ablation_20261118T150805+0800/test/I_2",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "B1-ablation/I_2",
+      "split": "test",
+      "manifest": "artificial/b1_ablation_20261118T150805+0800/test/I_2/evaluation_manifest.json",
+      "marker": "artificial/b1_ablation_20261118T150805+0800/test/I_2/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/b1_ablation_20261118T150805+0800/test/I_2/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "B1 ablation I_2",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/b1_ablation_20261118T150805+0800/run_manifest.json",
+        "artificial/b1_ablation_20261118T150805+0800/inputs_test.json",
+        "artificial/b1_ablation_20261118T150805+0800/verification_test.json"
+      ],
+      "design_note": "Fixed-parameter component deletion or I_2 control; source J lambda=2, angle gamma=.5. No retraining or new parameter search. Designed after observing B1 test; conditional contribution, not optimal simplified model."
     }
   ]
 }

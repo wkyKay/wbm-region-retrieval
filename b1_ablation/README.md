@@ -61,4 +61,4 @@ python b1_ablation/register.py --run-root artificial/b1_ablation_实际时间 --
 python results_catalog/build.py check
 ```
 
-共享登记器和生成汇总按项目规则同步。当前具体运行状态以项目说明和status.json为准。
+共享登记器和生成汇总按项目规则同步。原J_only对照按实际评分标记为untrained；历史登记提案原样保留。若共享来源元数据已经校正，重复应用旧提案会拒绝冲突，避免回退人工核实的监督信息。2026-11-18本次正式valid 5项/test 6项、独立验证及统计已全部完成，输出为 `artificial/b1_ablation_20261118T150805+0800/`。新增29项、旧B1 26项（含CUDA）、登记器19项测试通过；74个真实query全候选抽查一致，旧B1 327个文件保持不变。结论统一见[项目说明的实验结果](../doc/项目说明.md#实验结果)。
