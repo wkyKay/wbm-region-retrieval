@@ -81,6 +81,8 @@ PYTHONDONTWRITEBYTECODE=1 python b1_ablation/verify_structure_pair.py --device c
 
 启动时新建 `artificial/b1_ablation_structure_pair_check_真实时间/`，保存计划、来源签名、逐query核对和前后文件保护。仅在两种J强度的Top-500身份与顺序对所有query完全相同时，复用原J的K≤500指标，并新增A×J−J的10,000次分层配对bootstrap。原J公式与评价身份保留；不将该复核重复登记为新评价。出现强度排序差异时保存明细并拒绝复用，需另行评价新强度；源评分重放失败与强度等价失败分别报告。完成以根目录 `completed.json` 及其文件哈希为准，不宣称全部7,198名顺序相同或跨后端恒等。
 
+2026-11-19已确认上次 `artificial/b1_ablation_structure_pair_check_20261118T203238+0800/` 完整完成：7,199个查询全部通过，J两种强度Top-500差异为0，J/A×J源分数重放误差均为0；21个完成引用文件、manifest及源报告/排名哈希通过校验，原任务669个保护文件前后未变。无需重跑，不新增评价登记。A×J−J的P@10为+1.1488个百分点，95%配对区间[0.9904, 1.3141]；完整对比见[消融实验](../doc/消融实验.md#实验结果)。
+
 ## 输出与登记
 
 每项结果含 run_identity.json、evaluation_manifest.json、rankings.csv、metrics.json、coverage_metrics.json、逐query/类别报告及completed.json。根目录保存原始计划、来源清单、抽样审计、分组验证、旧文件保护报告及analysis/{valid,test}/统计。完整排名、模型和缓存不加入Git。
