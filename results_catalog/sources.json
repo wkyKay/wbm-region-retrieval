@@ -9161,6 +9161,316 @@
         "artificial/fgw_topk_test_20261119T205138+0800/evaluation_index_test.json"
       ],
       "design_note": "User-authorized full-test evaluation of exactly the first ten combinations in the completed valid grid's frozen rank order. All ten formulas were fixed before this test batch, with F strictly positive. The original valid winner remains the primary selected method; test results do not select or retune a formula. Frozen optimal cc8 F, WaPIRL G and original WBBS; no A, J or retraining. Historical design is posthoc after prior test observations. Duplicate/equivalent endpoints are comparison roles, not independent repeats."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_raw_d10_f01_g04_w05",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g04_w05",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_raw_d10_f01_g04_w05",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g04_w05/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g04_w05/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g04_w05/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 1: sum_raw_d10_f01_g04_w05 (original valid-selected primary)",
+      "valid_rank": 1,
+      "valid_selected_primary": true,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_minmax_d10_f02_g02_w06",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f02_g02_w06",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_minmax_d10_f02_g02_w06",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f02_g02_w06/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f02_g02_w06/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f02_g02_w06/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 2: sum_minmax_d10_f02_g02_w06",
+      "valid_rank": 2,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_raw_d10_f02_g03_w05",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f02_g03_w05",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_raw_d10_f02_g03_w05",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f02_g03_w05/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f02_g03_w05/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f02_g03_w05/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 3: sum_raw_d10_f02_g03_w05",
+      "valid_rank": 3,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_raw_d10_f01_g03_w06",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g03_w06",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_raw_d10_f01_g03_w06",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g03_w06/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g03_w06/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f01_g03_w06/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 4: sum_raw_d10_f01_g03_w06",
+      "valid_rank": 4,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_raw_d10_f03_g03_w04",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g03_w04",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_raw_d10_f03_g03_w04",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g03_w04/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g03_w04/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g03_w04/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 5: sum_raw_d10_f03_g03_w04",
+      "valid_rank": 5,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_raw_d10_f03_g02_w05",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g02_w05",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_raw_d10_f03_g02_w05",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g02_w05/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g02_w05/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_raw_d10_f03_g02_w05/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 6: sum_raw_d10_f03_g02_w05",
+      "valid_rank": 6,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_sum_minmax_d10_f03_g02_w05",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f03_g02_w05",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/sum_minmax_d10_f03_g02_w05",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f03_g02_w05/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f03_g02_w05/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/sum_minmax_d10_f03_g02_w05/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 7: sum_minmax_d10_f03_g02_w05",
+      "valid_rank": 7,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f01_g05_w04",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f01_g05_w04",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/weighted_product_d10_f01_g05_w04",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f01_g05_w04/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f01_g05_w04/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f01_g05_w04/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 8: weighted_product_d10_f01_g05_w04",
+      "valid_rank": 8,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f02_g05_w03",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f02_g05_w03",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/weighted_product_d10_f02_g05_w03",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f02_g05_w03/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f02_g05_w03/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f02_g05_w03/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 9: weighted_product_d10_f02_g05_w03",
+      "valid_rank": 9,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
+    },
+    {
+      "key": "fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f04_g03_w03",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f04_g03_w03",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "FGW-top10-cross/weighted_product_d10_f04_g03_w03",
+      "split": "test",
+      "manifest": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f04_g03_w03/evaluation_manifest.json",
+      "marker": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f04_g03_w03/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_cross_test_20261119T223644+0800/test/weighted_product_d10_f04_g03_w03/run_identity.json",
+      "selection": "artificial/fgw_cross_test_20261119T223644+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS cross-combination valid rank 10: weighted_product_d10_f04_g03_w03",
+      "valid_rank": 10,
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_cross_test_20261119T223644+0800/run_manifest.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/completed.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/source_protection_after.json",
+        "artificial/fgw_cross_test_20261119T223644+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-authorized supplementary coverage test of the original frozen valid Top 10. Only candidate eligibility changes: exclude self and identical complete label combinations before scoring and min-max normalization. Reuse verified complete F/G/WBBS component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid winner remains the designated primary configuration. Ground-truth labels filter benchmark eligibility only and never enter method scores. This is a posthoc diagnostic, not unseen-combination training generalization."
     }
   ]
 }

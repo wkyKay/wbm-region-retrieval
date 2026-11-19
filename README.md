@@ -7,7 +7,7 @@
 - [F/G/WBBS融合](fgw_fusion/README.md)：三组固定公式、来源、运行与恢复。
 - [F/G/WBBS网格搜索](fgw_grid_search/README.md)：166项完整valid网格已完成，主选公式为0.1F＋0.4G＋0.5W。
 - [前十项test评价](fgw_topk_test/README.md)：冻结valid前十项的完整test已完成；结果按原valid顺序展示，不按test重新选方案。
-- [前十项跨组合评价](fgw_cross_test/README.md)：排除同标签组合候选，复用原十组参数和coverage指标。
+- [前十项跨组合评价](fgw_cross_test/README.md)：十项已完成；排除同标签组合候选，复用原十组参数和coverage指标，与普通test分表展示。
 - [B1改进简述](doc/B1改进简述.md)：计算步骤、J与WBBS的区别、五组最佳实验及结论的简要版。
 - [自动结果总览](results_catalog/CURRENT_RESULTS.md)：完整成绩与来源。
 - [实验代码目录](experiments/README.md)：各入口和专属参数。
