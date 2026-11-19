@@ -31,10 +31,11 @@ def sha(path):
     return h.hexdigest()
 
 
-def dump(path, value):
+def dump(path, value, *, compact=False):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
+    formatting = {"separators": (",", ":")} if compact else {"indent": 2}
+    text = json.dumps(value, ensure_ascii=False, allow_nan=False, **formatting) + "\n"
     path.write_text(text)
 
 
@@ -338,7 +339,7 @@ def main():
             parser.error("collect requires --workspace (both repository directories)")
         snapshot = collect(args.workspace, read(folder / "sources.json"), read(snapshot_path) if snapshot_path.exists() else None)
         generated = render(snapshot)  # Validate everything before any output writes.
-        dump(snapshot_path, snapshot)
+        dump(snapshot_path, snapshot, compact=True)
     else:
         snapshot = read(snapshot_path)
         expected = hashlib.sha256(json.dumps(read(folder / "sources.json"), sort_keys=True).encode()).hexdigest()

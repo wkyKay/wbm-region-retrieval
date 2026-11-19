@@ -63,6 +63,8 @@ python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v
 
 新增结果先编辑 `sources.json`，再在有完整产物的服务器 `collect`。修改来源清单后直接离线 render/check 会拒绝，避免使用旧快照。相同快照生成的文件逐字节稳定；`check` 只检查已提交文件是否与快照一致，不连接服务器，也不代表源模型或原始排名已重新核验。
 
+正式 `collect` 将 `snapshot.json` 保存为紧凑 JSON，以减少重复来源元数据占用的文件体积。这只压缩空白排版，所有字段、浮点数、历史记录及来源内容保持不变；其他 JSON 默认仍用两空格缩进。通过官方采集生成，无需改写历史 manifest，离线 `render/check` 的报告内容不受影响。
+
 `artifacts/` 与 `artificial/` 下的运行目录均进入只读目录盘点；目录存在不等于已完成或已登记。普通协议下新增的 `fusion`、`fusion_ablation`、`posthoc` 类别 test 结果会追加到总览融合表，valid 与跨组合结果仍分开处理。新增方法的注册入口可以生成来源条目，只有报告、完成标记和冻结选择全部就绪后才能写入唯一 `sources.json`；登记器不依赖任何具体实验包。
 
 ## 指标读取规则

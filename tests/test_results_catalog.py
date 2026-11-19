@@ -1,5 +1,6 @@
 """Catalog integrity checks; no model imports, training, or writes to source runs."""
 import copy
+from contextlib import redirect_stdout
 import csv
 import importlib.util
 import io
@@ -14,6 +15,59 @@ CATALOG = Path(__file__).resolve().parents[1] / "results_catalog"
 spec = importlib.util.spec_from_file_location("result_catalog_build", CATALOG / "build.py")
 build = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(build)
+
+
+class SerializationTests(unittest.TestCase):
+    def test_compact_unicode_float_nested_roundtrip_and_default_format(self):
+        value = {"说明": "晶圆／融合 🌐", "metrics": {"Precision@10": 0.5501999999999999,
+                 "mAP@100": 0.20514388384343732, "tiny": 1e-12, "negative_zero": -0.0},
+                 "nested": [{"original": [None, True, False, 2751, {"文本": "第一行\n第二行"}]}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            pretty, compact = Path(tmp) / "default.json", Path(tmp) / "compact.json"
+            build.dump(pretty, value)
+            build.dump(compact, value, compact=True)
+            self.assertEqual(pretty.read_text(), json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+            self.assertEqual(compact.read_text(), json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
+            self.assertEqual(build.read(pretty), value)
+            self.assertEqual(build.read(compact), value)
+            self.assertIn("晶圆", compact.read_text())
+            self.assertEqual(compact.read_text().count("\n"), 1)
+            self.assertLess(compact.stat().st_size, pretty.stat().st_size)
+
+    def test_both_formats_reject_nonfinite_values_before_writing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for compact in (False, True):
+                for number in (float("nan"), float("inf"), float("-inf")):
+                    path = Path(tmp) / "rejected.json"
+                    with self.subTest(compact=compact, number=number), self.assertRaises(ValueError):
+                        build.dump(path, {"metric": number}, compact=compact)
+                    self.assertFalse(path.exists())
+
+    def test_collect_cli_writes_compact_snapshot_without_changing_values_or_sources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp).resolve() / "catalog"
+            workspace = Path(tmp).resolve() / "workspace"
+            sources = {"runs": [{"key": "synthetic"}]}
+            previous = {"runs": [], "schema_version": 1}
+            snapshot = {"schema_version": 1, "runs": [{"key": "synthetic", "value": .5501999999999999}],
+                        "metadata": {"说明": "仅排版压缩", "nested": [None, {"value": 1e-12}]}}
+            generated = {"registry.csv": "key\nsynthetic\n", "tables/example.csv": "value\n0.5501999999999999\n"}
+            build.dump(folder / "sources.json", sources)
+            build.dump(folder / "snapshot.json", previous)
+            source_bytes = (folder / "sources.json").read_bytes()
+            with patch("sys.argv", ["build.py", "collect", "--workspace", str(workspace), "--catalog", str(folder)]), \
+                    patch.object(build, "collect", return_value=snapshot) as collect, \
+                    patch.object(build, "render", return_value=generated) as render, \
+                    patch.object(build, "dump", wraps=build.dump) as dump, redirect_stdout(io.StringIO()):
+                build.main()
+            collect.assert_called_once_with(workspace, sources, previous)
+            render.assert_called_once_with(snapshot)
+            dump.assert_called_once_with(folder / "snapshot.json", snapshot, compact=True)
+            self.assertEqual(build.read(folder / "snapshot.json"), snapshot)
+            self.assertEqual((folder / "snapshot.json").read_text().count("\n"), 1)
+            self.assertEqual((folder / "sources.json").read_bytes(), source_bytes)
+            for name, text in generated.items():
+                self.assertEqual((folder / name).read_text(), text)
 
 
 class CollectionTests(unittest.TestCase):
@@ -268,6 +322,15 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(self.output, build.render(copy.deepcopy(self.snapshot)))
         groups = dict(build.metric_groups({"metrics": {"mAP@1": None}, "groups": {}}))
         self.assertIsNone(groups["all"]["mAP@1"])
+
+    def test_compact_snapshot_roundtrip_preserves_all_records_and_rendered_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "snapshot.json"
+            build.dump(path, self.snapshot, compact=True)
+            restored = build.read(path)
+            self.assertEqual(restored, self.snapshot)
+            self.assertEqual(restored["runs"], self.snapshot["runs"])
+            self.assertEqual(build.render(restored), self.output)
 
     def test_existing_generated_files_are_unchanged(self):
         for name, content in self.output.items():
