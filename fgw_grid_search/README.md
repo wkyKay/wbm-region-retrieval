@@ -1,6 +1,6 @@
 # F、G、WBBS 网格搜索
 
-独立代码包。当前仅完成代码设计与实现验证，**未运行正式搜索或 test，尚无最优配置**。科学设计与公式见[消融实验](../doc/消融实验.md#fgwbbs网格搜索)，公共协议和结果管理见[项目说明](../doc/项目说明.md)。旧 `fgw_fusion/`、模型、冻结协议与历史结果保持不变。
+独立代码包。完整默认网格为166项；用户随后要求在两小时内用valid缩小搜索，新增预先固定的31项清单，完成状态见下文。科学设计与公式见[消融实验](../doc/消融实验.md#fgwbbs网格搜索)，公共协议和结果管理见[项目说明](../doc/项目说明.md)。旧 `fgw_fusion/`、模型、冻结协议与历史结果保持不变。
 
 ## 配置与选择
 
@@ -12,6 +12,7 @@
 | `min_f_ticks` | 1；整数 1–denominator，F 权重／指数严格大于 0 |
 | `families` | `sum_raw`、`sum_minmax`、`weighted_product`，可选非空子集 |
 | `include_reference` | true；额外评价固定旧公式 `(0.5F+0.5G)*W`，参与全局选择 |
+| `weight_ticks` | null；默认完整网格；非空时只取明确列出的唯一整数三元组，仍须满足总和及F下限 |
 
 三项 ticks 之和等于 denominator；G、W 允许为 0。默认每族 55 组，共 165 组，加固定参考合计 **166 项 valid 评价**。参考的 `[0.5,0.5,1]` 表示其内层 F/G 系数和外层 W 指数，不属于权重和为 1 的网格。
 
@@ -19,7 +20,29 @@
 
 唯一选参指标为 valid 的 `exact/all/Precision@10`，比较所有 query 的 Top-10 **整数总命中数**，避免浮点均值造成假同分。并列依次取活跃分支较少、族优先级 `sum_raw → weighted_product → sum_minmax → legacy_fgw`、F 较大、W 较小、变体 ID 字典序较小。mAP@100、Coverage-nDCG@10 只作描述，不参与选择。`selection.json` 保存全局胜者、每族胜者、完整排名及规则；test 只接受全局胜者。
 
-除上表四项外，K、选参 split、指标、同分规则等科学设置冻结，不允许用配置覆盖。重复／等价端点不是独立重复实验。“最优”仅指该有限网格及所含参考中的最优，不表示全局连续权重最优。方案在看过历史 test 后提出，标记为事后研究。
+除上表五项外，K、选参 split、指标、同分规则等科学设置冻结，不允许用配置覆盖。重复／等价端点不是独立重复实验。“最优”仅指该有限网格及所含参考中的最优，不表示全局连续权重最优。方案在看过历史 test 后提出，标记为事后研究。
+
+## 两小时内的31项候选
+
+[config_valid_2h.json](config_valid_2h.json)对三族各指定同一10组`(F,G,W)`权重，另含原固定FGW参考，共31项：
+
+```text
+(0.5,0.5,0.0)  (0.5,0.0,0.5)  (0.1,0.0,0.9)
+(0.3,0.3,0.4)  (0.2,0.2,0.6)  (0.1,0.1,0.8)
+(0.2,0.1,0.7)  (0.1,0.2,0.7)  (0.4,0.2,0.4)  (0.2,0.4,0.4)
+```
+
+仅依据既有valid：WBBS优于单独F/G融合，而加入F/G又能提高WBBS，因此重点覆盖W主导、F/G对称与不对称、G为0以及不含W的融合端点。候选清单在运行前固定，不根据新结果临时增删；F始终大于0。三族共享权重点，以便比较算子与归一化，沿用唯一的valid P@10选择规则。
+
+这31项是预算约束下的候选搜索，不能保证覆盖被排除权重中的更优点。使用原500个valid query和每query全部3598个候选，不缩小数据协议。首次执行的命令为：
+
+```bash
+timeout --signal=TERM --kill-after=30s 6570s \
+env PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+python -u -m fgw_grid_search.run --stage search --config fgw_grid_search/config_valid_2h.json --workers 8
+```
+
+外层timeout控制本次父进程及worker进程组，最迟110分钟终止，预留10分钟核对与整理。只有31项全部封存、根验证通过才能冻结胜者并登记；超时部分结果保留，不能冒充完整搜索、不能删减原清单后补造完成标记。当前31项清单已设计，尚待本轮执行确认；test不在本次运行范围内。
 
 ## 入口与恢复
 
@@ -32,7 +55,7 @@ python -m fgw_grid_search.run --check-inputs
 
 `--dry-run` 不加载模型，不创建输出；`--check-inputs` 校验旧完成标记、来源文件、完整 WBBS 矩阵及固定池，不构建新缓存或评价。底层旧来源装载器只读检查两 split 的来源，不进行 test 搜索。
 
-以下为**后续正式运行命令，本次没有执行**：
+以下为**完整166项网格命令，尚未执行**；本轮31项使用上节配置：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \

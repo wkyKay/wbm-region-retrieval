@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "recipe": "fgw_grid_search_v1",
+  "denominator": 10,
+  "min_f_ticks": 1,
+  "weight_ticks": [
+    [5, 5, 0],
+    [5, 0, 5],
+    [1, 0, 9],
+    [3, 3, 4],
+    [2, 2, 6],
+    [1, 1, 8],
+    [2, 1, 7],
+    [1, 2, 7],
+    [4, 2, 4],
+    [2, 4, 4]
+  ],
+  "families": ["sum_raw", "sum_minmax", "weighted_product"],
+  "include_reference": true,
+  "ks": [1, 5, 10, 20, 50, 100, 500],
+  "tie_seed": 2026,
+  "objective": "valid/exact/all/Precision@10",
+  "selection_split": "valid",
+  "tie_rule": [
+    "active_branches_asc",
+    "family_priority_asc",
+    "F_weight_desc",
+    "WBBS_weight_asc",
+    "variant_id_asc"
+  ],
+  "family_priority": ["sum_raw", "weighted_product", "sum_minmax", "legacy_fgw"],
+  "training_required": false,
+  "posthoc_research": true,
+  "test_parameter_search": false
+}

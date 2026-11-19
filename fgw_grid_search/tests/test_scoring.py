@@ -16,6 +16,46 @@ def spec(family, ticks, denominator=10):
 
 
 class GridScoringTests(unittest.TestCase):
+    def test_filtered_valid_config_has_31_points_and_scores_match_full_grid(self):
+        settings = scoring.load_settings(Path(scoring.__file__).with_name("config_valid_2h.json"))
+        grid, complete = scoring.specs(settings), scoring.specs()
+        self.assertEqual(len(grid), 31)
+        self.assertEqual(Counter(s["family"] for s in grid.values()),
+                         {"sum_raw": 10, "sum_minmax": 10,
+                          "weighted_product": 10, "legacy_fgw": 1})
+        self.assertEqual(len(complete), 166)
+        self.assertIsNone(scoring.load_settings()["weight_ticks"])
+        components = {"F": np.array([0., .3, .9, 1.]), "G": np.array([.8, .4, .1, 0.]),
+                      "WBBS": np.array([.2, .7, 1., 0.])}
+        for name, candidate in grid.items():
+            self.assertEqual(candidate, complete[name])
+            np.testing.assert_array_equal(scoring.score_variant(components, candidate),
+                                          scoring.score_variant(components, complete[name]))
+
+    def test_tick_whitelist_is_canonical_and_does_not_alias_input(self):
+        original = [[5, 5, 0], [1, 0, 9], [2, 2, 6]]
+        settings = scoring.validate_settings({"weight_ticks": original})
+        reversed_settings = scoring.validate_settings({"weight_ticks": list(reversed(original))})
+        self.assertEqual(settings, reversed_settings)
+        self.assertEqual(list(scoring.specs(settings)), list(scoring.specs(reversed_settings)))
+        self.assertEqual(settings["weight_ticks"], [[1, 0, 9], [2, 2, 6], [5, 5, 0]])
+        self.assertEqual(original[0], [5, 5, 0])
+        settings["weight_ticks"][0][0] = 10
+        self.assertEqual(original[1], [1, 0, 9])
+
+    def test_invalid_whitelists_and_removed_f_are_rejected(self):
+        cases = [[], False, "all", [[1, 0, 9], [1, 0, 9]], [[0, 5, 5]],
+                 [[1, -1, 10]], [[1, 1, 9]], [[1, 0]], [[1, 0, 9, 0]],
+                 [[True, 0, 9]], [[1., 0, 9]], [[1, 0, False]],
+                 [(1, 0, 9)], [[1, 0, 9], None]]
+        for ticks in cases:
+            with self.subTest(ticks=ticks), self.assertRaises(ValueError):
+                scoring.validate_settings({"weight_ticks": ticks})
+        with self.assertRaises(ValueError):
+            scoring.validate_settings({"min_f_ticks": 2, "weight_ticks": [[1, 0, 9]]})
+        with self.assertRaises(ValueError):
+            scoring.validate_settings({"denominator": 9, "weight_ticks": [[1, 0, 9]]})
+
     def test_default_grid_has_166_points_and_f_cannot_disappear(self):
         grid = scoring.specs()
         self.assertEqual(len(grid), 166)

@@ -145,6 +145,21 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(self.rows, original_rows)
         self.assertEqual(self.settings, original_settings)
 
+    def test_filtered_grid_selection_uses_only_whitelist_and_order_is_canonical(self):
+        settings = scoring.validate_settings({"denominator": 4,
+                                             "weight_ticks": [[3, 0, 1], [1, 2, 1]]})
+        variants = scoring.specs(settings)
+        rows = [row for row in self.rows if row["variant"] in variants]
+        result = selection.choose_winner(rows, variants, settings)
+        reversed_settings = dict(settings, weight_ticks=list(reversed(settings["weight_ticks"])))
+        self.assertEqual(result, selection.choose_winner(list(reversed(rows)),
+                         scoring.specs(reversed_settings), reversed_settings))
+        self.assertEqual(result["num_variants"], 7)
+        with self.assertRaises(ValueError):
+            selection.choose_winner(rows, variants, self.settings)
+        with self.assertRaises(ValueError):
+            selection.choose_winner(self.rows, self.specs, settings)
+
 
 if __name__ == "__main__":
     unittest.main()

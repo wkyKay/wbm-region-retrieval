@@ -18,6 +18,7 @@ SETTINGS = {
     "recipe": "fgw_grid_search_v1",
     "denominator": 10,
     "min_f_ticks": 1,
+    "weight_ticks": None,
     "families": ["sum_raw", "sum_minmax", "weighted_product"],
     "include_reference": True,
     "ks": [1, 5, 10, 20, 50, 100, 500],
@@ -31,7 +32,7 @@ SETTINGS = {
     "posthoc_research": True,
     "test_parameter_search": False,
 }
-_CUSTOMIZABLE = {"denominator", "min_f_ticks", "families", "include_reference"}
+_CUSTOMIZABLE = {"denominator", "min_f_ticks", "weight_ticks", "families", "include_reference"}
 _FAMILIES = ("sum_raw", "sum_minmax", "weighted_product")
 
 
@@ -47,7 +48,7 @@ def _same_type_and_value(value, expected):
 def validate_settings(settings):
     """Validate known fields, fill defaults, and return an independent copy.
 
-    Only the four grid-definition fields are configurable. Evaluation and
+    Only the grid-definition fields are configurable. Evaluation and
     winner-selection rules remain frozen even when a custom grid is requested.
     """
     if not isinstance(settings, Mapping) or set(settings) - set(SETTINGS):
@@ -63,6 +64,18 @@ def validate_settings(settings):
     minimum = result["min_f_ticks"]
     if type(minimum) is not int or not 1 <= minimum <= denominator:
         raise ValueError("min_f_ticks must retain F: integer in [1, denominator]")
+    ticks = result["weight_ticks"]
+    if ticks is not None:
+        if not isinstance(ticks, list) or not ticks:
+            raise ValueError("weight_ticks must be null or a nonempty list of tick triples")
+        if any(not isinstance(row, list) or len(row) != 3
+               or any(type(value) is not int or value < 0 for value in row)
+               or row[0] < minimum or sum(row) != denominator for row in ticks):
+            raise ValueError("Each weight_ticks triple must retain F and sum to denominator")
+        if len({tuple(row) for row in ticks}) != len(ticks):
+            raise ValueError("weight_ticks must not contain duplicate triples")
+        # Equivalent user orderings must also have identical settings signatures.
+        result["weight_ticks"] = sorted(ticks)
     families = result["families"]
     if (not isinstance(families, list) or not families
             or any(type(family) is not str or family not in _FAMILIES for family in families)
@@ -92,17 +105,20 @@ def specs(settings=None):
     """Return deterministic IDs and exact tick-derived specifications."""
     settings = validate_settings(SETTINGS if settings is None else settings)
     denominator = settings["denominator"]
+    ticks_grid = settings["weight_ticks"]
+    if ticks_grid is None:
+        ticks_grid = [[f, g, denominator - f - g]
+                      for f in range(settings["min_f_ticks"], denominator + 1)
+                      for g in range(denominator - f + 1)]
     result = {}
     for family in settings["families"]:
-        for f_ticks in range(settings["min_f_ticks"], denominator + 1):
-            for g_ticks in range(denominator - f_ticks + 1):
-                w_ticks = denominator - f_ticks - g_ticks
-                name = (f"{family}_d{denominator:02d}_f{f_ticks:02d}"
-                        f"_g{g_ticks:02d}_w{w_ticks:02d}")
-                ticks = [f_ticks, g_ticks, w_ticks]
-                result[name] = {"family": family,
-                                "weights": [value / denominator for value in ticks],
-                                "ticks": ticks, "denominator": denominator}
+        for f_ticks, g_ticks, w_ticks in ticks_grid:
+            name = (f"{family}_d{denominator:02d}_f{f_ticks:02d}"
+                    f"_g{g_ticks:02d}_w{w_ticks:02d}")
+            ticks = [f_ticks, g_ticks, w_ticks]
+            result[name] = {"family": family,
+                            "weights": [value / denominator for value in ticks],
+                            "ticks": ticks, "denominator": denominator}
     if settings["include_reference"]:
         result["legacy_fgw"] = {"family": "legacy_fgw", "weights": [0.5, 0.5, 1.0]}
     return result
