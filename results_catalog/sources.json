@@ -2319,6 +2319,204 @@
         "artificial/b1_ablation_20261118T190927+0800/verification_test.json"
       ],
       "design_note": "Joint deletion of local F and angular A: G * exp(-2 D_J), global weight 1, angular gamma 0. Frozen original J strength 2; no retraining or new parameter search. Designed after observing prior B1 and component-ablation test. No local region score or matching contributes to the ranking."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_valid_FGW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/valid/FGW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/FGW",
+      "split": "valid",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/valid/FGW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/valid/FGW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/valid/FGW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS FGW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/valid/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_valid_GW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/valid/GW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/GW",
+      "split": "valid",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/valid/GW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/valid/GW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/valid/GW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS GW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/valid/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_valid_FW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/valid/FW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/FW",
+      "split": "valid",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/valid/FW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/valid/FW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/valid/FW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS FW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_valid.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/valid/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_test_FGW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/test/FGW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/FGW",
+      "split": "test",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/test/FGW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/test/FGW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/test/FGW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS FGW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/test/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_test_GW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/test/GW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/GW",
+      "split": "test",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/test/GW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/test/GW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/test/GW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS GW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/test/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
+    },
+    {
+      "key": "fgw_fgw_fusion_20261119T174724_0800_test_FW",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fgw_fusion_20261119T174724+0800/test/FW",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "FGW/FW",
+      "split": "test",
+      "manifest": "artificial/fgw_fusion_20261119T174724+0800/test/FW/evaluation_manifest.json",
+      "marker": "artificial/fgw_fusion_20261119T174724+0800/test/FW/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fgw_fusion_20261119T174724+0800/test/FW/run_identity.json",
+      "selection": null,
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "F/G/WBBS FW",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fgw_fusion_20261119T174724+0800/run_manifest.json",
+        "artificial/fgw_fusion_20261119T174724+0800/completed.json",
+        "artificial/fgw_fusion_20261119T174724+0800/inputs_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/evaluation_index_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/source_audit_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/verification_test.json",
+        "artificial/fgw_fusion_20261119T174724+0800/analysis/test/completed.json"
+      ],
+      "design_note": "Fixed (0.5 F_optimal + 0.5 G)*WBBS with GW and FW deletions; remaining branch weight 1. No angle or J. Frozen self-supervised cc8/WaPIRL sources and original WBBS settings, no retraining or parameter search. Designed after prior B1/test observations; raw WBBS and exponential J differ in scale."
     }
   ]
 }
