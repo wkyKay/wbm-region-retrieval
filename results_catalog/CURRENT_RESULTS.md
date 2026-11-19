@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-19T20:22:51+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-19T21:32:34+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 299 个评价结果、164,192 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 309 个评价结果、169,792 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -67,6 +67,16 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | F/G/WBBS FGW | 70.2598 | 61.2793 | 28.2800 | 88.9174 | `fgw_fgw_fusion_20261119T174724_0800_test_FGW` |
 | F/G/WBBS GW | 69.3291 | 60.2667 | 28.1106 | 88.4132 | `fgw_fgw_fusion_20261119T174724_0800_test_GW` |
 | F/G/WBBS FW | 70.1625 | 60.6501 | 27.2736 | 88.9271 | `fgw_fgw_fusion_20261119T174724_0800_test_FW` |
+| F/G/WBBS valid rank 1: sum_raw_d10_f01_g04_w05 (valid-selected primary) | 69.7041 | 61.5974 | 28.3309 | 88.8642 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_raw_d10_f01_g04_w05_test_sum_raw_d10_f01_g04_w05` |
+| F/G/WBBS valid rank 2: sum_minmax_d10_f02_g02_w06 | 69.6625 | 61.6836 | 28.4071 | 88.9530 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_minmax_d10_f02_g02_w06_test_sum_minmax_d10_f02_g02_w06` |
+| F/G/WBBS valid rank 3: sum_raw_d10_f02_g03_w05 | 70.2598 | 61.8878 | 28.2005 | 89.1018 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_raw_d10_f02_g03_w05_test_sum_raw_d10_f02_g03_w05` |
+| F/G/WBBS valid rank 4: sum_raw_d10_f01_g03_w06 | 69.9125 | 61.5030 | 28.5560 | 88.8333 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_raw_d10_f01_g03_w06_test_sum_raw_d10_f01_g03_w06` |
+| F/G/WBBS valid rank 5: sum_raw_d10_f03_g03_w04 | 70.3431 | 61.7586 | 27.1163 | 89.1534 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_raw_d10_f03_g03_w04_test_sum_raw_d10_f03_g03_w04` |
+| F/G/WBBS valid rank 6: sum_raw_d10_f03_g02_w05 | 70.5931 | 61.7711 | 27.6053 | 89.1745 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_raw_d10_f03_g02_w05_test_sum_raw_d10_f03_g02_w05` |
+| F/G/WBBS valid rank 7: sum_minmax_d10_f03_g02_w05 | 69.9958 | 61.7252 | 27.9356 | 89.0907 | `fgw_grid_fgw_topk_test_20261119T205138_0800__sum_minmax_d10_f03_g02_w05_test_sum_minmax_d10_f03_g02_w05` |
+| F/G/WBBS valid rank 8: weighted_product_d10_f01_g05_w04 | 69.5374 | 61.3432 | 28.4330 | 88.7440 | `fgw_grid_fgw_topk_test_20261119T205138_0800__weighted_product_d10_f01_g05_w04_test_weighted_product_d10_f01_g05_w04` |
+| F/G/WBBS valid rank 9: weighted_product_d10_f02_g05_w03 | 69.8847 | 61.7364 | 28.2378 | 89.0164 | `fgw_grid_fgw_topk_test_20261119T205138_0800__weighted_product_d10_f02_g05_w03_test_weighted_product_d10_f02_g05_w03` |
+| F/G/WBBS valid rank 10: weighted_product_d10_f04_g03_w03 | 70.5654 | 61.6363 | 27.4610 | 89.1894 | `fgw_grid_fgw_topk_test_20261119T205138_0800__weighted_product_d10_f04_g03_w03_test_weighted_product_d10_f04_g03_w03` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
