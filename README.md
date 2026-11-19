@@ -5,7 +5,7 @@
 - [项目说明](doc/项目说明.md)：项目设计、公共数据与评价、运行、结果概览和登记。
 - [消融实验](doc/消融实验.md)：B1及WBBS融合的符号、实验设计、对比数据和结论。
 - [F/G/WBBS融合](fgw_fusion/README.md)：三组固定公式、来源、运行与恢复。
-- [F/G/WBBS网格搜索](fgw_grid_search/README.md)：F始终保留，比较加法与加权乘法；已完成31项valid选参，test未运行。
+- [F/G/WBBS网格搜索](fgw_grid_search/README.md)：F始终保留，比较加法与加权乘法；已完成166项完整valid网格，选中原分数加法0.1F＋0.4G＋0.5W；test未运行。
 - [B1改进简述](doc/B1改进简述.md)：计算步骤、J与WBBS的区别、五组最佳实验及结论的简要版。
 - [自动结果总览](results_catalog/CURRENT_RESULTS.md)：完整成绩与来源。
 - [实验代码目录](experiments/README.md)：各入口和专属参数。
