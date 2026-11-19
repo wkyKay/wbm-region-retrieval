@@ -96,7 +96,7 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | wapirl | 60.5532 | 21.1807 | `cross_wapirl` |
 | f_radial_area | 71.2707 | 31.8461 | `cross_f_radial_area` |
 
-本表额外排除同标签组合候选，每 query 6,999–7,170 个候选。999 个 query 无 FullCoverage 正样本；仅对应 Recall/AP 平均排除，保留其余指标，Recall/AP 有效 query=6,200。七方法均已完成；F 是 2026-11-11 的旧径向面积来源，不能替代当前 cc8。与普通 test 独立展示。
+本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。
 
 ## 保存位置与追溯
 

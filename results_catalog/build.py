@@ -313,7 +313,7 @@ def render(snapshot):
     if additional_fusion:
         lines.extend(["新增融合实验按各自已冻结的 valid 选择记录评价；监督信息、事后设计背景和来源见登记表及 manifest，不将新增变体自动替换为当前主方法。", ""])
     table("跨组合 test", [r for r in runs if r["category"] == "cross_combination"], True)
-    lines.extend(["本表额外排除同标签组合候选，每 query 6,999–7,170 个候选。999 个 query 无 FullCoverage 正样本；仅对应 Recall/AP 平均排除，保留其余指标，Recall/AP 有效 query=6,200。七方法均已完成；F 是 2026-11-11 的旧径向面积来源，不能替代当前 cc8。与普通 test 独立展示。", "",
+    lines.extend(["本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。", "",
                   "## 保存位置与追溯", "",
                   f"服务器工作区：`{snapshot['source_workspace']}`。registry.csv 的 remote_path 是每项报告所在目录；snapshot.json 保存报告哈希、完成标记哈希、来源 manifest、选参记录及协议清单哈希。", "",
                   "当前主实验：`wbm-region-retrieval/artifacts/f_segmentation_radial_area_v1/cc8/{valid,test}/best_nce/`；模型：`wbm-region-retrieval/artifacts/f_segmentation_v1/cc8/seed_2026/F/best_nce.pt`。", "",
