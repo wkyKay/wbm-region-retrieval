@@ -14,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 
+from results_catalog.build import BASE_PROTOCOL_SIGNATURE
 from wbm_retrieval.common import digest, file_hash, read_json, write_csv, write_json
 from .selection import select_candidates
 from .state import now, read_signed, signed
@@ -21,6 +22,7 @@ from .state import now, read_signed, signed
 
 ROOT = Path(__file__).resolve().parents[1]
 METRICS = ("Precision@10", "mAP@100", "Coverage-nDCG@10")
+KS = [1, 5, 10, 20, 50, 100, 500]
 COMPARISON_ROLES = ("geometric_winner", "product_reference", "structure_reference",
                     "global_reference", "WBBS")
 
@@ -93,6 +95,98 @@ def _records(path, ids):
     _require(len(rows) == len(by_id) == len(ids) and set(by_id) == set(map(int, ids)),
              "Per-query report is incomplete or has duplicate/foreign IDs")
     return [by_id[int(q)] for q in ids]
+
+
+def validate_wbbs_sources(exact_root, coverage_root, ids, source_files, binding):
+    """Require one formal WBBS ranking and the identical frozen candidate identities.
+
+    Historical absolute paths may have moved. The coverage manifest and report
+    must instead bind the bytes of the exact ranking and its signed manifest.
+    """
+    exact_root, coverage_root = Path(exact_root).resolve(), Path(coverage_root).resolve()
+    roots, markers = [], []
+    for folder, required in ((exact_root, ("metrics.json", "per_query.csv", "rankings.csv")),
+                              (coverage_root, ("coverage_metrics.json", "coverage_per_query.csv"))):
+        root = folder if (folder / "completed.json").exists() else folder.parent
+        marker = binding.sealed(root)
+        _require(marker.get("split") == "test" and marker.get("num_queries") == len(ids)
+                 and marker.get("test_evaluated") is True, "WBBS completion is not the formal test")
+        for name in required:
+            _require(str((folder / name).relative_to(root)) in marker["files"],
+                     "WBBS completion does not bind required report")
+        roots.append(root); markers.append(marker)
+    exact_manifest_path = binding.bind(roots[0] / "evaluation_manifest.json")
+    exact_manifest = read_signed(exact_manifest_path)
+    coverage_manifest = read_json(binding.bind(roots[1] / "evaluation_manifest.json"))
+    _require("evaluation_manifest.json" in markers[1]["files"]
+             and "protocol/test_pool.json" in markers[1]["files"],
+             "WBBS coverage completion omits provenance or candidate identities")
+    exact_report = read_json(binding.bind(exact_root / "metrics.json"))
+    coverage_report = read_json(binding.bind(coverage_root / "coverage_metrics.json"))
+    exact_meta, coverage_meta = exact_report.get("metadata", {}), coverage_report.get("metadata", {})
+    signature = exact_manifest["signature"]
+    _require(markers[0].get("evaluation_signature") == exact_meta.get("evaluation_signature") == signature
+             and markers[0].get("smoke") is False
+             and markers[1].get("evaluation_signature") == digest(coverage_manifest),
+             "WBBS report/completion signatures do not bind the supplied manifests")
+    for manifest in (exact_manifest, coverage_manifest):
+        _require(manifest.get("method") == "wbbs" and manifest.get("variant") == "global"
+                 and manifest.get("split") == "test" and manifest.get("ks") == KS
+                 and manifest.get("query_count") == manifest.get("gallery_count") == len(ids)
+                 and manifest.get("candidates_per_query") == len(ids) - 1,
+                 "WBBS method, metric cutoffs or formal candidate scope differs")
+    _require(exact_manifest.get("runner_version") == "unified-exact-v1"
+             and exact_manifest.get("smoke") is False and exact_manifest.get("tie_seed") == 2026
+             and exact_manifest.get("candidate_rule") == "all_gallery_except_query"
+             and exact_manifest.get("ranking_limit") == 500
+             and exact_meta.get("method") == "wbbs" and exact_meta.get("variant") == "global"
+             and exact_meta.get("smoke") is False and exact_meta.get("tie_seed") == 2026
+             and exact_meta.get("ranking_limit") == 500
+             and coverage_manifest.get("runner_version") == "coverage-postprocess-v1"
+             and coverage_manifest.get("postprocess_only") is True
+             and coverage_meta.get("postprocess_only") is True,
+             "WBBS evidence is not the unchanged formal global ranking")
+    _require(exact_report.get("ks") == coverage_report.get("ks") == KS
+             and exact_report.get("metric_version") == "exact_v1"
+             and coverage_report.get("metric_version") == "coverage_v1"
+             and exact_report.get("retrieval_protocol_signature") == BASE_PROTOCOL_SIGNATURE
+             and coverage_manifest.get("retrieval_protocol_signature") == BASE_PROTOCOL_SIGNATURE,
+             "WBBS metric family or frozen retrieval protocol differs")
+    ranking = binding.bind(exact_root / "rankings.csv")
+    links = dict(ranking_source_sha256=binding.files[str(ranking)],
+                 ranking_manifest_sha256=binding.files[str(exact_manifest_path)],
+                 ranking_evaluation_signature=signature, ranking_runner_version="unified-exact-v1")
+    for evidence in (coverage_manifest, coverage_meta):
+        _require(all(evidence.get(key) == value for key, value in links.items()),
+                 "WBBS exact and coverage do not use the same ranking and manifest")
+    sources = exact_manifest.get("sources", {})
+    raw_path, raw_sha = _bound_path(source_files, "Wafer_Map_Datasets.npz")
+    binding.bind(raw_path, raw_sha)
+    _require(sources.get("data_file") == raw_sha, "WBBS uses a different raw dataset")
+    gallery = None
+    for name in ("test_queries.csv", "test_gallery.csv"):
+        path, sha = _bound_path(source_files, name)
+        path = binding.bind(path, sha)
+        _require(sources.get("retrieval_protocol", {}).get(name) == sha,
+                 "WBBS query/gallery manifest differs from the frozen G/J inputs")
+        actual = _query_ids(path, len(ids))
+        if name == "test_queries.csv":
+            _require(np.array_equal(actual, ids), "WBBS query identities differ")
+        else:
+            gallery = actual
+    for root in roots:
+        pool = read_json(binding.bind(root / "protocol/test_pool.json"))
+        _require(pool.get("split") == "test" and pool.get("protocol_signature") == BASE_PROTOCOL_SIGNATURE
+                 and pool.get("derived_smoke") is False
+                 and pool.get("candidate_rule") == "all_gallery_except_query"
+                 and pool.get("candidates_per_query") == len(ids) - 1
+                 and sorted(pool.get("queries", [])) == ids.tolist()
+                 and sorted(pool.get("gallery", [])) == gallery.tolist(),
+                 "WBBS full candidate identities differ from the frozen G/J pool")
+    return dict(status="verified", method="wbbs", variant="global",
+                retrieval_protocol_signature=BASE_PROTOCOL_SIGNATURE,
+                query_ids_digest=digest(ids.tolist()), gallery_ids_digest=digest(gallery.tolist()),
+                **links)
 
 
 def load_method(exact_root, coverage_root, ids, labels, *, split, pool_size, binding=None):
@@ -233,6 +327,23 @@ def _load_runs(valid_root, test_root, binding):
                      and checked.get("num_queries") == (500 if split == "valid" else 7199)
                      and checked.get("all_queries_full_candidate_topk_exact") is True,
                      "Missing successful full-query independent verification")
+            evidence = read_json(binding.bind(folder / "evaluation_manifest.json"))
+            _require(evidence.get("retrieval_protocol_signature") == BASE_PROTOCOL_SIGNATURE
+                     and evidence.get("ks") == KS and evidence.get("tie_seed") == 2026
+                     and evidence.get("candidate_rule") == "all_gallery_except_query"
+                     and evidence.get("num_queries") == (500 if split == "valid" else 7199)
+                     and evidence.get("gallery_count") == (3599 if split == "valid" else 7199)
+                     and evidence.get("signature") == checked.get("signature")
+                     and evidence.get("context_signature") == digest(manifests[split]["context"])
+                     and evidence.get("split") == split and evidence.get("variant") == name,
+                     "G/J evaluation identity or frozen candidate protocol differs")
+            for filename in ("metrics.json", "coverage_metrics.json"):
+                report = read_json(binding.bind(folder / filename))
+                metadata = report.get("metadata", {})
+                _require(report.get("ks") == KS
+                         and metadata.get("signature") == evidence["signature"]
+                         and metadata.get("retrieval_protocol_signature") == BASE_PROTOCOL_SIGNATURE,
+                         "G/J metric report is not bound to this exact/coverage ranking")
     return frozen, manifests
 
 
@@ -278,16 +389,8 @@ def analyze(valid_root, test_root, *, wbbs_exact_root, wbbs_coverage_root,
              "Bound NPZ does not supply valid eight-bit defect labels for the frozen query IDs")
     patterns, strata = label_strata(ids["test"], labels)
     _require(len(patterns) == 37, "Formal test must contain the 37 frozen complete label combinations")
-    checked_markers = {}
-    for folder, filenames in ((Path(wbbs_exact_root).resolve(), ("per_query.csv", "metrics.json")),
-                              (Path(wbbs_coverage_root).resolve(), ("coverage_per_query.csv", "coverage_metrics.json"))):
-        marker_root = folder if (folder / "completed.json").exists() else folder.parent
-        if marker_root not in checked_markers:
-            checked_markers[marker_root] = binding.sealed(marker_root)
-        marker = checked_markers[marker_root]
-        for filename in filenames:
-            relative = str((folder / filename).relative_to(marker_root))
-            _require(relative in marker["files"], "WBBS completion does not bind required report")
+    wbbs_validation = validate_wbbs_sources(wbbs_exact_root, wbbs_coverage_root,
+                                            ids["test"], source_files, binding)
     loaded, summary = {}, []
     for split, root, names in (("valid", valid_root, [x["variant"] for x in frozen["ranking"]]),
                                ("test", test_root, frozen["selected_variants"])):
@@ -319,6 +422,7 @@ def analyze(valid_root, test_root, *, wbbs_exact_root, wbbs_coverage_root,
         unique_pairs=[list(pair) for pair in pairs], no_test_parameter_selection=True,
         query_ids_digest=digest(ids["test"].tolist()),
         raw_query_labels_digest=digest(labels[ids["test"]].astype(int).tolist()),
+        wbbs_source_validation=wbbs_validation,
         source_hashes=dict(sorted(binding.files.items())), repetitions=int(repetitions), seed=2026,
         metrics=list(METRICS), units="ratios; multiply by 100 for percentages/percentage-point differences",
         stratum_sizes={"".join(map(str, pattern)): len(indices) for pattern, indices in zip(patterns, strata)},

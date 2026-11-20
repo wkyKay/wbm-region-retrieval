@@ -8,8 +8,8 @@ import unittest
 
 import numpy as np
 
-from gj_fusion.analysis import (SourceBinding, _load_runs, comparison_plan,
-                                label_strata, load_method, paired_bootstrap)
+from gj_fusion.analysis import (BASE_PROTOCOL_SIGNATURE, KS, SourceBinding, _load_runs, comparison_plan,
+                                label_strata, load_method, paired_bootstrap, validate_wbbs_sources)
 from gj_fusion.scoring import frozen_grid
 from gj_fusion.selection import select_candidates
 from gj_fusion.state import seal, signed
@@ -171,9 +171,19 @@ class SourceEvidenceTests(unittest.TestCase):
         for folder, split, names in ((valid, "valid", frozen_grid()), (test, "test", chosen["selected_variants"])):
             write_json(folder / "status.json", {"status": "completed"})
             for name in names:
+                sig = "evaluation-" + split + "-" + name
                 write_json(folder / split / name / "verification.json", dict(status="verified", split=split,
-                           variant=name, num_queries=500 if split == "valid" else 7199,
+                           variant=name, signature=sig, num_queries=500 if split == "valid" else 7199,
                            all_queries_full_candidate_topk_exact=True))
+                write_json(folder / split / name / "evaluation_manifest.json",
+                           dict(retrieval_protocol_signature=BASE_PROTOCOL_SIGNATURE, ks=KS, tie_seed=2026,
+                                candidate_rule="all_gallery_except_query", num_queries=500 if split == "valid" else 7199,
+                                gallery_count=3599 if split == "valid" else 7199, signature=sig,
+                                context_signature=digest(context if split == "valid" else test_context),
+                                split=split, variant=name))
+                for filename in ("metrics.json", "coverage_metrics.json"):
+                    write_json(folder / split / name / filename, dict(ks=KS, metadata=dict(
+                        signature=sig, retrieval_protocol_signature=BASE_PROTOCOL_SIGNATURE)))
         seal(valid, digest(context)); seal(test, digest(test_context))
         return valid, test, chosen
 
@@ -186,6 +196,116 @@ class SourceEvidenceTests(unittest.TestCase):
             write_json(test / "frozen_selection.json", signed({k:v for k,v in bad.items() if k != "signature"}))
             with self.assertRaises(ValueError):
                 _load_runs(valid, test, SourceBinding())
+
+
+class WbbsProvenanceTests(unittest.TestCase):
+    """Metadata-chain fixtures; metric/ranking calculations are tested separately."""
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.exact, self.coverage = self.root / "exact" / "test", self.root / "coverage" / "test"
+        self.exact.mkdir(parents=True); self.coverage.mkdir(parents=True)
+        self.ids = np.asarray([1, 4, 9], dtype=np.int64)
+        self.sources = {}
+        for name, content in (("Wafer_Map_Datasets.npz", "raw fixture bytes"),
+                              ("test_queries.csv", "sample_id\n1\n4\n9\n"),
+                              ("test_gallery.csv", "sample_id\n1\n4\n9\n")):
+            path = self.root / name; path.write_text(content)
+            self.sources[str(path)] = file_hash(path)
+        for path in (self.exact / "rankings.csv", self.exact / "per_query.csv",
+                     self.coverage / "coverage_per_query.csv"):
+            path.write_text("fixture\n")
+        common = dict(method="wbbs", variant="global", split="test", ks=KS,
+                      query_count=3, gallery_count=3, candidates_per_query=2)
+        self.em = dict(**common, runner_version="unified-exact-v1", smoke=False, tie_seed=2026,
+                       candidate_rule="all_gallery_except_query", ranking_limit=500,
+                       sources=dict(data_file=self.sources[str(self.root / "Wafer_Map_Datasets.npz")],
+                                    retrieval_protocol={k:self.sources[str(self.root / k)]
+                                        for k in ("test_queries.csv", "test_gallery.csv")}))
+        self.cm = dict(**common, runner_version="coverage-postprocess-v1", postprocess_only=True,
+                       retrieval_protocol_signature=BASE_PROTOCOL_SIGNATURE,
+                       ranking_source="/old/server/path/rankings.csv")
+        self.er = dict(ks=KS, metric_version="exact_v1", retrieval_protocol_signature=BASE_PROTOCOL_SIGNATURE,
+                       metadata=dict(method="wbbs", variant="global", smoke=False, tie_seed=2026, ranking_limit=500))
+        self.cr = dict(ks=KS, metric_version="coverage_v1", metadata=dict(postprocess_only=True))
+        self.pool = dict(split="test", protocol_signature=BASE_PROTOCOL_SIGNATURE, derived_smoke=False,
+                         queries=self.ids.tolist(), gallery=self.ids.tolist(),
+                         candidate_rule="all_gallery_except_query", candidates_per_query=2)
+        for folder in (self.exact, self.coverage):
+            write_json(folder.parent / "protocol/test_pool.json", self.pool)
+        self.save()
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def save(self, *, link_overrides=None):
+        em = signed(self.em)
+        write_json(self.exact.parent / "evaluation_manifest.json", em)
+        links = dict(ranking_source_sha256=file_hash(self.exact / "rankings.csv"),
+                     ranking_manifest_sha256=file_hash(self.exact.parent / "evaluation_manifest.json"),
+                     ranking_evaluation_signature=em["signature"], ranking_runner_version="unified-exact-v1")
+        links.update(link_overrides or {})
+        self.cm.update(links); self.cr["metadata"].update(links)
+        self.er["metadata"]["evaluation_signature"] = em["signature"]
+        write_json(self.coverage.parent / "evaluation_manifest.json", self.cm)
+        write_json(self.exact / "metrics.json", self.er)
+        write_json(self.coverage / "coverage_metrics.json", self.cr)
+        for folder, signature in ((self.exact, em["signature"]), (self.coverage, digest(self.cm))):
+            root = folder.parent
+            files = {str(p.relative_to(root)):file_hash(p) for p in root.rglob("*")
+                     if p.is_file() and p.name != "completed.json"}
+            write_json(root / "completed.json", dict(split="test", num_queries=3, test_evaluated=True,
+                       smoke=False, evaluation_signature=signature, files=files))
+
+    def validate(self):
+        return validate_wbbs_sources(self.exact, self.coverage, self.ids, self.sources, SourceBinding())
+
+    def test_accepts_matching_frozen_ids_and_content_links_after_path_migration(self):
+        self.assertEqual(self.validate()["status"], "verified")
+
+    def test_rejects_different_exact_and_coverage_ranking_even_when_resealed(self):
+        self.save(link_overrides={"ranking_source_sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "same ranking"):
+            self.validate()
+
+    def test_rejects_different_manifest_link_even_when_resealed(self):
+        self.save(link_overrides={"ranking_manifest_sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "same ranking"):
+            self.validate()
+
+    def test_rejects_other_method_with_valid_self_signatures(self):
+        self.em["method"] = self.cm["method"] = self.er["metadata"]["method"] = "other"
+        self.save()
+        with self.assertRaisesRegex(ValueError, "WBBS method"):
+            self.validate()
+
+    def test_rejects_other_protocol_with_identical_counts(self):
+        self.er["retrieval_protocol_signature"] = self.cm["retrieval_protocol_signature"] = "other"
+        self.save()
+        with self.assertRaisesRegex(ValueError, "frozen retrieval protocol"):
+            self.validate()
+
+    def test_rejects_other_gallery_id_with_identical_counts(self):
+        wrong = dict(self.pool, gallery=[1, 4, 8])
+        write_json(self.coverage.parent / "protocol/test_pool.json", wrong)
+        self.save()
+        with self.assertRaisesRegex(ValueError, "candidate identities"):
+            self.validate()
+
+    def test_rejects_wrong_raw_data_or_frozen_gallery_source(self):
+        for key in ("raw", "gallery"):
+            with self.subTest(key=key):
+                old = self.em["sources"]["data_file"]
+                old_gallery = self.em["sources"]["retrieval_protocol"]["test_gallery.csv"]
+                if key == "raw":
+                    self.em["sources"]["data_file"] = "0" * 64
+                else:
+                    self.em["sources"]["retrieval_protocol"]["test_gallery.csv"] = "0" * 64
+                self.save()
+                with self.assertRaises(ValueError):
+                    self.validate()
+                self.em["sources"]["data_file"] = old
+                self.em["sources"]["retrieval_protocol"]["test_gallery.csv"] = old_gallery
 
 
 if __name__ == "__main__":
