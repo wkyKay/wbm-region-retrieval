@@ -16,8 +16,9 @@ from results_catalog import build as catalog
 from wbm_retrieval.common import digest, file_hash, read_json
 from f_region_structure.state import TZ
 from . import scoring, selection
-from .run import VERSION, code_identity, read_frozen
+from .run import VERSION, code_identity, read_frozen, check_binding
 from .pipeline import KS, variant_signature
+from .verify import REPORT_FILES
 from .state import read_signed, verified
 
 
@@ -34,6 +35,7 @@ def proposal(output,*,root=ROOT):
             or status.get('status')!='completed' or status.get('context_signature')!=signature
             or status.get('test_evaluated')!=(split=='test') or not verified(output,signature)):
         raise ValueError('Only completed matching G/J stages may be registered')
+    check_binding(context['source_binding'])
     valid_root=output if split=='valid' else Path(manifest['valid_run'])
     frozen,valid_manifest=read_frozen(valid_root)
     choice=output/('selection.json' if split=='valid' else 'frozen_selection.json')
@@ -57,6 +59,24 @@ def proposal(output,*,root=ROOT):
     if replay.get('status')!='verified' or set(replay.get('controls',{}))!={'J_only','G_only','product'}:
         raise ValueError('Original controls were not replayed')
     nquery,ngallery=(500,3599) if split=='valid' else (7199,7199)
+    for name,control in replay['controls'].items():
+        source=control.get('source')
+        if (control.get('top500_identical') is not True or control.get('num_queries')!=nquery
+                or not isinstance(source,str) or source not in context['source_binding']
+                or control.get('source_sha256')!=context['source_binding'][source]
+                or control.get('new_sha256')!=file_hash(output/split/name/'rankings.csv')):
+            raise ValueError('Historical control replay is missing or stale')
+        error=control.get('max_score_error')
+        if name!='J_only' and (not isinstance(error,(int,float)) or not 0<=error<=2e-7):
+            raise ValueError('Historical control scores differ beyond recorded backend tolerance')
+    audit=read_json(output/f'component_audit_{split}.json')
+    if (audit.get('status')!='verified' or audit.get('split')!=split
+            or audit.get('context_signature')!=signature or audit.get('num_queries')!=37
+            or len(set(audit.get('query_ids',[])))!=37 or audit.get('candidate_pairs')!=740
+            or audit.get('max_candidates_per_query')!=20
+            or not 0<=audit.get('max_global_absolute_error',float('inf'))<=2e-7
+            or not 0<=audit.get('max_joint_distance_absolute_error',float('inf'))<=1e-12):
+        raise ValueError('Independent source-component audit is incomplete or invalid')
     runs=[]
     for name,spec in specs.items():
         folder=output/split/name
@@ -79,9 +99,14 @@ def proposal(output,*,root=ROOT):
                 or any(ev.get(k)!=v for k,v in ident.items())):
             raise ValueError('Evaluation identity or frozen formula/protocol changed')
         if (checked.get('status')!='verified' or checked.get('signature')!=sig
+                or checked.get('split')!=split or checked.get('variant')!=name
+                or checked.get('ks')!=KS or checked.get('tie_seed')!=2026
                 or checked.get('num_queries')!=nquery or checked.get('ranking_rows')!=nquery*500
                 or checked.get('full_candidates_checked')!=nquery*(ngallery-1)
                 or checked.get('all_queries_full_candidate_topk_exact') is not True
+                or checked.get('independent_fusion_all_candidates') is not True
+                or set(checked.get('files',{}))!=set(REPORT_FILES)|{'run_identity.json'}
+                or checked.get('ranking_sha256')!=file_hash(folder/'rankings.csv')
                 or checked.get('top10_hits')!=row.get('top10_hits')):
             raise ValueError('Full-candidate independent verification is incomplete')
         for key in ('max_metric_absolute_error','max_saved_score_absolute_error','max_component_absolute_error'):
@@ -161,6 +186,10 @@ def apply_proposal(output, *, workspace=None, root=ROOT):
         merged = {**sources, "runs": [*sources["runs"], *additions]}
         # Collection verifies every report/identity before any shared data file is changed.
         updated = catalog.collect(workspace, merged, previous)
+        old_runs={item['key']:item for item in previous['runs']}
+        new_runs={item['key']:item for item in updated['runs']}
+        if (len(new_runs)!=len(updated['runs']) or any(new_runs.get(key)!=value for key,value in old_runs.items())):
+            raise ValueError('Existing registered result changed during collection')
         generated = catalog.render(updated)
         if any(not (folder / name).is_file() or (folder / name).read_bytes() != content
                for name, content in original.items()):
