@@ -27,7 +27,8 @@ VERSION = 'f_region_score_test_v1'
 
 def code_identity():
     result = valid_code_identity()
-    paths = [ROOT/'f_region_score_search/register.py']
+    paths = [ROOT/'f_region_score_search/register.py',
+             ROOT/'f_region_structure/register.py', ROOT/'results_catalog/build.py']
     paths += [p for p in Path(__file__).parent.glob('*.py') if p.name != 'register.py']
     for path in sorted(paths):
         result[str(path.relative_to(ROOT))] = file_hash(path)
