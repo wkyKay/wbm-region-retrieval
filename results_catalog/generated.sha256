@@ -1,0 +1,31 @@
+{
+  "compression": {
+    "filename": "",
+    "format": "gzip",
+    "level": 9,
+    "mtime": 0
+  },
+  "files": {
+    "metrics.csv": {
+      "gzip": {
+        "sha256": "017ec6d2146e55620ad7a1eefcc1ed6c435458e970585cdb857481d47f652be0",
+        "size": 2927568
+      },
+      "raw": {
+        "sha256": "d810d08a44c1512f8e4ae43492a3e0661d75e8ba94b05da2adaf31daf1d5eba7",
+        "size": 107553919
+      }
+    },
+    "tables/fusion.csv": {
+      "gzip": {
+        "sha256": "452689630421b73ffdcd43289d980bd663fb981a8d9cbf8a7c935663a66af9e1",
+        "size": 2674951
+      },
+      "raw": {
+        "sha256": "9a1a870d9f3311d181fe2932c3a9eb4aeaf2195f4106a292214fc4ccd923b9a0",
+        "size": 100005117
+      }
+    }
+  },
+  "schema_version": 1
+}

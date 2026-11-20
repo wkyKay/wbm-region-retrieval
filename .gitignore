@@ -44,3 +44,7 @@ artificial/
 
 # The complete catalogue JSON remains available locally; Git stores its lossless archive.
 /results_catalog/snapshot.json
+
+# Large derived tables stay at their original local paths; Git stores lossless archives.
+/results_catalog/metrics.csv
+/results_catalog/tables/fusion.csv

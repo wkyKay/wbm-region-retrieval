@@ -10,6 +10,7 @@
 | `snapshot.json` | 从服务器只读采集的报告、完成标记哈希、来源 manifest、选参记录、协议哈希和目录盘点；支持离线生成 |
 | `snapshot.json.gz`、`snapshot.sha256` | Git保存的完整快照无损归档及原始／压缩字节数、SHA-256；工作区仍使用原路径`snapshot.json`，不删字段或改成绩 |
 | `snapshot_archive.py` | 归档、恢复和逐字节校验工具；不修改现有采集、登记或评分代码 |
+| `generated_archive.py`、`generated.sha256` | 大型派生表的无损归档、恢复与校验；Git保存`metrics.csv.gz`及`tables/fusion.csv.gz`，本地仍使用完整CSV原路径 |
 | `registry.csv` | 每项评价一行的登记表；`remote_path` 指向原始结果目录 |
 | `metrics.csv` | 全部指标长表，保留原始比例和精度；缺失值为空，不填零 |
 | `tables/methods.csv` | 普通 test 的六对比方法与当前 cc8 主方法 |
@@ -55,12 +56,15 @@ python3 results_catalog/build.py collect --workspace /data/wangkaiyan2024
 python3 results_catalog/build.py check
 python3 results_catalog/snapshot_archive.py pack
 python3 results_catalog/snapshot_archive.py verify
+python3 results_catalog/generated_archive.py pack
+python3 results_catalog/generated_archive.py verify
 ```
 
 本地无需下载模型、特征或原始排名，可以从已经核验并纳入 Git 的快照重建。新克隆先恢复完整JSON：
 
 ```bash
 python3 results_catalog/snapshot_archive.py unpack
+python3 results_catalog/generated_archive.py unpack
 python3 results_catalog/build.py render
 python3 results_catalog/build.py check
 python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v
@@ -71,6 +75,8 @@ python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v
 正式 `collect` 仍将 `snapshot.json` 保存为紧凑JSON；现有登记器和`build.py`仍读取该路径。随着登记增长，完整JSON超过GitHub单文件大小限制，因此Git只跟踪`snapshot.json.gz`和`snapshot.sha256`，本地与服务器继续保留完整JSON。归档不解析或重新序列化原文件，恢复后逐字节一致，所有字段、浮点数、历史记录及来源内容原样保留；不改写Git历史或旧实验manifest。
 
 每次完成官方`collect/check`后运行`pack`和`verify`，同步归档与校验文件。归档固定gzip时间和文件名，同环境相同输入产生相同归档；不同zlib版本可能产生不同压缩字节，但原始JSON的SHA必须一致。`unpack`只创建缺失的JSON，或接受已有的相同内容；已有不同内容、符号链接或哈希不符时拒绝覆盖。已有工作区拉取更新后，若旧JSON与新归档不同，先将旧JSON另存为保留副本，再执行`unpack`，避免误覆盖尚未登记的新结果。归档校验只证明字节完整性，正式成绩仍以原有`build.py check`和来源核验为准。
+
+415项登记后，`metrics.csv`超过GitHub的100MiB单文件限制，`tables/fusion.csv`也接近该限制。两表因此同样改为Git保存无损gzip与独立`generated.sha256`，完整CSV仍留在本地／服务器原路径，并可由原有`build.py render`从快照逐字节重建；不删行、不截断、不改旧记录。`generated_archive.py`固定只处理这两表，恢复拒绝覆盖不同现有CSV；拉取更新后先另存旧CSV再恢复，或按已核验的新快照执行原有render。每次正式collect/check后对快照和两表分别pack/verify，再同步全部归档及校验清单。GitHub上的原始表归档为[完整指标](metrics.csv.gz)和[融合表](tables/fusion.csv.gz)。
 
 `artifacts/` 与 `artificial/` 下的运行目录均进入只读目录盘点；目录存在不等于已完成或已登记。普通协议下新增的 `fusion`、`fusion_ablation`、`posthoc` 类别 test 结果会追加到总览融合表，valid 与跨组合结果仍分开处理。新增方法的注册入口可以生成来源条目，只有报告、完成标记和冻结选择全部就绪后才能写入唯一 `sources.json`；登记器不依赖任何具体实验包。
 
