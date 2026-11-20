@@ -10984,6 +10984,39 @@
         "artificial/f_region_score_search_20261120T140544+0800/valid/j_only/verification.json"
       ],
       "design_note": "Valid-only frozen 15-candidate comparison of multiplicative, mixed arithmetic, zero-gated arithmetic and CNN/structure endpoint regional scores. Reuses the previous all-point regional joint descriptors, frozen cc8 Top-4 h512 best_nce seed2026, area factor, original greedy matching and query sqrt(area) aggregation. The j_only endpoint uses regional J plus area without CNN scoring, and is untrained; other variants reuse the frozen self-supervised CNN. No training and no test evaluation. Integer valid exact P@10 with a fixed tie rule selects the finite-grid winner. Product baseline exactly replays the previously selected regional-J formula. Research follows historical test observations; no test-generalization claim."
+    },
+    {
+      "key": "f_region_score_test_f_region_score_test_20261120T143348_0800_test_mixed_a0p5_e1p0",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/f_region_score_test_20261120T143348+0800/test/mixed_a0p5_e1p0",
+      "category": "fusion_ablation",
+      "method": "F",
+      "variant": "RegionalJScore/mixed_a0p5_e1p0",
+      "split": "test",
+      "manifest": "artificial/f_region_score_test_20261120T143348+0800/test/mixed_a0p5_e1p0/evaluation_manifest.json",
+      "marker": "artificial/f_region_score_test_20261120T143348+0800/test/mixed_a0p5_e1p0/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/f_region_score_test_20261120T143348+0800/test/mixed_a0p5_e1p0/run_identity.json",
+      "selection": "artificial/f_region_score_test_20261120T143348+0800/frozen_selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "区域J等权加法（valid冻结胜者）",
+      "required_families": [
+        "exact",
+        "coverage"
+      ],
+      "protocol": "retrieval_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/f_region_score_test_20261120T143348+0800/run_manifest.json",
+        "artificial/f_region_score_test_20261120T143348+0800/completed.json",
+        "artificial/f_region_score_test_20261120T143348+0800/inputs.json",
+        "artificial/f_region_score_test_20261120T143348+0800/source_protection_after.json",
+        "artificial/f_region_score_test_20261120T143348+0800/formula_audit_test.json",
+        "artificial/f_region_score_test_20261120T143348+0800/evaluation_index_test.json",
+        "artificial/f_region_score_test_20261120T143348+0800/test/mixed_a0p5_e1p0/verification.json"
+      ],
+      "design_note": "One complete test evaluation of the previously frozen valid-only 15-candidate winner mixed_a0p5_e1p0: region score B*(0.5*C+0.5*exp(-0.5*D_J)), without the zero-CNN gate. Frozen cc8 Top-4 h512 best_nce seed2026, original all-point joint descriptors, area factor, greedy matching and query sqrt(area) aggregation. Original valid selection/completion/index SHA256 are bound before test. No training, test parameter selection or extra test variants. Research follows historical test observations; this does not replace the project main method."
     }
   ]
 }
