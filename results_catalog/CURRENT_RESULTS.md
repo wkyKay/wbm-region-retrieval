@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-19T22:54:39+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-20T10:55:32+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 319 个评价结果、173,152 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 321 个评价结果、173,824 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -105,6 +105,8 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | F/G/WBBS cross-combination valid rank 8: weighted_product_d10_f01_g05_w04 | 75.0142 | 34.7340 | `fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f01_g05_w04` |
 | F/G/WBBS cross-combination valid rank 9: weighted_product_d10_f02_g05_w03 | 75.2641 | 34.8646 | `fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f02_g05_w03` |
 | F/G/WBBS cross-combination valid rank 10: weighted_product_d10_f04_g03_w03 | 75.8246 | 35.5786 | `fgw_cross_fgw_cross_test_20261119T223644_0800_test_weighted_product_d10_f04_g03_w03` |
+| F optimal matching cross-combination | 71.1717 | 31.5433 | `fw_cross_fw_cross_test_20261120T104447_0800_test_F` |
+| F optimal matching * WBBS cross-combination | 75.9327 | 35.8050 | `fw_cross_fw_cross_test_20261120T104447_0800_test_FW` |
 
 本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。
 
