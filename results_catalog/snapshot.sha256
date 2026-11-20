@@ -1,0 +1,17 @@
+{
+  "compression": {
+    "filename": "",
+    "format": "gzip",
+    "level": 9,
+    "mtime": 0
+  },
+  "schema_version": 1,
+  "snapshot.json": {
+    "sha256": "613f3747123f4ae50a921a52fc5fd62f0358d02c0eee0258375e9c2883b2a848",
+    "size": 107166631
+  },
+  "snapshot.json.gz": {
+    "sha256": "ac2e18b08c3bbe6b5dffca3a1795808a1941612b1880d7b62f529370f2760727",
+    "size": 28544167
+  }
+}

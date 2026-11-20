@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-20T15:08:46+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-20T17:18:58+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 364 个评价结果、197,680 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 403 个评价结果、219,520 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -79,6 +79,16 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | F/G/WBBS valid rank 10: weighted_product_d10_f04_g03_w03 | 70.5654 | 61.6363 | 27.4610 | 89.1894 | `fgw_grid_fgw_topk_test_20261119T205138_0800__weighted_product_d10_f04_g03_w03_test_weighted_product_d10_f04_g03_w03` |
 | 区域结构 replace_radial_all_points_l0p5 | 66.1342 | 56.4453 | 20.2482 | 87.2084 | `f_region_structure_f_region_structure_20261120T120331_0800_test_replace_radial_all_points_l0p5` |
 | 区域J等权加法（valid冻结胜者） | 68.5095 | 58.1442 | 20.8054 | 87.6135 | `f_region_score_test_f_region_score_test_20261120T143348_0800_test_mixed_a0p5_e1p0` |
+| 区域J与面积融合 add_a0p4_b0p25 | 70.8848 | 59.7819 | 21.0581 | 87.8135 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p4_b0p25` |
+| 区域J与面积融合 add_a0p5_b0p25 | 69.6763 | 59.3249 | 20.6791 | 87.5906 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p5_b0p25` |
+| 区域J与面积融合 add_a0p5_b0p15 | 68.8568 | 58.9554 | 21.0854 | 87.7352 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p5_b0p15` |
+| 区域J与面积融合 mul_a0p4_b0p25 | 69.9681 | 59.3207 | 21.1336 | 87.8942 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_mul_a0p4_b0p25` |
+| 区域J与面积融合 add_a0p4_b0p15 | 69.7458 | 59.2443 | 21.2897 | 87.8414 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p4_b0p15` |
+| 区域J与面积融合 mul_a0p5_b0p15 | 68.5095 | 58.1442 | 20.8054 | 87.6135 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_mul_a0p5_b0p15` |
+| 区域J与面积融合 mul_a0p5_b0p25 | 69.3291 | 59.0388 | 20.9047 | 87.7634 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_mul_a0p5_b0p25` |
+| 区域J与面积融合 add_a0p5_b0p1 | 68.1484 | 57.9956 | 20.8206 | 87.5263 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p5_b0p1` |
+| 区域J与面积融合 add_a0p6_b0p25 | 68.1067 | 58.1845 | 19.9850 | 87.0724 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p6_b0p25` |
+| 区域J与面积融合 add_a0p4_b0p1 | 68.4817 | 58.1845 | 20.9551 | 87.5694 | `f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p4_b0p1` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 

@@ -33,6 +33,7 @@
 
 5. 将新的快照和生成文件同步到本地；可离线执行 `python3 results_catalog/build.py render` 和 `check`。若改变生成器或新增协议适配，运行 `python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v` 及适用的新增验证。
 6. `snapshot.json` 由采集生成，`registry.csv`、`metrics.csv`、`tables/*.csv` 和 `CURRENT_RESULTS.md` 由脚本生成。禁止手工改数、绕过签名或修改快照来掩盖失败；来源清单改变后须重新 collect，不能继续使用旧快照。
+   完整`snapshot.json`保留在本地和服务器原路径供现有工具读取；Git改存无损`snapshot.json.gz`及`snapshot.sha256`，以避免单文件大小限制。官方`collect/check`后执行`python3 results_catalog/snapshot_archive.py pack`和`verify`；新克隆先执行`unpack`再使用原有工具。恢复工具拒绝覆盖不同内容的现有JSON；已有工作区更新归档后，先另存旧JSON再恢复。归档须保持全部原始字节与SHA一致，不删字段、不改历史记录、不改写Git历史。
 7. 更新项目说明的运行、结果概览和历史记录相关章节；B1详细设计、完整结果与结论单独更新 `doc/消融实验.md`，项目说明保留摘要和链接；实验 README 仅补充专属参数，注明完成状态、原始路径、结果及限制；不得留下失效的“已启动、尚未确认完成”。有保存价值且被引用的旧分析保存为本地历史参考副本，并在项目说明的历史记录节提供相对链接，不把旧结论改写为新实验结论。
 
 ## 汇总与论文比较边界
