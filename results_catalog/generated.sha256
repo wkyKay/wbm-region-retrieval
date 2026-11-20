@@ -8,12 +8,12 @@
   "files": {
     "metrics.csv": {
       "gzip": {
-        "sha256": "017ec6d2146e55620ad7a1eefcc1ed6c435458e970585cdb857481d47f652be0",
-        "size": 2927568
+        "sha256": "3b3bd93c8bb1bbf7c1ca79296cc1d2e8d4b23eadfa7808a9115697af4a4db0c0",
+        "size": 2951615
       },
       "raw": {
-        "sha256": "d810d08a44c1512f8e4ae43492a3e0661d75e8ba94b05da2adaf31daf1d5eba7",
-        "size": 107553919
+        "sha256": "5fdc8f207d070f23e4528ef902fa01e73762ed592884c73cd77cfd25999c5bb9",
+        "size": 108481077
       }
     },
     "tables/fusion.csv": {
