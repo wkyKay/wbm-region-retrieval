@@ -12973,6 +12973,45 @@
         "artificial/fgj_cross_test_20261120T193642+0800/test/WBBS/verification.json"
       ],
       "design_note": "User-specified six-recipe cross-combination coverage diagnostic; fixed formula WBBS. F is frozen cc8 optimal radial-area matching, G is the original frozen self-supervised whole-map score, and J=exp(-2D_H) uses the original 128-dimensional whole-map joint descriptor. WBBS is the same frozen raw score. No angle term, score calibration, new training, valid search or test winner selection. Exclude self and identical complete label combinations before complete-candidate scoring; original coverage_v1 metrics, K, groups, tie rules and undefined-denominator handling are unchanged. Ground-truth labels filter benchmark eligibility only and never enter score formulas. Descending Coverage-nDCG@10 and metric-specific ranks are descriptive reporting, not method selection. Replayed endpoints are control roles, not independent training repeats. This posthoc diagnostic does not establish unseen-training-combination generalization or replace the designated cc8 primary method."
+    },
+    {
+      "key": "f_region_j_cross_f_region_j_cross_test_20261120T202638_0800_test_add_a0p4_b0p25",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "regional-J-area-cross/add_a0p4_b0p25",
+      "split": "test",
+      "manifest": "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/evaluation_manifest.json",
+      "marker": "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/run_identity.json",
+      "selection": "artificial/f_region_area_fusion_valid_20261120T155825+0800/selection.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "区域J与面积加法F（跨组合）",
+      "selection_rule": "user_requested_cross_evaluation_of_frozen_valid_winner",
+      "valid_selected_primary": true,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/f_region_j_cross_test_20261120T202638+0800/run_manifest.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/completed.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/frozen_variants.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/inputs.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/candidate_protocol.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/evaluation_index_test.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/formula_audit_test.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/historical_replay.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/comparison_references.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/score_cache/completed.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/source_protection_after.json",
+        "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/verification.json"
+      ],
+      "design_note": "Cross-combination coverage evaluation of the unchanged original 29-way valid winner add_a0p4_b0p25, spec family=add, alpha=0.4, beta=0.25. Regional pair score (1-0.25)*(0.4*C+0.6*T)+0.25*A equals 0.30*C+0.45*T+0.25*A mathematically; production retains the original arithmetic. C is clipped regional CNN cosine, T=exp(-0.5*regional Hellinger), A=exp(-D_area/1.5). Reuse frozen self-supervised cc8 Top-4 h512 best_nce seed2026, all-point regional joint descriptors, original greedy matching and query sqrt(area) aggregation. A is area, not the earlier angle term; T is regional, not whole-map J at strength 2. No new training, calibration, weight search or test parameter selection. Exclude self and identical complete label combinations; unchanged coverage_v1 formulas, K, grouping, ties and undefined-denominator rules. Complete original-pool regional scores are computed once, replay all historical winner Top-500 scores exactly, then filter candidate eligibility. New full eligible-pool ranking/metric verification uses that sealed score cache, with a separate independent 740-pair regional formula/greedy audit. Six earlier cross methods are read-only comparison references, not new evaluations. The source valid winner identity does not replace the project's designated main method or imply selection on this cross protocol. Posthoc diagnostic; no new unseen-training-combination split or cross-seed/significance claim."
     }
   ]
 }
