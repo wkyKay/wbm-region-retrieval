@@ -9533,6 +9533,37 @@
         "artificial/fw_cross_test_20261120T104447+0800/evaluation_index_test.json"
       ],
       "design_note": "User-requested supplementary coverage test of fixed F and literal F*WBBS. F is the frozen optimal-local component used by the previous ten F/G/WBBS configurations, not the earlier greedy F cross-combination baseline. No G, exponent search or normalization. Exclude self and identical complete label combinations before full-pool scoring. Reuse verified complete component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid-selected configuration and designated primary method remain unchanged. Ground-truth labels filter benchmark eligibility only and never enter method scores. This posthoc component diagnostic does not establish monotonic benefits from higher F weight or unseen-combination generalization."
+    },
+    {
+      "key": "fw_add_cross_fw_add_cross_test_20261120T110737_0800_test_FW_ADD",
+      "repository": "wbm-region-retrieval",
+      "path": "artificial/fw_add_cross_test_20261120T110737+0800/test/FW_ADD",
+      "category": "cross_combination",
+      "method": "F",
+      "variant": "F-WBBS-add-cross/FW_ADD",
+      "split": "test",
+      "manifest": "artificial/fw_add_cross_test_20261120T110737+0800/test/FW_ADD/evaluation_manifest.json",
+      "marker": "artificial/fw_add_cross_test_20261120T110737+0800/test/FW_ADD/completed.json",
+      "identity_schema_version": 1,
+      "identity": "artificial/fw_add_cross_test_20261120T110737+0800/test/FW_ADD/run_identity.json",
+      "selection": "artificial/fw_add_cross_test_20261120T110737+0800/frozen_variants.json",
+      "coverage": null,
+      "supervision": "self_supervised",
+      "display": "0.5 F optimal matching + 0.5 WBBS cross-combination",
+      "selection_rule": "user_specified_posthoc_components",
+      "valid_selected_primary": false,
+      "required_families": [
+        "coverage"
+      ],
+      "protocol": "coverage_cross_combination_v1",
+      "posthoc": true,
+      "supporting_manifests": [
+        "artificial/fw_add_cross_test_20261120T110737+0800/run_manifest.json",
+        "artificial/fw_add_cross_test_20261120T110737+0800/completed.json",
+        "artificial/fw_add_cross_test_20261120T110737+0800/source_protection_after.json",
+        "artificial/fw_add_cross_test_20261120T110737+0800/evaluation_index_test.json"
+      ],
+      "design_note": "User-requested supplementary coverage test of fixed 0.5F+0.5WBBS. F is the frozen optimal-local component used by the previous ten F/G/WBBS configurations, not the earlier greedy F cross-combination baseline. Original sum_raw scoring with weights [0.5,0,0.5]; no G, search or normalization. Exclude self and identical complete label combinations before full-pool scoring. Reuse verified complete component scores read-only, with unchanged coverage_v1 formulas, K, groups, tie policy and zero-denominator rules. No exact reports, new metrics, training, parameter search or test winner selection. The original valid-selected configuration and designated primary method remain unchanged. Ground-truth labels filter benchmark eligibility only and never enter method scores. This posthoc component diagnostic does not establish monotonic benefits from higher F weight or unseen-combination generalization."
     }
   ]
 }
