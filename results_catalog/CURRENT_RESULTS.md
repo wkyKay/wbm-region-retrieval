@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-21T15:40:08+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-21T16:29:47+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 440 个评价结果、238,000 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 477 个评价结果、254,464 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -96,6 +96,11 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | 区域证据F base4_q75 | 68.4123 | 56.9815 | 19.4307 | 87.3440 | `f_region_evidence_f_region_evidence_20261120T213736_0800_test_base4_q75` |
 | 区域证据F top8_none | 68.8290 | 58.5762 | 20.2831 | 87.9018 | `f_region_evidence_f_region_evidence_20261120T213736_0800_test_top8_none` |
 | 区域证据F top8_q75 | 66.1759 | 55.9300 | 19.6314 | 87.4487 | `f_region_evidence_f_region_evidence_20261120T213736_0800_test_top8_q75` |
+| 区域WBBS F all_bb_a04 | 34.4631 | 32.9643 | 12.4859 | 71.0955 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_test_all_bb_a04` |
+| 区域WBBS F all_wbbs_a04 | 60.3278 | 51.0126 | 18.4151 | 84.3280 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_test_all_wbbs_a04` |
+| 区域WBBS F denoised_bb_a04 | 10.1125 | 11.5113 | 5.3342 | 55.9710 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_test_denoised_bb_a04` |
+| 区域WBBS F denoised_wbbs_a04 | 45.9230 | 41.4599 | 14.9212 | 78.4956 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_test_denoised_wbbs_a04` |
+| 区域WBBS F all_wbbs_a06 | 64.8701 | 54.7215 | 19.5799 | 86.0936 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_test_all_wbbs_a06` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
@@ -137,6 +142,11 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | 区域证据F base4_q75（跨组合） | 76.1955 | 38.2720 | `f_region_evidence_f_region_evidence_20261120T213736_0800_cross_test_base4_q75` |
 | 区域证据F top8_none（跨组合） | 76.0963 | 37.5149 | `f_region_evidence_f_region_evidence_20261120T213736_0800_cross_test_top8_none` |
 | 区域证据F top8_q75（跨组合） | 76.7081 | 38.8221 | `f_region_evidence_f_region_evidence_20261120T213736_0800_cross_test_top8_q75` |
+| 区域WBBS F all_bb_a04（跨组合） | 62.4937 | 25.5619 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_cross_test_all_bb_a04` |
+| 区域WBBS F all_wbbs_a04（跨组合） | 72.1291 | 31.8628 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_cross_test_all_wbbs_a04` |
+| 区域WBBS F denoised_bb_a04（跨组合） | 53.9422 | 19.3027 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_cross_test_denoised_bb_a04` |
+| 区域WBBS F denoised_wbbs_a04（跨组合） | 67.9473 | 27.4635 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_cross_test_denoised_wbbs_a04` |
+| 区域WBBS F all_wbbs_a06（跨组合） | 73.7402 | 33.8741 | `f_region_wbbs_f_region_wbbs_20261121T143545_0800_cross_test_all_wbbs_a06` |
 
 本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。
 
