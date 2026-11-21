@@ -250,6 +250,10 @@ def render(output, *, gallery=True):
                         compact=True)
                 fig.suptitle(f'Fixed test example gallery · page {start // 6 + 1}',
                              fontsize=15, x=.035, ha='left', y=.992)
+                from matplotlib.patches import Patch
+                fig.legend(handles=[Patch(facecolor=color, label=label) for color, label in
+                    zip(COMPONENT_COLORS, ('Weighted CNN C', 'Weighted structure T', 'Weighted area A'))],
+                    loc='lower left', bbox_to_anchor=(.030, .023), ncol=3, frameon=False, fontsize=8)
                 fig.text(.035, .012, 'Same frozen method and masks in every panel. All 37 class representatives × ranks 1, 10, 100 × two protocols.',
                          fontsize=8, color='#566473')
                 pdf.savefig(fig, bbox_inches='tight', pad_inches=.16)
