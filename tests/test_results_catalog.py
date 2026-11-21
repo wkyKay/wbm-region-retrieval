@@ -157,6 +157,43 @@ class CollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Candidate protocol mismatch"):
             self.collect()
 
+    def test_cross_valid_uses_its_frozen_candidate_identity_and_range(self):
+        self.report.unlink()
+        self.report = self.folder / "coverage_metrics.json"
+        derived = {"protocol_version": "coverage_cross_combination_v1",
+                   "base_protocol_signature": build.BASE_PROTOCOL_SIGNATURE,
+                   "candidate_identity_sha256": build.CROSS_SPLITS["valid"]["candidate_identity_sha256"]}
+        report = {"split": "valid", "num_queries": 500, "metric_version": "coverage_v1",
+                  "ks": [1, 5, 10, 20, 50, 100, 500], "metrics": {"Coverage-nDCG@10": .5},
+                  "metadata": {"derived_protocol": derived}}
+        build.dump(self.report, report)
+        build.dump(self.marker, {"files": {self.report.name: build.sha(self.report)}})
+        self.specs["runs"][0].update(required_families=["coverage"], protocol="coverage_cross_combination_v1")
+        first = self.collect()
+        row = first["runs"][0]
+        self.assertEqual((row["query_count"], row["gallery_count"], row["candidates_per_query"]), (500, 3599, "3499-3585"))
+        derived["candidate_identity_sha256"] = build.CROSS_SPLITS["test"]["candidate_identity_sha256"]
+        build.dump(self.report, report)
+        build.dump(self.marker, {"files": {self.report.name: build.sha(self.report)}})
+        with self.assertRaisesRegex(ValueError, "candidate identity changed"):
+            self.collect()
+
+    def test_cross_test_keeps_original_candidate_identity_and_range(self):
+        self.report.unlink()
+        self.report = self.folder / "coverage_metrics.json"
+        report = {"split": "test", "num_queries": 7199, "metric_version": "coverage_v1",
+                  "ks": [1, 5, 10, 20, 50, 100, 500], "metrics": {"Coverage-nDCG@10": .5},
+                  "metadata": {"derived_protocol": {"protocol_version": "coverage_cross_combination_v1",
+                    "base_protocol_signature": build.BASE_PROTOCOL_SIGNATURE,
+                    "candidate_identity_sha256": build.CROSS_SPLITS["test"]["candidate_identity_sha256"]}}}
+        build.dump(self.report, report)
+        build.dump(self.marker, {"files": {self.report.name: build.sha(self.report)}})
+        self.specs["runs"][0].update(split="test", required_families=["coverage"], protocol="coverage_cross_combination_v1")
+        first = self.collect()
+        row = first["runs"][0]
+        self.assertEqual((row["query_count"], row["gallery_count"], row["candidates_per_query"]), (7199, 7199, "6999-7170"))
+        self.assertEqual(self.collect(first)["runs"], first["runs"])
+
     def test_old_protocol_signature_rejected_even_with_same_query_count(self):
         d = build.read(self.report)
         d["retrieval_protocol_signature"] = "different-protocol"
@@ -336,6 +373,19 @@ class ReportTests(unittest.TestCase):
         for name, content in self.output.items():
             with self.subTest(name=name):
                 self.assertEqual((CATALOG / name).read_text(), content)
+
+    def test_cross_valid_remains_in_csv_but_not_test_overview(self):
+        snapshot = copy.deepcopy(self.snapshot)
+        item = copy.deepcopy(next(r for r in snapshot["runs"] if r["category"] == "cross_combination"))
+        item.update(key="synthetic_cross_valid", run_id="20261121T010000+0800__synthetic_cross_valid",
+                    split="valid", query_count=500, gallery_count=3599, candidates_per_query="3499-3585")
+        snapshot["runs"].append(item)
+        rendered = build.render(snapshot)
+        self.assertNotIn("`synthetic_cross_valid`", rendered["CURRENT_RESULTS.md"])
+        cross = list(csv.DictReader(io.StringIO(rendered["tables/cross_combination.csv"])))
+        new_rows = [r for r in cross if r["key"] == "synthetic_cross_valid"]
+        self.assertTrue(new_rows)
+        self.assertEqual({r["split"] for r in new_rows}, {"valid"})
 
     def test_new_fusion_test_is_appended_without_valid_or_cross_contamination(self):
         snapshot = copy.deepcopy(self.snapshot)

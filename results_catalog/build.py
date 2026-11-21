@@ -17,6 +17,12 @@ TZ = ZoneInfo("Asia/Shanghai")
 PROTOCOL_FILES = ["deduplicated/split.csv", "retrieval_v1/metadata.json"] + [
     f"retrieval_v1/{s}_{part}.csv" for s in ("valid", "test") for part in ("queries", "gallery")]
 BASE_PROTOCOL_SIGNATURE = "6a428fb8d8bdf34fb6c60852b6d9a7467bf6880cae8c802a6a9c5a36f96cb8a1"
+CROSS_SPLITS = {
+    "valid": {"candidate_identity_sha256": "e9e865ff288db79bf622f5016c17ac22d61d5ca071d39893a6202b9b0dd013b7",
+              "candidates_per_query": "3499-3585"},
+    "test": {"candidate_identity_sha256": "68c6875330ed70841586c654da776f8d0bc72bcd4cd341b79cea29705543f0b8",
+             "candidates_per_query": "6999-7170"},
+}
 
 
 def read(path):
@@ -177,7 +183,7 @@ def collect(workspace, specs, previous=None):
             derived = d.get("metadata", {}).get("derived_protocol")
             if (protocol_name == "coverage_cross_combination_v1") != bool(derived):
                 raise ValueError(f"Candidate protocol mismatch: {spec['key']}/{family}")
-            if derived and derived.get("candidate_identity_sha256") != "68c6875330ed70841586c654da776f8d0bc72bcd4cd341b79cea29705543f0b8":
+            if derived and (spec["split"] not in CROSS_SPLITS or derived.get("candidate_identity_sha256") != CROSS_SPLITS[spec["split"]]["candidate_identity_sha256"]):
                 raise ValueError(f"Cross-combination candidate identity changed: {spec['key']}")
             signature = derived.get("base_protocol_signature") if derived else d.get("retrieval_protocol_signature", d.get("metadata", {}).get("retrieval_protocol_signature"))
             if (family == "exact" or derived or signature is not None) and signature != BASE_PROTOCOL_SIGNATURE:
@@ -211,7 +217,7 @@ def collect(workspace, specs, previous=None):
                      "protocol": protocol_name, "completion": ref(root, marker),
                      "status": "report_hashes_verified", "query_count": expected_n,
                      "gallery_count": 3599 if spec["split"] == "valid" else 7199,
-                     "candidates_per_query": "6999-7170" if protocol_name != "retrieval_v1" else expected_n - 1 if spec["split"] == "test" else 3598,
+                     "candidates_per_query": CROSS_SPLITS[spec["split"]]["candidates_per_query"] if protocol_name != "retrieval_v1" else expected_n - 1 if spec["split"] == "test" else 3598,
                      "provenance": provenance, "reports": reports})
         print("Verified", spec["key"], flush=True)
     if len({r["run_id"] for r in runs}) != len(runs) or len({r["key"] for r in runs}) != len(runs):
@@ -312,7 +318,7 @@ def render(snapshot):
                   "组合与角向单项的差值不代表统计显著或跨种子稳定收益。valid 参数网格、所有 test 对照和分组见 [融合长表](tables/fusion.csv)。", ""])
     if additional_fusion:
         lines.extend(["新增融合实验按各自已冻结的 valid 选择记录评价；监督信息、事后设计背景和来源见登记表及 manifest，不将新增变体自动替换为当前主方法。", ""])
-    table("跨组合 test", [r for r in runs if r["category"] == "cross_combination"], True)
+    table("跨组合 test", [r for r in runs if r["category"] == "cross_combination" and r["split"] == "test"], True)
     lines.extend(["本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。", "",
                   "## 保存位置与追溯", "",
                   f"服务器工作区：`{snapshot['source_workspace']}`。registry.csv 的 remote_path 是每项报告所在目录；snapshot.json 保存报告哈希、完成标记哈希、来源 manifest、选参记录及协议清单哈希。", "",
