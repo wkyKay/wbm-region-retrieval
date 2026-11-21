@@ -96,3 +96,16 @@ python3 -m unittest discover -s tests -p 'test_results_catalog.py' -v
 快照保留历史 manifest 原文，包括旧绝对路径、当时源码和 checkpoint 哈希；当前仓库 HEAD 只表示采集环境，不替代实验当时的代码身份。服务器旧路径 `wbm-matching` 是 `compared_methods` 的符号链接，不改写历史路径。
 
 本登记核验报告哈希，不重训、不重跑评价，不逐一重新计算模型、特征及 Top-500 排名哈希。`status=report_hashes_verified` 精确表达此范围。完整独立复算记录仍留在原实验目录。
+
+## 论文材料副本
+
+用户指定的`result/A`、`B`、`C`、`D`、`F`、`G`保存写作所需资料，原运行保持原位。范围与入稿状态见[证据总表](../doc/论文实验证据总表.md)，E1/E2已免去。`paper_bundle_selection.json`固定所选来源、字节哈希及正文入口；`paper_bundle.py`逐文件校验后复制，并从既有catalog精确筛选B/C/F表及指标有效query／类别数，不新增正式评价或另建成绩登记。
+
+在完整来源所在服务器构建，已有不同副本会拒绝覆盖；`--output`也可指定新的导出目录：
+
+```bash
+python3 results_catalog/paper_bundle.py build --selection results_catalog/paper_bundle_selection.json --workspace /data/wangkaiyan2024 --output result
+python3 results_catalog/paper_bundle.py verify --output result
+```
+
+本地下载同名目录后执行第二条即可离线验收。`result/`由Git忽略，须单独传输；原`source_completed.json`仍描述原运行，根`package_manifest.json`才校验整理子集。论文数据入口为`paper_use.json`，`verification.json`记录本地独立文件及指标筛选核验；不将这份部分导出称为完整训练／排名档案。

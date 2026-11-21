@@ -51,3 +51,6 @@ artificial/
 
 # Isolated paper experiments: scores, rankings and metric reports
 /results/
+
+# Publication material copies, grouped by evidence section; originals stay in place.
+/result/
