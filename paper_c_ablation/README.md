@@ -39,4 +39,4 @@ python -u -m paper_c_ablation.run --stage all --workers 8
 
 本轮目录为`results/20261121T175924+0800__paper_c_ablation/`，根manifest实际启动时间为2026-11-21 17:59:44（Asia/Shanghai）；目录时间17:59:24是进程启动时间，不代替manifest中的开始时间。18份报告全部完成核验，四项历史控制精确重放，新增14项正式登记。
 
-服务器绝对路径：`/data/wangkaiyan2024/wbm-region-retrieval/results/20261121T175924+0800__paper_c_ablation/`。本地[同名目录](../results/20261121T175924+0800__paper_c_ablation/)保存轻量报告与元数据；完整分数矩阵和排名保留服务器。主要入口为`comparison_test.csv`、`comparison_cross_test.csv`、`test/<变体>/`、`cross_test/<变体>/`；`score_cache/test/<变体>/scores.npy`为完整评分矩阵，`rankings.csv`为Top-500排名。完成状态见`completed.json`和各评价的`verification.json`，来源、原选择与重放证明见`run_manifest.json`、`frozen_plan.json`及`replay_*.json`。
+服务器绝对路径：`/data/wangkaiyan2024/wbm-region-retrieval/results/20261121T175924+0800__paper_c_ablation/`。本地[同名目录](../results/20261121T175924+0800__paper_c_ablation/)保存轻量报告与元数据；完整分数矩阵和Top-500排名文件保留服务器。主要入口为`comparison_test.csv`、`comparison_cross_test.csv`、`test/<变体>/`、`cross_test/<变体>/`；`score_cache/test/<变体>/scores.npy`为完整评分矩阵，`rankings.csv`为Top-500排名。完成状态见`completed.json`和各评价的`verification.json`，来源、原选择与重放证明见`run_manifest.json`、`frozen_plan.json`及`replay_*.json`。
