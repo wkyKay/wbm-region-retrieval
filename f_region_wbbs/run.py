@@ -23,8 +23,10 @@ GLOBAL_TEST = ROOT/'artificial/fgj_cross_test_20261120T193642+0800/test/WBBS'
 
 
 def code_identity():
+    from .compat import ARCHIVED_PATH
     paths = set(Path(__file__).parent.glob('*.py'))
     paths.discard(Path(__file__).with_name('register.py'))
+    paths.add(ROOT/ARCHIVED_PATH)
     for folder in ('f_region_evidence', 'f_region_structure', 'f_region_score_search',
                    'f_region_score_test', 'f_region_area_fusion', 'f_region_j_cross_test',
                    'fgj_cross_test', 'fgw_grid_search', 'fgw_cross_test', 'fgw_fusion',
@@ -191,7 +193,8 @@ def main(argv=None):
     data = inputs.load('valid')
     source_binding = data['source_binding']
     context = {'version': VERSION, 'grid': grid(), 'settings': SETTINGS, 'selection_rule': SELECTION_RULE,
-        'source_binding': source_binding, 'code': code_identity(), 'numpy': np.__version__, 'scipy': scipy.__version__,
+        'source_binding': source_binding, 'source_compatibility': data['source_compatibility'],
+        'code': code_identity(), 'numpy': np.__version__, 'scipy': scipy.__version__,
         'ks': KS, 'cnn_training': False, 'cnn_forward_passes': 0, 'posthoc_research': True,
         'test_parameter_search': False, 'matching': scoring.MATCHING, 'score_dtype': 'float64; unchanged source feature arithmetic',
         'seed': 2026, 'region_count': 'unchanged Top-4', 'structure': 'WBBS original full-wafer TV and radial normalization, then frozen region masks'}
@@ -211,7 +214,10 @@ def main(argv=None):
         record(output/'run_manifest.json', signed({'version': VERSION, 'context': context,
             'started_at': stamp.isoformat(), 'run_id': stamp.strftime('%Y%m%dT%H%M%S%z')+'__f_region_wbbs'}))
         record(output/'settings.json', SETTINGS)
-        record(output/'inputs_valid.json', {'context_signature': ctx, 'source_binding': source_binding})
+        record(output/'inputs_valid.json', {'context_signature': ctx, 'source_binding': source_binding,
+            'source_compatibility': data['source_compatibility']})
+        record(output/'source_compatibility_valid.json', {'context_signature': ctx,
+            'source_compatibility': data['source_compatibility']})
     if verified(output, ctx):
         print('Run already complete and verified', flush=True)
         return 0
@@ -244,6 +250,10 @@ def main(argv=None):
         for folder in (CROSS_J, GLOBAL_TEST):
             inputs.bind_sealed(folder, binding)
         record(output/'inputs_test.json', {'context_signature': ctx, 'source_binding': binding,
+            'source_compatibility': data['source_compatibility'],
+            'selection_sha256': file_hash(output/'selection.json')})
+        record(output/'source_compatibility_test.json', {'context_signature': ctx,
+            'source_compatibility': data['source_compatibility'],
             'selection_sha256': file_hash(output/'selection.json')})
         record(output/'test_context.json', signed({'context_signature': ctx, 'selection_sha256': file_hash(output/'selection.json'),
             'source_binding_sha256': digest(binding), 'specs': chosen['selected_specs']}))

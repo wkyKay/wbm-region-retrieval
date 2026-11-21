@@ -87,4 +87,6 @@ python -u -m f_region_wbbs.run --stage all \
 
 整图WBBS的cross-valid基准复用旧`fgw_grid_20261119T200653+0800/component_cache/valid`完整float64分数。读取其完成文件、原始ID、来源签名与哈希，再复制到本轮独立分数缓存；自身格仅按新缓存约定保存0，永不进入候选排名，所有非自身分数保持完全一致。
 
+历史区域来源还绑定当时的`results_catalog/build.py`。该行政脚本现已增加cross-valid登记支持，因此新输入适配器仅允许这一已核实的版本转换：历史SHA-256为`13d294548056ff6905968f39d0cd8f793672485b29cd8caf4674028f80f1bd6b`的原字节保存在`provenance/results_catalog_build_13d29454.py.txt`，当前脚本另以实际哈希绑定。`source_compatibility_<split>.json`明确记录历史路径、原字节副本及当前路径；副本不执行，其他科学源码仍要求原位哈希完全相同。旧valid选择、全部报告封存及test来源等式仍逐项校验，不修改历史manifest，不把本次映射表述为旧canonical源码未变。
+
 旧源码、NPZ、协议、模型、区域缓存、排名和报告只读。本轮属于查看既往test后的研究，虽然本轮参数在valid冻结，不能据此声称整个研究从未接触test。区域选择规则、点对应与分数分解提供可追溯解释，不等于每个区域的语义标签或因果必要性证明；区域WBBS是对已有点匹配方法的局部适配，不宣称重新发明WBBS。

@@ -18,6 +18,7 @@ from fgw_grid_search.cache import FullScoreCache
 from wbm_retrieval.common import digest, file_hash, read_json
 from .state import ROOT, GLOBAL, KS
 from .protocol import PROTOCOL, RULE, FROZEN, BASE_PROTOCOL_SIGNATURE
+from . import compat
 
 REGION_SOURCE = ROOT/'artificial/f_region_structure_20261120T120331+0800'
 VALID_SOURCE = ROOT/'artificial/f_region_area_fusion_valid_20261120T155825+0800'
@@ -96,9 +97,9 @@ def global_valid_source(pool, binding, source=GLOBAL_SOURCE):
         raise ValueError('Global full-score matrix is detached from its signed original inputs')
     for name, expected in cache.completion['files'].items():
         _bind(folder/'completed'/name, binding, expected)
-    # These are the exact unchanged scientific sources referenced by the old run.
-    for name, expected in context['code'].items():
-        _bind(ROOT/name, binding, expected)
+    # Scientific canonical bytes remain exact. Any allowlisted administrative
+    # source revision is represented by its real archived/current byte hashes.
+    compatibility = compat.validate_code(context['code'], binding)
     receipt = {'status': 'verified', 'source_root': str(source), 'source_cache': str(folder),
         'source_manifest_signature': manifest['signature'], 'source_context_signature': digest(context),
         'source_inputs_signature': inp['signature'], 'source_cache_signature': cache.signature,
@@ -110,6 +111,7 @@ def global_valid_source(pool, binding, source=GLOBAL_SOURCE):
         'split': 'valid', 'num_queries': len(pool), 'gallery_count': len(pool.gallery),
         'nonself_pairs': len(pool)*(len(pool.gallery)-1), 'component': 'WBBS',
         'retrieval_protocol_signature': pool.protocol_signature,
+        'source_compatibility': compatibility,
         'scope': 'unchanged completed full WBBS score matrix, no new global scoring or tuning'}
     return GlobalWBBSProvider(cache, pool, receipt), receipt
 
@@ -152,7 +154,7 @@ def _reference_folders(split, binding):
 def load(split='valid'):
     if split == 'valid':
         data = area_inputs.load_valid(REGION_SOURCE)
-        manifest, frozen, binding = area_inputs.frozen_choice(VALID_SOURCE)
+        manifest, frozen, binding, compatibility = compat.frozen_choice(VALID_SOURCE)
         if (frozen['selection']['winner'] != SOURCE_VARIANT
                 or manifest['context']['source_binding'] != data['source_binding']
                 or manifest['context']['matching'] != data['config']['matching']):
@@ -160,7 +162,8 @@ def load(split='valid'):
         binding.update(data['source_binding'])
         baseline = VALID_SOURCE/'valid'/SOURCE_VARIANT
     elif split == 'test':
-        data = area_inputs.load_test(VALID_SOURCE)
+        data = compat.load_test(VALID_SOURCE)
+        compatibility = data['source_compatibility']
         binding = dict(data['source_binding'])
         manifest = read_signed(TEST_SOURCE/'run_manifest.json')
         context = manifest['context']
@@ -198,15 +201,21 @@ def load(split='valid'):
     global_provider, global_source = (global_valid_source(protocol.retrieval.valid, binding)
                                      if split == 'valid' else (None, None))
     references = _reference_folders(split, binding)
+    compatibility = compat.unique_receipts(compatibility + (
+        global_source['source_compatibility'] if global_source is not None else []))
+    # All legacy exact source-binding comparisons above completed first.
+    compat.bind_compatibility(compatibility, binding)
     data.update(config=config, suite=suite, checkpoint=checkpoint, protocol=protocol,
         maps=maps, old_labels=old_labels, source_identity=source_identity,
         source_binding=dict(sorted(binding.items())), baseline_folder=baseline, source_run=REGION_SOURCE,
+        source_compatibility=compatibility,
         global_provider=global_provider, global_source=global_source, reference_folders=references,
         source_metadata={'regional_source': str(REGION_SOURCE.resolve()),
             'source_valid': str(VALID_SOURCE.resolve()), 'source_test': str(TEST_SOURCE.resolve()) if split=='test' else None,
             'source_variant': SOURCE_VARIANT, 'source_spec': {'family': 'add', 'alpha': .4, 'beta': .25},
             'baseline_folder': str(baseline.resolve()), 'structure_strength': .5,
             'training_required': False, 'train_reference_bank_loaded': False,
+            'source_compatibility': compatibility,
             'global_valid_source': global_source, 'reference_folders': references})
     return data
 

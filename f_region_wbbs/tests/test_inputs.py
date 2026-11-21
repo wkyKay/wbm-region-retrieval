@@ -1,5 +1,7 @@
 """Global-score provenance, exact copy and held-out-input isolation checks."""
 from pathlib import Path
+import ast
+import inspect
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -7,7 +9,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from f_region_wbbs import inputs
+from f_region_wbbs import inputs, compat
 from f_region_structure.state import signed, record, seal
 from wbm_retrieval.common import digest, file_hash, read_json, write_json
 
@@ -173,6 +175,98 @@ class SourceBindingTests(unittest.TestCase):
         with patch.object(inputs.area_inputs,'load_valid',side_effect=AssertionError('invalid split')):
             for split in ('train','smoke','Test'):
                 with self.assertRaises(ValueError):inputs.load(split)
+
+
+class AdministrativeSourceCompatibilityTests(unittest.TestCase):
+    def fixture(self, tmp):
+        root = Path(tmp)
+        current = root/compat.HISTORICAL_PATH
+        archived = root/compat.ARCHIVED_PATH
+        current.parent.mkdir(parents=True);archived.parent.mkdir(parents=True)
+        current.write_bytes((compat.ROOT/compat.HISTORICAL_PATH).read_bytes())
+        archived.write_bytes((compat.ROOT/compat.ARCHIVED_PATH).read_bytes())
+        return root, current, archived
+
+    def test_archived_original_bytes_and_truthful_two_file_binding(self):
+        self.assertEqual(file_hash(compat.ROOT/compat.ARCHIVED_PATH), compat.HISTORICAL_SHA256)
+        with tempfile.TemporaryDirectory() as tmp:
+            root,current,archived = self.fixture(tmp)
+            with patch.object(compat, 'ROOT', root):
+                legacy_binding = {'unchanged-old-source': 'original-sha'}
+                before = dict(legacy_binding)
+                receipts = compat.validate_code({compat.HISTORICAL_PATH: compat.HISTORICAL_SHA256})
+                self.assertEqual(legacy_binding, before)
+                self.assertEqual(len(receipts), 1)
+                row = receipts[0]
+                self.assertEqual(set(row), {'historical_path','expected_sha256','archived_path',
+                    'archived_sha256','current_path','current_sha256','scope'})
+                self.assertEqual(row['scope'], 'catalog administration only')
+                self.assertNotEqual(row['archived_sha256'], row['current_sha256'])
+                final_binding = dict(legacy_binding)
+                compat.bind_compatibility(receipts, final_binding)
+                self.assertEqual(legacy_binding, before)
+                self.assertEqual(final_binding[str(current.resolve())], file_hash(current))
+                self.assertEqual(final_binding[str(archived.resolve())], file_hash(archived))
+                self.assertEqual(len(final_binding), len(before)+2)
+                self.assertEqual(compat.unique_receipts(receipts+receipts), receipts)
+
+    def test_science_hash_unknown_revision_and_noncanonical_paths_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root,current,archived = self.fixture(tmp)
+            science = root/'science.py';science.write_text('frozen scientific bytes\n')
+            with patch.object(compat, 'ROOT', root):
+                path, rows = compat.resolve_source('science.py', file_hash(science))
+                self.assertEqual(path, science);self.assertEqual(rows, [])
+                for name, expected in [('science.py', compat.HISTORICAL_SHA256),
+                        (compat.HISTORICAL_PATH, 'not-the-allowlisted-old-hash'),
+                        ('../results_catalog/build.py', compat.HISTORICAL_SHA256),
+                        ('./results_catalog/build.py', compat.HISTORICAL_SHA256),
+                        (str(current.resolve()), compat.HISTORICAL_SHA256)]:
+                    with self.assertRaises(ValueError):compat.resolve_source(name, expected)
+                current.write_text('unapproved administrative revision\n')
+                with self.assertRaises(ValueError):
+                    compat.resolve_source(compat.HISTORICAL_PATH, compat.HISTORICAL_SHA256)
+
+    def test_corrupt_archive_and_mutated_receipt_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root,current,archived = self.fixture(tmp)
+            with patch.object(compat, 'ROOT', root):
+                rows = compat.validate_code({compat.HISTORICAL_PATH: compat.HISTORICAL_SHA256})
+                bad = [{**rows[0], 'scope': 'pretend all canonical code unchanged'}]
+                with self.assertRaises(ValueError):compat.bind_compatibility(bad, {})
+                with self.assertRaises(ValueError):compat.unique_receipts(rows+bad)
+                archived.write_bytes(archived.read_bytes()+b'\n')
+                with self.assertRaises(ValueError):
+                    compat.resolve_source(compat.HISTORICAL_PATH, compat.HISTORICAL_SHA256)
+
+    def test_canonical_unchanged_file_needs_no_mapping(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root,current,archived = self.fixture(tmp)
+            current.write_bytes(archived.read_bytes())
+            with patch.object(compat, 'ROOT', root):
+                binding = {}
+                rows = compat.validate_code({compat.HISTORICAL_PATH: compat.HISTORICAL_SHA256}, binding)
+                self.assertEqual(rows, [])
+                self.assertEqual(binding, {str(current.resolve()): compat.HISTORICAL_SHA256})
+
+    def test_full_legacy_gates_preserved_except_explicit_source_resolution(self):
+        # Compare complete function ASTs to ensure this exceptional adapter does
+        # not drop a legacy seal, selection, metrics, cache or binding-equality gate.
+        old = inspect.getsource(inputs.area_inputs.frozen_choice)
+        old = old.replace('from .register import proposal', 'from f_region_area_fusion.register import proposal')
+        old = old.replace("    for name, expected_hash in context['code'].items():\n"
+            "        if file_hash(ROOT/name) != expected_hash:\n"
+            "            raise ValueError('Scientific code changed since valid: '+name)\n",
+            "    source_compatibility = validate_code(context['code'])\n")
+        old = old.replace('return manifest, wrapper, binding',
+                          'return manifest, wrapper, binding, source_compatibility')
+        self.assertEqual(ast.dump(ast.parse(old)), ast.dump(ast.parse(inspect.getsource(compat.frozen_choice))))
+        old = inspect.getsource(inputs.area_inputs.load_test)
+        old = old.replace('manifest, choice, binding = frozen_choice(source)',
+            'manifest, choice, binding, source_compatibility = frozen_choice(source)')
+        old = old.replace('baseline_folder=baseline)',
+                          'baseline_folder=baseline, source_compatibility=source_compatibility)')
+        self.assertEqual(ast.dump(ast.parse(old)), ast.dump(ast.parse(inspect.getsource(compat.load_test))))
 
 
 if __name__=='__main__':unittest.main()
