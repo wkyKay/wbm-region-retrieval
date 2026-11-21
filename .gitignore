@@ -48,3 +48,6 @@ artificial/
 # Large derived tables stay at their original local paths; Git stores lossless archives.
 /results_catalog/metrics.csv
 /results_catalog/tables/fusion.csv
+
+# Isolated paper experiments: scores, rankings and metric reports
+/results/
