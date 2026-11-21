@@ -34,3 +34,7 @@ python -u -m paper_d_explanation.run --stage verify --output-root results/<本�
 `explanations/`保存真实解释JSON、逐匹配CSV、原图／mask样例素材和核验；`figures/`保存论文组合图、单例和完整样例图集；`d4/`保存逐查询基线、逐区域遮蔽、策略结果与汇总；根目录保存来源、冻结计划、视觉审阅、完整核验与最终完成标记。整个`results/`已被Git忽略。
 
 得分复原是计算一致性证据；遮蔽是评分证据敏感性分析，均不等于区域语义真值、物理因果或用户研究。两协议的参考候选可能不同，不把它们描述为同一扰动的直接跨协议对照。
+
+本轮已完成并封存于[`results/20261121T191702+0800__paper_d_explanation/`](../results/20261121T191702+0800__paper_d_explanation/)，本地与服务器保存完整产物。D1/D2有222对、870条真实匹配；D3有四案例主图、四幅单例及37页图集；D4有7,161个主分析查询和5,920个面积近似匹配查询。112行汇总独立复算通过，59,432个历史文件保护核查通过。本地和服务器各17项测试通过；最终验收与视觉检查范围见根`verification.json`和`figure_review.json`。具体数值与论文展示清单集中维护在[消融实验D节](../doc/消融实验.md#paper-d-explanation)和[唯一证据总表](../doc/论文实验证据总表.md)，仍待中英文入稿。
+
+完整科学来源签名在服务器执行前后及最终`verify`均通过。本地同级`compared_methods/shared/exact_metrics.py`与服务器冻结版本不同，因此本地严格源码环境门禁拒绝通过；该独立仓库未被修改。本地完成的是全部封存产物SHA核验和`verify_output`的独立解释／汇总复核，见[本地验收回执](../results/20261121T191702+0800__paper_d_explanation.local_verification.json)，不称为同环境重算。后续科学复现应使用根manifest中绑定的服务器依赖版本。

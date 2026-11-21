@@ -12034,9 +12034,16 @@
         "artificial/f_region_area_fusion_test_20261120T160426+0800/formula_audit_test.json",
         "artificial/f_region_area_fusion_test_20261120T160426+0800/evaluation_index_test.json",
         "artificial/f_region_area_fusion_test_20261120T160426+0800/test/add_a0p4_b0p25/verification.json",
-        "artificial/f_region_area_fusion_test_20261120T160426+0800/baseline_replay.json"
+        "artificial/f_region_area_fusion_test_20261120T160426+0800/baseline_replay.json",
+        "results/20261121T191702+0800__paper_d_explanation/run_manifest.json",
+        "results/20261121T191702+0800__paper_d_explanation/frozen_plan.json",
+        "results/20261121T191702+0800__paper_d_explanation/completed.json",
+        "results/20261121T191702+0800__paper_d_explanation/verification.json",
+        "results/20261121T191702+0800__paper_d_explanation/summary.json",
+        "results/20261121T191702+0800__paper_d_explanation/figures/figures_manifest.json",
+        "results/20261121T191702+0800__paper_d_explanation/figure_review.json"
       ],
-      "design_note": "Prespecified 29-candidate regional CNN/J/area score study; 29 valid evaluations select exactly ten by integer exact Top-10 hits, with ties preferring the original equal-weight multiplicative-area baseline and then lexicographic names. Test evaluates only these ten frozen choices, without test parameter selection. Reuses frozen self-supervised cc8 Top-4 h512 best_nce seed2026, all-point regional joint descriptors, original score scales, greedy matching and query sqrt(area) aggregation. Entropy weighting is a regional adaptation over every non-self gallery region, not a reproduction of whole-wafer literature scores. No training; posthoc research does not replace the project main method."
+      "design_note": "Prespecified 29-candidate regional CNN/J/area score study; 29 valid evaluations select exactly ten by integer exact Top-10 hits, with ties preferring the original equal-weight multiplicative-area baseline and then lexicographic names. Test evaluates only these ten frozen choices, without test parameter selection. Reuses frozen self-supervised cc8 Top-4 h512 best_nce seed2026, all-point regional joint descriptors, original score scales, greedy matching and query sqrt(area) aggregation. Entropy weighting is a regional adaptation over every non-self gallery region, not a reproduction of whole-wafer literature scores. No training; posthoc research does not replace the project main method. Paper D support adds verified 222 real test explanation pairs and posthoc score-row deletion diagnostics on 7161 multi-region queries (5920 approximate area-matched queries); it does not alter this formal evaluation, select a new model, or add benchmark rows. Full eligible galleries remain fixed; diagnostic aggregates have their own query denominators and are not the original 7199-query test means."
     },
     {
       "key": "f_region_area_fusion_f_region_area_fusion_test_20261120T160426_0800_test_add_a0p5_b0p25",
@@ -13009,9 +13016,16 @@
         "artificial/f_region_j_cross_test_20261120T202638+0800/comparison_references.json",
         "artificial/f_region_j_cross_test_20261120T202638+0800/score_cache/completed.json",
         "artificial/f_region_j_cross_test_20261120T202638+0800/source_protection_after.json",
-        "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/verification.json"
+        "artificial/f_region_j_cross_test_20261120T202638+0800/test/add_a0p4_b0p25/verification.json",
+        "results/20261121T191702+0800__paper_d_explanation/run_manifest.json",
+        "results/20261121T191702+0800__paper_d_explanation/frozen_plan.json",
+        "results/20261121T191702+0800__paper_d_explanation/completed.json",
+        "results/20261121T191702+0800__paper_d_explanation/verification.json",
+        "results/20261121T191702+0800__paper_d_explanation/summary.json",
+        "results/20261121T191702+0800__paper_d_explanation/figures/figures_manifest.json",
+        "results/20261121T191702+0800__paper_d_explanation/figure_review.json"
       ],
-      "design_note": "Cross-combination coverage evaluation of the unchanged original 29-way valid winner add_a0p4_b0p25, spec family=add, alpha=0.4, beta=0.25. Regional pair score (1-0.25)*(0.4*C+0.6*T)+0.25*A equals 0.30*C+0.45*T+0.25*A mathematically; production retains the original arithmetic. C is clipped regional CNN cosine, T=exp(-0.5*regional Hellinger), A=exp(-D_area/1.5). Reuse frozen self-supervised cc8 Top-4 h512 best_nce seed2026, all-point regional joint descriptors, original greedy matching and query sqrt(area) aggregation. A is area, not the earlier angle term; T is regional, not whole-map J at strength 2. No new training, calibration, weight search or test parameter selection. Exclude self and identical complete label combinations; unchanged coverage_v1 formulas, K, grouping, ties and undefined-denominator rules. Complete original-pool regional scores are computed once, replay all historical winner Top-500 scores exactly, then filter candidate eligibility. New full eligible-pool ranking/metric verification uses that sealed score cache, with a separate independent 740-pair regional formula/greedy audit. Six earlier cross methods are read-only comparison references, not new evaluations. The source valid winner identity does not replace the project's designated main method or imply selection on this cross protocol. Posthoc diagnostic; no new unseen-training-combination split or cross-seed/significance claim."
+      "design_note": "Cross-combination coverage evaluation of the unchanged original 29-way valid winner add_a0p4_b0p25, spec family=add, alpha=0.4, beta=0.25. Regional pair score (1-0.25)*(0.4*C+0.6*T)+0.25*A equals 0.30*C+0.45*T+0.25*A mathematically; production retains the original arithmetic. C is clipped regional CNN cosine, T=exp(-0.5*regional Hellinger), A=exp(-D_area/1.5). Reuse frozen self-supervised cc8 Top-4 h512 best_nce seed2026, all-point regional joint descriptors, original greedy matching and query sqrt(area) aggregation. A is area, not the earlier angle term; T is regional, not whole-map J at strength 2. No new training, calibration, weight search or test parameter selection. Exclude self and identical complete label combinations; unchanged coverage_v1 formulas, K, grouping, ties and undefined-denominator rules. Complete original-pool regional scores are computed once, replay all historical winner Top-500 scores exactly, then filter candidate eligibility. New full eligible-pool ranking/metric verification uses that sealed score cache, with a separate independent 740-pair regional formula/greedy audit. Six earlier cross methods are read-only comparison references, not new evaluations. The source valid winner identity does not replace the project's designated main method or imply selection on this cross protocol. Posthoc diagnostic; no new unseen-training-combination split or cross-seed/significance claim. Paper D support adds verified 222 real test explanation pairs and posthoc score-row deletion diagnostics on 7161 multi-region queries (5920 approximate area-matched queries); it does not alter this formal evaluation, select a new model, or add benchmark rows. Full eligible galleries remain fixed; diagnostic aggregates have their own query denominators and are not the original 7199-query test means."
     },
     {
       "key": "f_region_evidence_f_region_evidence_20261120T213736_0800_valid_base4_none",
