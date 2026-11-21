@@ -34,3 +34,9 @@ python -u -m paper_c_ablation.run --stage all --workers 8
 完整缓存的所有查询排序与指标均独立核验；另对每类最小query ID和最小20个合格候选抽查六种区域公式及匹配。浮点分项公式容差2e-6，使用已核查区域对矩阵的独立匹配容差1e-12；后者避免float32原始余弦近并列差异，并非所有区域对的独立重算。四项历史控制（主方法valid/普通test/跨组合test、C3 valid）要求Top-500候选ID、顺序及得分完全相同，关联原key，不重复登记。因此18份报告新增14项正式登记。
 
 运行用时只用于追溯，不能当作E区部署准备成本或单查询延迟测量。大规模完整缓存与排名保存服务器，Git只管理代码、文档、来源清单及汇总。
+
+## 本轮产物
+
+本轮目录为`results/20261121T175924+0800__paper_c_ablation/`，根manifest实际启动时间为2026-11-21 17:59:44（Asia/Shanghai）；目录时间17:59:24是进程启动时间，不代替manifest中的开始时间。18份报告全部完成核验，四项历史控制精确重放，新增14项正式登记。
+
+服务器绝对路径：`/data/wangkaiyan2024/wbm-region-retrieval/results/20261121T175924+0800__paper_c_ablation/`。本地[同名目录](../results/20261121T175924+0800__paper_c_ablation/)保存轻量报告与元数据；完整分数矩阵和排名保留服务器。主要入口为`comparison_test.csv`、`comparison_cross_test.csv`、`test/<变体>/`、`cross_test/<变体>/`；`score_cache/test/<变体>/scores.npy`为完整评分矩阵，`rankings.csv`为Top-500排名。完成状态见`completed.json`和各评价的`verification.json`，来源、原选择与重放证明见`run_manifest.json`、`frozen_plan.json`及`replay_*.json`。
