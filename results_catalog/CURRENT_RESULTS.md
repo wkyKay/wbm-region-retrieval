@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-20T22:27:15+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-21T15:40:08+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
