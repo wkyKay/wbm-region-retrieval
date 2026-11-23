@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-23T20:24:55+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-24T05:15:56+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 511 个评价结果、270,144 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 551 个评价结果、288,064 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -111,6 +111,16 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | CNN改进 context_dropout fusion | 68.9679 | 58.7957 | 20.7404 | 87.5211 | `cnn_refinement_evaluation_context_dropout_test_fusion` |
 | CNN改进 filtered_negatives cnn_only | 38.0053 | 30.3681 | 7.8534 | 73.8185 | `cnn_refinement_evaluation_filtered_negatives_test_cnn_only` |
 | CNN改进 filtered_negatives fusion | 69.9403 | 59.5374 | 20.8033 | 87.7713 | `cnn_refinement_evaluation_filtered_negatives_test_fusion` |
+| CNN单项增强 crop cnn_only | 45.7841 | 34.2284 | 7.2455 | 76.3671 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_crop_test_cnn_only` |
+| CNN单项增强 crop fusion | 70.3292 | 59.8611 | 20.8230 | 87.7589 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_crop_test_fusion` |
+| CNN单项增强 cutout cnn_only | 18.9887 | 15.1104 | 2.3792 | 60.0991 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_cutout_test_cnn_only` |
+| CNN单项增强 cutout fusion | 68.7734 | 58.6248 | 20.3107 | 87.3239 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_cutout_test_fusion` |
+| CNN单项增强 noise cnn_only | 20.9890 | 16.2300 | 2.6592 | 61.0370 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_noise_test_cnn_only` |
+| CNN单项增强 noise fusion | 69.0790 | 58.3220 | 20.2581 | 87.2628 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_noise_test_fusion` |
+| CNN单项增强 rotation cnn_only | 45.6730 | 37.1732 | 9.3654 | 77.5818 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_rotation_test_cnn_only` |
+| CNN单项增强 rotation fusion | 70.7876 | 60.8946 | 21.5503 | 88.2002 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_rotation_test_fusion` |
+| CNN单项增强 shift cnn_only | 44.5895 | 35.1868 | 9.2563 | 76.3018 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_shift_test_cnn_only` |
+| CNN单项增强 shift fusion | 70.5098 | 59.4791 | 21.1281 | 87.7191 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_shift_test_fusion` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
@@ -167,6 +177,16 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | CNN改进 context_dropout fusion（跨组合） | 75.0166 | 36.2912 | `cnn_refinement_evaluation_context_dropout_cross_test_fusion` |
 | CNN改进 filtered_negatives cnn_only（跨组合） | 65.4054 | 26.3495 | `cnn_refinement_evaluation_filtered_negatives_cross_test_cnn_only` |
 | CNN改进 filtered_negatives fusion（跨组合） | 75.2819 | 36.3801 | `cnn_refinement_evaluation_filtered_negatives_cross_test_fusion` |
+| CNN单项增强 crop cnn_only（跨组合） | 67.1536 | 27.9525 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_crop_cross_test_cnn_only` |
+| CNN单项增强 crop fusion（跨组合） | 75.2901 | 36.5190 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_crop_cross_test_fusion` |
+| CNN单项增强 cutout cnn_only（跨组合） | 55.8550 | 20.5042 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_cutout_cross_test_cnn_only` |
+| CNN单项增强 cutout fusion（跨组合） | 74.8895 | 36.0119 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_cutout_cross_test_fusion` |
+| CNN单项增强 noise cnn_only（跨组合） | 56.6724 | 20.4931 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_noise_cross_test_cnn_only` |
+| CNN单项增强 noise fusion（跨组合） | 74.8704 | 35.9994 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_noise_cross_test_fusion` |
+| CNN单项增强 rotation cnn_only（跨组合） | 67.4228 | 27.7969 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_rotation_cross_test_cnn_only` |
+| CNN单项增强 rotation fusion（跨组合） | 75.6117 | 36.7426 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_rotation_cross_test_fusion` |
+| CNN单项增强 shift cnn_only（跨组合） | 66.3376 | 26.8343 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_shift_cross_test_cnn_only` |
+| CNN单项增强 shift fusion（跨组合） | 74.9576 | 35.9494 | `cnn_augmentation_20261123T211208_0800__cnn_augmentation_shift_cross_test_fusion` |
 
 本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。
 

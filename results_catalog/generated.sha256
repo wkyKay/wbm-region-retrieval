@@ -8,22 +8,22 @@
   "files": {
     "metrics.csv": {
       "gzip": {
-        "sha256": "2146a6061c8afdac4f123ef3675a1d7010722ba087156d727569e2b6788c1400",
-        "size": 3489523
+        "sha256": "a8221b2ff32d338eb1d8c75823d2d89ae51c5650c72b21646a5697eae7d66b0d",
+        "size": 3727042
       },
       "raw": {
-        "sha256": "7d504289f411dd54c6fec421c97bf4c1f637190f1d2f79ff40a72c9c463b27ec",
-        "size": 129012319
+        "sha256": "f0d9579a222c5e71982fdcb24163c332a07a6f3c0845a2535f30dbdff829ca81",
+        "size": 138331603
       }
     },
     "tables/fusion.csv": {
       "gzip": {
-        "sha256": "8c90da6e32ed4225ffa7651db9830a663e4c06e44b2672cdea6b46f306ef7eda",
-        "size": 3052411
+        "sha256": "3a2d4ccce38447e0c86551bd70b75b84e862727a7b421bde387138d6d28f4a69",
+        "size": 3200649
       },
       "raw": {
-        "sha256": "28b443a7146658699db9beab1e330aba9c98f90ba81965ce53205f237f6b1fa5",
-        "size": 113864484
+        "sha256": "707ce8825ec31d9cef149c0070959363b35c12de25b0905417d90756a09f88d1",
+        "size": 119498064
       }
     }
   },

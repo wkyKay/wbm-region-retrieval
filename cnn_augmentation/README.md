@@ -41,8 +41,14 @@ python -m cnn_augmentation.register --run-root "$RUN" --apply
 
 续行器只启动预设五模型，空闲GPU先承接尚未开始的训练，再承接已完成模型的valid/test评价，最后生成报告并封存。每次启动持久化进程与命令，日志保存在`logs/`；阶段失败立即停止调度并保留产物。`--resume`仅复用已验收阶段或接管仍存活进程，不自动重试失败阶段。确需从完整`last.pt`恢复训练时，显式使用`run --stage train --variant <名称> --output-root "$RUN" --resume`，保留原运行身份。
 
-训练前审计同一1024个train区域，保存逐token实际变换、目标／支持保留率及确定性8例输入图。每轮另累计全部99,786个token的实际干预计数，最终报告100轮曝光。报告包括训练曲线、增强曝光、valid/test配对检索图及完整指标表。8个既有基线评价角色沿用原key；只有五新模型×两评分×四协议角色，共40项待完成后登记。官方collect/check与两套归档验证按公共规则执行，不用部分日志冒充完成结果。
+训练前审计同一1024个train区域，保存逐token实际变换、目标／支持保留率及确定性8例输入图。每轮另累计全部99,786个token的实际干预计数，最终报告100轮曝光。报告包括训练曲线、增强曝光、valid/test配对检索图及完整指标表。8个既有基线评价角色沿用原key；五新模型×两评分×四协议角色共40项新评价已完成，登记状态见下节。官方collect/check与两套归档验证按公共规则执行，不用部分日志冒充完成结果。
 
 ## 本轮状态
 
-2026-11-23已完成论文与作者代码核对，正在实现及验收；尚未启动正式训练。实际运行身份、完成证据、结果和下载范围在验收后更新此节，论文入稿状态单独维护于[证据总表](../doc/论文实验证据总表.md)。
+运行身份为`20261123T211208+0800__cnn_augmentation`，实际开始于2026-11-23 21:12:08（+08:00），2026-11-24 05:05:18完成科学结果封存，来源见[运行清单](../results/20261123T211208+0800__cnn_augmentation/run_manifest.json)与[完成状态](../results/20261123T211208+0800__cnn_augmentation/status.json)。五组均完成100轮／39,000步，以及CNN单独评分和固定融合的valid、跨组合valid、普通test、跨组合test；原基线只引用8个已登记角色。[独立训练审计](../results/20261123T211208+0800__cnn_augmentation__training_review.json)核验65个封存文件、相同初始化、五个不同最终模型及有限训练数值；22项源码与启动版本`b37e3d7`一致。[来源保护记录](../results/20261123T211208+0800__cnn_augmentation/source_protection_after.json)确认59,130个旧文件的大小／mtime未变，1MiB以下文件另核验SHA-256，实际使用的关键来源单独绑定哈希。
+
+五组中只有**任意角旋转**达到预设检索标准：融合test exact P@10从59.7819%提高到60.8946%，增加1.112655个百分点，配对95%区间为[0.865329,1.362689]；CNN单独P@10增加4.657591个百分点。融合跨组合Coverage-nDCG@10增加0.260774个百分点，区间为[0.142694,0.372356]，满足预设非劣界。裁剪的融合P@10差值区间跨零，Cutout、噪声和平移的融合P@10下降；五组结果均保留。旋转也有取舍：跨组合FullCoverage mAP@100在CNN单独评分下下降0.047931个百分点，融合下下降0.008498个百分点且区间跨零，不能表述为全指标改善。完整结果与判断见[报告摘要](../results/20261123T211208+0800__cnn_augmentation/report/summary.json)、[配对差值](../results/20261123T211208+0800__cnn_augmentation/report/paired_retrieval_differences.csv)及[消融实验](../doc/消融实验.md#cnn-augmentation)。
+
+每组实际累计9,978,600次训练视图；只有Cutout出现空目标，比例0.7893%，未做额外拒绝或重抽。论文候选主图为[test配对检索图](../results/20261123T211208+0800__cnn_augmentation/report/figures/retrieval_test.pdf)，主表来源为[完整指标摘录](../results/20261123T211208+0800__cnn_augmentation/report/paper_main_metrics.csv)；增强示例、训练曲线、实际曝光和valid图作为附录候选，具体见[展示清单](../results/20261123T211208+0800__cnn_augmentation/report/paper_display.json)。这些结果尚未整合进中英文稿，入稿状态单独维护于[证据总表](../doc/论文实验证据总表.md)。
+
+本轮是由已有基线／test观察提出的单seed事后增强研究，区间固定模型与图库，未校正既往探索或多重比较。它只检验作者增强操作在区域检索上的适配，不复现整晶圆分类成绩，也不据test排名自动替换论文主模型。40项新评价已正式登记，总计551项，原511项来源及快照对象保持一致，基线未重复登记；官方collect/check、两套归档pack/verify，以及本地恢复后的verify/check均通过，见[登记核验](../results/20261123T211208+0800__cnn_augmentation__catalog_verification.json)。本地已下载并逐文件核验631个写作／溯源文件，共204,478,518字节，范围见[下载回执](../results/20261123T211208+0800__cnn_augmentation__local_download.json)。权重、特征／评分数组和完整Top-500排名仍留在服务器，本地写作子集不等同于完整实验归档。
