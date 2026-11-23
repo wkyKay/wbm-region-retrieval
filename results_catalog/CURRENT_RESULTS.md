@@ -1,6 +1,6 @@
 # 当前结果总览
 
-结果核验时间：2026-11-21T19:26:02+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
+结果核验时间：2026-11-23T20:24:55+08:00（Asia/Shanghai）。本页由 `results_catalog/build.py` 自动生成。
 
 当前主方法为 cc8＋径向位置＋相对面积，冻结 best_nce；融合和角向／最优匹配保留为扩展实验。当前主方法身份在查看历史 test 后确认，不追述为 test 前选定。
 
@@ -12,7 +12,7 @@ exact 要求完整标签组合相同；coverage 按查询标签覆盖比例，Fu
 
 [使用说明](README.md) · [结果登记表](registry.csv) · [全部指标长表](metrics.csv) · [来源配置](sources.json) · [核验快照及来源签名](snapshot.json)
 
-登记 491 个评价结果、261,184 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
+登记 511 个评价结果、270,144 条指标；模型训练运行作为来源保存在 manifest 中。未进入当前表的服务器目录也列于 snapshot.json 的 inventory，不表示目录无效或可以删除。
 
 数值表均为 test 总体 query 平均，原始比例乘 100 展示。完整 K=1/5/10/20/50/100/500、类别宏平均、单／混合及标签数量分组保存在 CSV。监督方法与自监督／无训练方法的监督信息不同。
 
@@ -106,6 +106,11 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | 区域J＋F固定消融 no_a | 63.7589 | 53.9408 | 19.2296 | 86.2853 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_test_no_a` |
 | 区域J＋F固定消融 independent_j | 68.9679 | 58.9429 | 20.9790 | 87.5449 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_test_independent_j` |
 | 区域J＋F固定消融 reuse_candidate | 64.3145 | 54.0047 | 18.7725 | 87.0962 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_test_reuse_candidate` |
+| CNN改进 baseline cnn_only | 39.1860 | 32.5156 | 8.5207 | 74.8068 | `cnn_refinement_evaluation_baseline_test_cnn_only` |
+| CNN改进 context_dropout cnn_only | 29.4763 | 23.8130 | 6.2053 | 69.3710 | `cnn_refinement_evaluation_context_dropout_test_cnn_only` |
+| CNN改进 context_dropout fusion | 68.9679 | 58.7957 | 20.7404 | 87.5211 | `cnn_refinement_evaluation_context_dropout_test_fusion` |
+| CNN改进 filtered_negatives cnn_only | 38.0053 | 30.3681 | 7.8534 | 73.8185 | `cnn_refinement_evaluation_filtered_negatives_test_cnn_only` |
+| CNN改进 filtered_negatives fusion | 69.9403 | 59.5374 | 20.8033 | 87.7713 | `cnn_refinement_evaluation_filtered_negatives_test_fusion` |
 
 融合 α=0.5、角向 γ=0.5 由 valid exact/all/Precision@10 选择；占比约束选中零强度，等于基线。最优匹配单独报告。历史角向＋最优匹配组合是在查看前一轮 test 后提出的补充实验，posthoc=true，没有 test 参数搜索，也不能描述为 test 前确定的方案。
 
@@ -157,6 +162,11 @@ Nakazawa、Yu 使用监督分类训练；WaPIRL 是 F 对齐的整图适配。WM
 | 区域J＋F固定消融 no_a（跨组合） | 74.9779 | 36.2023 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_cross_test_no_a` |
 | 区域J＋F固定消融 independent_j（跨组合） | 75.1247 | 36.2578 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_cross_test_independent_j` |
 | 区域J＋F固定消融 reuse_candidate（跨组合） | 76.5262 | 38.7304 | `paper_c_ablation_20261121T175924_0800__paper_c_ablation_cross_test_reuse_candidate` |
+| CNN改进 baseline cnn_only（跨组合） | 65.8197 | 26.6343 | `cnn_refinement_evaluation_baseline_cross_test_cnn_only` |
+| CNN改进 context_dropout cnn_only（跨组合） | 62.5954 | 24.6423 | `cnn_refinement_evaluation_context_dropout_cross_test_cnn_only` |
+| CNN改进 context_dropout fusion（跨组合） | 75.0166 | 36.2912 | `cnn_refinement_evaluation_context_dropout_cross_test_fusion` |
+| CNN改进 filtered_negatives cnn_only（跨组合） | 65.4054 | 26.3495 | `cnn_refinement_evaluation_filtered_negatives_cross_test_cnn_only` |
+| CNN改进 filtered_negatives fusion（跨组合） | 75.2819 | 36.3801 | `cnn_refinement_evaluation_filtered_negatives_cross_test_fusion` |
 
 本表额外排除同标签组合候选，每 query 6,999–7,170 个候选，沿用原 coverage_v1 指标。999 个 query 无 FullCoverage 正样本，FullCoverage Recall/AP 有效 query=6,200；其中199个 query 的 IDCG=0，Coverage-nDCG 有效 query=7,000；MeanCoverage、FullCoverage Hit/Precision 保留7,199个 query。历史七方法中的 F 是2026-11-11旧径向面积来源，不能替代当前 cc8；后续融合变体以各自来源、冻结配置和运行身份区分。所有跨组合结果与普通 test 分表展示。
 
