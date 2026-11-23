@@ -1,0 +1,89 @@
+{
+  "paper": {
+    "title": "Self-Supervised Representation Learning for Wafer Bin Map Defect Pattern Classification",
+    "authors": [
+      "Hyungu Kahng",
+      "Seoung Bum Kim"
+    ],
+    "year": 2021,
+    "doi": "10.1109/TSM.2020.3038165",
+    "provided_pdf_sha256": "56105cc84f10867270138fa2609b8660da4cfd80a003102610c65952a6121da9",
+    "relevant_pdf_pages": [
+      3,
+      4,
+      6,
+      7,
+      9,
+      10
+    ]
+  },
+  "author_implementation": {
+    "doi": "10.1109/TSM.2020.3038165",
+    "author_repository": "https://github.com/hgkahng/WaPIRL",
+    "author_commit": "10e24c3bbec1ebe98ed32bef8faa86206042ef58",
+    "augmentation_source": "datasets/transforms.py",
+    "albumentations_version": "0.4.6",
+    "albumentations_commit": "70452cd040f782dcaca1b19964d6eafe7e5d14eb",
+    "scope": "adaptation of five augmentation operators to existing F, not reproduction of whole-wafer supervised classification or fine-tuning",
+    "augmentation_source_sha256": "d596ef65c07b2f129aacb86a6dea7a12ba55e14a9ac5dcb022a6be005fefd525"
+  },
+  "table_II_resnet18_macro_f1": {
+    "label_fractions": [
+      0.01,
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "supervised_baseline": [
+      0.57,
+      0.666,
+      0.716,
+      0.77,
+      0.81,
+      0.858
+    ],
+    "crop": [
+      0.693,
+      0.792,
+      0.821,
+      0.857,
+      0.879,
+      0.895
+    ],
+    "cutout": [
+      0.697,
+      0.727,
+      0.773,
+      0.838,
+      0.869,
+      0.883
+    ],
+    "noise": [
+      0.581,
+      0.676,
+      0.723,
+      0.805,
+      0.857,
+      0.875
+    ],
+    "rotation": [
+      0.721,
+      0.78,
+      0.827,
+      0.846,
+      0.858,
+      0.86
+    ],
+    "shift": [
+      0.683,
+      0.785,
+      0.811,
+      0.856,
+      0.876,
+      0.883
+    ]
+  },
+  "interpretation": "Crop strongest across most regimes; rotation strongest ResNet18 at1% and10% labels; paper aggregate recommendation does not imply everycrop row wins; TableII supervised finetuning median10trials not directly comparable to current retrieval. Author classification training also applies configured augmentation, so those values do not isolate the effect of self-supervised augmentation alone."
+}
