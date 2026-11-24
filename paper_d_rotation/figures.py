@@ -200,7 +200,7 @@ def render(output, *, gallery=True):
     fig = plt.figure(figsize=(14.8, 4.5 * len(cases)))
     outer = fig.add_gridspec(len(cases), 3, width_ratios=(1.0, 1.0, 1.85),
                             left=.035, right=.97, top=.90, bottom=.12,
-                            hspace=.85, wspace=.62)
+                            hspace=.85, wspace=1.1)
     for i, case in enumerate(cases):
         axes = [fig.add_subplot(outer[i, j]) for j in range(3)]
         _draw_case(fig, axes, by_id[case['example_id']], assets,
@@ -221,7 +221,7 @@ def render(output, *, gallery=True):
     for case in cases:
         fig = plt.figure(figsize=(14.8, 4.8))
         grid = fig.add_gridspec(1, 3, width_ratios=(1., 1., 1.85),
-                              left=.035, right=.97, top=.76, bottom=.25, wspace=.62)
+                              left=.035, right=.97, top=.76, bottom=.25, wspace=1.1)
         axes = [fig.add_subplot(grid[0, j]) for j in range(3)]
         _draw_case(fig, axes, by_id[case['example_id']], assets, CATEGORY_TITLES[case['category']])
         fig.text(.035, .96, 'Actual test retrieval · region correspondences and score contributions',
