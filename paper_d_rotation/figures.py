@@ -61,18 +61,48 @@ def _draw_map(ax, raw, mask, region_colors, prefix, *, compact=False):
     ax.set_xticks([]); ax.set_yticks([])
     for spine in ax.spines.values():
         spine.set_color('#DDE2E7'); spine.set_linewidth(.7)
-    centers = {}
+    centers, labels, pixels = {}, {}, {}
     height, width = raw.shape
+    ax.set_xlim(-.5, width - .5); ax.set_ylim(height - .5, -.5)
+    # Fix the displayed map geometry before measuring text in display pixels.
+    ax.apply_aspect()
     for local in range(int(mask.max())):
         ys, xs = np.where(mask == local + 1)
         if not len(xs):
             raise ValueError('Noncontiguous original region mask labels')
         center = (float(xs.mean()), float(ys.mean()))
         centers[local] = center
-        ax.text(center[0], center[1], f'{prefix}{local + 1}', fontsize=7 if compact else 9,
+        pixels[local] = np.column_stack((xs, ys))
+        labels[local] = ax.text(center[0], center[1], f'{prefix}{local + 1}', fontsize=7 if compact else 9,
                 fontweight='bold', color='#17232F', ha='center', va='center', zorder=5,
                 path_effects=[pe.withStroke(linewidth=2.7, foreground='white')])
-    ax.set_xlim(-.5, width - .5); ax.set_ylim(height - .5, -.5)
+    # Nested regions can have coincident centroids. Keep smaller-region labels
+    # fixed and move a colliding larger label to its nearest real mask pixel.
+    # This is display-only: return the original centroids for matching links.
+    renderer = ax.figure.canvas.get_renderer()
+    padding = 1.9 * ax.figure.dpi / 72.  # outline plus a visible text gap
+    placed = []
+    for local in sorted(centers, key=lambda i: (len(pixels[i]), i)):
+        label = labels[local]
+        box = label.get_window_extent(renderer).padded(padding)
+        if any(box.overlaps(other) for other in placed):
+            candidates = pixels[local]
+            shifts = ax.transData.transform(candidates) - ax.transData.transform(centers[local])
+            allowed = np.ones(len(candidates), dtype=bool)
+            for other in placed:
+                allowed &= ((box.x0 + shifts[:, 0] >= other.x1)
+                    | (box.x1 + shifts[:, 0] <= other.x0)
+                    | (box.y0 + shifts[:, 1] >= other.y1)
+                    | (box.y1 + shifts[:, 1] <= other.y0))
+            eligible = candidates[allowed]
+            if not len(eligible):
+                raise ValueError('No separated in-mask region label position')
+            distance = np.sum((eligible - centers[local]) ** 2, axis=1)
+            # Distance, then row and column make ties independent of backend.
+            chosen = eligible[np.lexsort((eligible[:, 0], eligible[:, 1], distance))[0]]
+            label.set_position(chosen)
+            box = label.get_window_extent(renderer).padded(padding)
+        placed.append(box)
     return centers
 
 
