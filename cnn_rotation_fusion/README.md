@@ -42,4 +42,12 @@ WBBS使用中央登记中的`wbbs_test`与`cross_wbbs`原始来源，核验协�
 
 这是观察已有任意角旋转test结果后提出的事后配权研究。valid选参约束后续搜索，但不能把现有test重新称作未接触的独立确认集。单seed和固定图库条件配对区间不代表训练稳定性，也未校正既往探索或多重比较。新结果不自动替换原论文主模型，是否入稿由证据总表单独维护。
 
-当前处于实现与运行前核验；正式运行身份、结果、WBBS对照和保存范围在完成后更新本节。
+正式运行`20261124T093446+0800__cnn_rotation_fusion`已于2026-11-24 10:10:25完成科学封存，源码为`07d9dc2`。12组valid在09:40:26冻结唯一胜者`alpha=0.4,beta=0.15`，即`0.34C+0.51T+0.15A`：valid P@10为53.48%，原权重旋转模型为53.06%。C:T仍为4:6，主要改变是面积权重从0.25降至0.15。
+
+完整test呈现指标取舍。旋转CNN配新权重的exact P@10／mAP@100为60.4723%／12.6726%，低于原权重的60.8946%／12.8223%；P@10差值为−0.422281个百分点，95%条件区间[−0.620954,−0.213884]。跨组合nDCG@10／FullCoverage P@10／FullCoverage mAP@100则提高0.593134／0.770940／0.149953个百分点，三项区间均为正。与整图WBBS相比，新权重的P@10和两种coverage nDCG@10较高，但普通exact mAP@100及跨组合FullCoverage mAP@100仍较低。该结果不支持把新权重表述为全面改善，也不按test自动更换论文主方法。
+
+用户所需的五行同表保存在[WBBS联合对比表](../results/20261124T093446+0800__cnn_rotation_fusion/report/comparison_wbbs.csv)，普通／跨组合指标明确分列；另有[普通test分表](../results/20261124T093446+0800__cnn_rotation_fusion/report/comparison_test.csv)、[跨组合分表](../results/20261124T093446+0800__cnn_rotation_fusion/report/comparison_cross_test.csv)、[配对区间](../results/20261124T093446+0800__cnn_rotation_fusion/report/paired_test_comparisons.csv)及[valid选择依据](../results/20261124T093446+0800__cnn_rotation_fusion/report/valid_selection.csv)。四个区域角色分别为原／旋转CNN×原／新权重，不合并为单因素增强效果；WBBS保留原正式来源。完整解释维护于[消融实验第18节](../doc/消融实验.md#cnn-rotation-fusion)，保存、登记和入稿状态统一见项目说明与证据总表。
+
+服务器完整产物位于`/data/wangkaiyan2024/wbm-region-retrieval/results/20261124T093446+0800__cnn_rotation_fusion/`，本地同名目录保存写作与溯源子集，完整评分数组及Top-500排名留在服务器。原模型、协议和已用来源保持只读；原权重旋转模型通过完整valid评分与Top-500精确重放后复用。新入口35项测试及4个子测试在本地与服务器通过；它们是实现检查，不替代正式结果的来源、排序和分母核验。
+
+正式登记新增16项、引用20个历史区域评价角色，当前总数567，原551项来源与快照对象不变；WBBS未重复登记。[独立验收](../results/20261124T093446+0800__cnn_rotation_fusion__independent_review.json)重算69组源指标和24组配对均值／有效N，最大误差4.44e-16。服务器与本地归档核验通过，本地[写作子集](../results/20261124T093446+0800__cnn_rotation_fusion__local_download.json)共244文件、37,506,348字节；原始完成标记及远程路径保持原样，此子集不等于完整科学归档。
