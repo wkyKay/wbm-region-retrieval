@@ -2,6 +2,16 @@
 
 本入口完成当前主方法的D1–D4，复用任意角旋转CNN固定第100轮的原视图特征，评分为`0.85*(0.4*C+0.6*T)+0.15*A`。来源必须是已封存的本轮`paper_c_rotation`运行；历史`paper_d_explanation`及旧产物保持不变。本入口不训练、不选参、不新增正式方法×split成绩。论文状态统一见[证据总表](../doc/论文实验证据总表.md)。
 
+## 已完成运行
+
+正式运行保存在[`result1124/20261124T195710+0800__paper_d_rotation/`](../result1124/20261124T195710+0800__paper_d_rotation/)，实际启动于`2026-11-24T19:57:10+08:00`，已封存为`completed`，并于`2026-11-24T20:21:11+08:00`通过独立`verified`核验。来源为本轮[`20261124T192819+0800__paper_c_rotation`](../result1124/20261124T192819+0800__paper_c_rotation/)的主方法结果。当前证据已完成，尚未替换中英文稿件中的旧方法图表。
+
+已核验222对解释（两协议各111对）、870对区域匹配及244张原图／mask，最大代数复原误差为`3.33e-16`。遮蔽验证精确重放全部7,199个查询的完整候选分数；两协议各有7,161个多区域查询参加主分析、5,920个查询参加面积控制，另38个单区域查询保留基线。共核验56,958条单区域遮蔽记录、104,648条策略记录及112条汇总记录。完整结果和解释边界见[汇总](../result1124/20261124T195710+0800__paper_d_rotation/summary.json)、[独立核验](../result1124/20261124T195710+0800__paper_d_rotation/verification.json)及[完成标记](../result1124/20261124T195710+0800__paper_d_rotation/completed.json)，论文结论维护于[消融实验](../doc/消融实验.md)。
+
+最终图像包含[四类案例主图](../result1124/20261124T195710+0800__paper_d_rotation/figures/main_cases.pdf)、[四张独立案例](../result1124/20261124T195710+0800__paper_d_rotation/figures/individual/)及[37页完整图集](../result1124/20261124T195710+0800__paper_d_rotation/figures/gallery/all_222_anchor_examples.pdf)，共42个PNG、6个PDF；48个文件的实际视觉审阅范围和SHA记录于[figure_review.json](../result1124/20261124T195710+0800__paper_d_rotation/figure_review.json)。图集全部页已通过PNG／PDF联系表检查，12个标签位置变化页另作整页细查；不将联系表检查表述为对全部小字逐字审查。
+
+两轮排版修复仅影响显示：先增加主图和单例的列间距，避免长分项说明压入候选图；再检测区域编号碰撞，保留小区域编号，将冲突的大区域编号移至自身原始mask内最近的可用像素。原始mask、科学数值、真实区域中心及对应连线端点均未改变；[244张资产的布局审计](../result1124/20261124T195710+0800__paper_d_rotation/label_layout_audit.json)保存了验证范围。前两轮图像、旧绘图源码和未通过说明保留于[`render_history/attempt_1/`](../result1124/20261124T195710+0800__paper_d_rotation/render_history/attempt_1/)和[`attempt_2/`](../result1124/20261124T195710+0800__paper_d_rotation/render_history/attempt_2/)。
+
 ## 固定设计
 
 D1/D2按37种完整标签组合各取固定查询顺序中的首query，在普通和跨组合排名取rank1/10/100，共222对；逐例核对原始mask、实际一对一匹配、深度／结构／面积分项及候选总分。D3按预设规则选择精确成功、跨组合完整覆盖、部分覆盖、无覆盖四类案例。无覆盖案例要求完整合格图库中存在正覆盖候选，不能把图库缺失当作模型失败。
