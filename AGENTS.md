@@ -8,7 +8,7 @@
 
 - **当前项目及论文主方法按用户2026-11-24指定，统一为任意角旋转CNN＋新加法权重的结构增强区域检索**：`add_a0p4_b0p15`（`new_theta_star`），区域对评分 `S=0.34C+0.51T+0.15A`。C使用`results/20261123T211208+0800__cnn_augmentation/training/rotation/checkpoint.pt`的固定第100轮、seed=2026模型；不是原CNN的`best_nce`。训练第二视图使用任意角旋转，推断使用原始视图，不做随机旋转或TTA。T、A、cc8、min_area=5、Top-4、h512、单向贪心一对一及查询`sqrt(area)`聚合保持原区域加法方案定义。
 - 当前主方法的普通／跨组合结果来自`results/20261124T093446+0800__cnn_rotation_fusion/evaluation/rotation/{test,cross_test}/add_a0p4_b0p15/`，实现与来源见`cnn_rotation_fusion/README.md`及[doc/项目说明.md](doc/项目说明.md)。权重仅按valid选定；用户指定主方法发生在查看test结果后，不追述为test前选定或全指标最优。不得以文档更新为由修改冻结默认配置、源码、模型或结果；复查时读取已有产物，新科学设置另建运行。
-- 两条论文贡献仍为算法框架与可追溯评分解释。先读[doc/论文实验证据总表.md](doc/论文实验证据总表.md)：2026-11-21主方法为原CNN＋`add_a0p4_b0p25`（`0.30C+0.45T+0.25A`），原C/D/F图表已入稿，但不能当作当前新编码器／新权重的受控消融或解释证据；当前稿件与证据的对齐状态须分别记录。历史结果及原key保持不变。
+- 两条论文贡献仍为算法框架与可追溯评分解释。先读[doc/论文实验证据总表.md](doc/论文实验证据总表.md)：2026-11-21主方法为原CNN＋`add_a0p4_b0p25`（`0.30C+0.45T+0.25A`），历史C/D/F图表保留原身份。2026-11-24论文`e83bfb8`已将B主结果、当前C/D及F统计图表更新为任意角旋转CNN＋0.34／0.51／0.15，并加入增强摘要及编码器／权重交叉对照。旧编码器／权重只作为明确控制，旧弱面积区间由同旋转编码器原权重对照替代；不得改写历史结果、原key或676文件材料包。
 - 原F的cc8径向位置＋相对面积乘法、原`best_nce`以及其余五种分割均保留为历史实验，方法与来源见`experiments/proposed/f_segmentation_geometry/README.md`；不再作为未指定版本时的默认主方法。原始mask几何量不能改为裁切／缩放后的量。
 - 最新成绩先读 [当前结果总览](results_catalog/CURRENT_RESULTS.md)，结果更新规则读 [登记说明](results_catalog/README.md)，来源身份以 `results_catalog/sources.json`、`snapshot.json` 及原始 manifest 为准。旧日期文档和 `experiments/_archive/` 只作历史追溯。
 - 改实验实现前查明源码签名依赖；结果管理代码保持在 `results_catalog/`，不为目录整理改动冻结训练或评分源码。
