@@ -54,3 +54,6 @@ artificial/
 
 # Publication material copies, grouped by evidence section; originals stay in place.
 /result/
+
+# 2026-11-24 current-method ablations and explanation evidence
+/result1124/
